@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './ClientFormComponent.css'
+import '../Form.css'
 
 function ClientFormComponent() {
     const [formData, setFormData] = useState({
@@ -10,6 +10,7 @@ function ClientFormComponent() {
         city: '',
         onlineTherapy: false,
         therapistGender: '',
+        consent: false
     })
 
     const [currencies, setCurrencies] = useState([
@@ -28,6 +29,10 @@ function ClientFormComponent() {
         }));
         if (errors[name]) {
             setErrors(prev => ({ ...prev, [name]: '' }));
+        }
+
+        if (name === 'onlineTherapy' && errors.city) {
+            setErrors(prev => ({ ...prev, city: '' }));
         }
     };
 
@@ -88,7 +93,11 @@ function ClientFormComponent() {
 
         if (!formData.therapistGender) {
             newErrors.therapistGender = 'Выберите предпочитаемый пол терапевта';
-        }    
+        }
+
+        if (!formData.consent) {
+            newErrors.consent = "Необходимо дать согласие на обработку персональных данных"
+        }
 
     const hasSelectedCurrency = currencies.some(c => c.selected);
         if (!hasSelectedCurrency) {
@@ -239,13 +248,16 @@ function ClientFormComponent() {
             <div className="form-field">
                 <input 
                     name="city"
-                    placeholder="Введите город, в котором ищете терапевта *" 
+                    placeholder="Введите город, в котором ищете терапевта" 
                     type="text" 
                     value={formData.city}
                     onChange={handleInputChange}
                     className={errors.city ? 'error' : ''}
                 />
                 {errors.city && <span className="error-message">{errors.city}</span>}
+                <small style={{ display: 'block', marginTop: '5px', color: '#666' }}>
+                Если не укажете город, отметьте, что готовы к онлайн терапии
+            </small>
             </div>
 
             <div className="form-field">
@@ -329,6 +341,19 @@ function ClientFormComponent() {
                 </label>
                 {errors.therapistGender && <span className="error-message">{errors.therapistGender}</span>}
             </fieldset>
+
+            <div className="form-field">
+                <label>
+                    <input 
+                        type="checkbox" 
+                        name="consent"
+                        checked={formData.consent}
+                        onChange={handleInputChange}
+                    />
+                    Дайте согласие на обработку персональных данных
+                </label>
+                {errors.consent && <span className="error-message">{errors.consent}</span>}
+            </div>
 
             <div className="form-actions">
                 <button type="submit" className="submit-btn">Отправить заявку</button>
