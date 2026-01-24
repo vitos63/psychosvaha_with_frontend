@@ -41,5 +41,5 @@
   "devDependencies": {
     "gh-pages": "^6.3.0"
   },
-  "homepage": "http://vitos63.github.io/psychosvaha_with_frontend/build"
+  "homepage": "."
 }
