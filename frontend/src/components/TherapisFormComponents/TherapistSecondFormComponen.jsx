@@ -568,30 +568,6 @@ return (
             </label>
         </div>
 
-        <div className="form-field">
-            <label>
-                <input
-                    type="checkbox"
-                    name="doesGroupTherapy"
-                    checked={formData.doesGroupTherapy}
-                    onChange={handleInputChange}
-                />
-                Вы проводите групповую терапию?
-            </label>
-        </div>
-
-        <div className="form-field">
-            <label>
-                <input
-                    type="checkbox"
-                    name="isSupervisor"
-                    checked={formData.isSupervisor}
-                    onChange={handleInputChange}
-                />
-                Вы супервизор?
-            </label>
-        </div>
-
         {Object.entries(TAG_CATEGORIES).map(([category, tags]) => (
             <fieldset key={category} className="form-field tags-fieldset">
                 <legend>{categoryLabels[category]} (можно выбрать несколько)</legend>
