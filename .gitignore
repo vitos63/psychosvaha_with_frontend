@@ -8,6 +8,8 @@ __pycache__/
 alembic
 alembic.ini
 
+/node_modules
+
 # Distribution / packaging
 .Python
 build/
