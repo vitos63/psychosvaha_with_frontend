@@ -18,7 +18,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build -a"
   },
   "eslintConfig": {
     "extends": [
@@ -41,5 +41,5 @@
   "devDependencies": {
     "gh-pages": "^6.3.0"
   },
-  "homepage": "http://<username>.github.io/psychosvaha_with_frontend"
+  "homepage": "http://<username>.github.io/psychosvaha_with_frontend/frontend"
 }
