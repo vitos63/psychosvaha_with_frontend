@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/psychosvaha_with_frontend/static/css/main.41d5429b.css",
+    "main.js": "/psychosvaha_with_frontend/static/js/main.64bea418.js",
+    "static/js/453.20359781.chunk.js": "/psychosvaha_with_frontend/static/js/453.20359781.chunk.js",
+    "static/media/logo.svg": "/psychosvaha_with_frontend/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "index.html": "/psychosvaha_with_frontend/index.html",
+    "main.41d5429b.css.map": "/psychosvaha_with_frontend/static/css/main.41d5429b.css.map",
+    "main.64bea418.js.map": "/psychosvaha_with_frontend/static/js/main.64bea418.js.map",
+    "453.20359781.chunk.js.map": "/psychosvaha_with_frontend/static/js/453.20359781.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.41d5429b.css",
+    "static/js/main.64bea418.js"
+  ]
+}
