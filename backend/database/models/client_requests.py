@@ -18,7 +18,7 @@ class ClientRequest(Base):
     __tablename__ = "client_requests"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
     client_id: Mapped[int] = mapped_column(nullable=False)
     problem_description: Mapped[str] = mapped_column(nullable=False)
     sex: Mapped[Sex] = mapped_column(Enum(Sex), nullable=False)

@@ -24,3 +24,9 @@ class Approved(str, Enum):
     APPROVE = 'Одобрен'
     DISAPPROVE = "Не одобрен"
     NOT_A_DEFINITION = 'Не определен'
+
+
+class QueueStatus(str, Enum):
+    READY = "ready"
+    DONE = "done"
+    ERROR = "error"

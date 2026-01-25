@@ -15,3 +15,6 @@ logger.add(sink=sys.stdout, level=os.getenv("LOG_LEVEL", "INFO").upper())
 
 DB_MIGRATIONS_URL = os.environ["DB_MIGRATIONS_URL"]
 DB_URL = os.environ["DB_URL"]
+
+CONSUMER_BATCH_SIZE = int(os.environ["CONSUMER_BATCH_SIZE"])
+CONSUMER_SLEEP_SECONDS = float(os.environ["CONSUMER_SLEEP_SECONDS"])
