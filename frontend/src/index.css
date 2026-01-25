@@ -1,13 +1,26 @@
-body {
+/* App.css или index.css */
+html, body, #root {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* Убираем стандартные отступы у навигации */
+nav {
+  margin: 0;
+  padding: 10px;
+  background: #f0f0f0;
+}
+
+nav a {
+  margin-right: 15px;
+  text-decoration: none;
+  color: #2AABEE;
+}
+
+/* Если не раскрывается, попробуйте это */
+body {
+  background-color: transparent !important;
 }
