@@ -1,5 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
+import { useEffect } from 'react';
+
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import ClientFormComponent from './components/ClientFormComponents/ClientFormComponent';
 import TherapistFirstFormComponent from './components/TherapisFormComponents/TherapistFirstFormComponen';
@@ -7,6 +9,23 @@ import TherapistSecondFormComponent from './components/TherapisFormComponents/Th
 
 
 function App() {
+   useEffect(() => {
+        if (window.Telegram && window.Telegram.WebApp) {
+            const tg = window.Telegram.WebApp;
+
+            tg.ready();
+            tg.expand();
+            const user = tg.initDataUnsafe?.user;
+            
+            if (user) {
+                console.log('Telegram ID:', user.id);
+                console.log('Username:', user.username);
+                console.log('Имя:', user.first_name);
+                console.log('Фамилия:', user.last_name);
+            }
+        }
+    }, []);
+
   return (
     <Router>
       <nav>
