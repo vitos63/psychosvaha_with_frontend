@@ -1,0 +1,12 @@
+services:
+  db:
+    image: postgres:15
+    container_name: db
+    restart: always
+    environment:
+      POSTGRES_DB: psycho
+      POSTGRES_USER: psycho_user
+      POSTGRES_PASSWORD: psychopass
+      TZ: UTC
+    ports:
+      - "5432:5432"
