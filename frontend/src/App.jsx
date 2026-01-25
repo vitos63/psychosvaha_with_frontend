@@ -70,6 +70,14 @@ function App() {
             </div>
           )}
         </div>
+        <div style={{ background: '#fee', padding: 10 }}>
+          <pre>{JSON.stringify({
+            telegram: !!window.Telegram,
+            webapp: !!window.Telegram?.WebApp,
+            protocol: window.location.protocol,
+            user: window.Telegram?.WebApp?.initDataUnsafe?.user
+          }, null, 2)}</pre>
+        </div>
         <div> Some text</div>
       </Router>
     </div>
