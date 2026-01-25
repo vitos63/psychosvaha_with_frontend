@@ -10,10 +10,12 @@ import TherapistSecondFormComponent from './components/TherapisFormComponents/Th
 
 function App() {
   const [user, setUser] = useState(null);
+  const [tgApp, setTgApp] = useState(null);
 
   useEffect(() => {
     if (window.Telegram?.WebApp) {
       const tg = window.Telegram.WebApp;
+      setTgApp(tg)
 
       tg.ready();
       tg.expand();
@@ -30,6 +32,9 @@ function App() {
 
   return (
     <Router>
+      <div>
+        Статус Telegram WebApp: {tgApp ? '✅ Доступен' : '❌ Недоступен'}
+      </div>
       {user && (
         <div style={{
           padding: '10px',
