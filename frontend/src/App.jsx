@@ -31,10 +31,8 @@ function App() {
   }, []);
 
   return (
+    <div style={{ minHeight: '100vh' }}>
     <Router>
-      <div>
-        Статус Telegram WebApp: {tgApp ? '✅ Доступен' : '❌ Недоступен'}
-      </div>
       {user && (
         <div style={{
           padding: '10px',
@@ -58,7 +56,25 @@ function App() {
         <Route path="/form-thrapist-first" element={<TherapistFirstFormComponent />} />
         <Route path="/form-thrapist-second" element={<TherapistSecondFormComponent />} />
       </Routes>
+      <div style={{ padding: 10, background: '#ffeeba' }}>
+        Статус Telegram WebApp: {tgApp ? '✅ Доступен' : '❌ Недоступен'}
+        {user && (
+        <div style={{
+          padding: '10px',
+          background: '#f0f0f0',
+          marginBottom: '20px'
+        }}>
+          <h3>👤 Пользователь Telegram:</h3>
+          <p><strong>ID:</strong> {user.id}</p>
+          <p><strong>Имя:</strong> {user.first_name} {user.last_name || ''}</p>
+          {user.username && <p><strong>Username:</strong> @{user.username}</p>}
+        </div>
+      )}
+      </div>
+      <div> Some text</div>
     </Router>
+    </div>
+    
 
 
   );
