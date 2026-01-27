@@ -2,6 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from cron.queue.tasks.base_processor import BaseProcessor
 from repo.client_requests_tags import ClientRequestTagRepo
+
 from .task import AddTagsToRequestTask
 
 

@@ -1,6 +1,6 @@
-from typing import Optional
 
 from pydantic import BaseModel
+
 from .enums import Sex
 
 
@@ -10,6 +10,6 @@ class CreateClientRequest(BaseModel):
     sex: Sex
     age: int
     currency_amount: dict
-    city: Optional[str] = None
+    city: str | None = None
     is_online: bool
-    psychotherapist_sex: Optional[Sex] = None
+    psychotherapist_sex: Sex | None = None

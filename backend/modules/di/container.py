@@ -1,11 +1,11 @@
-from datetime import timezone
+from datetime import UTC
 
 from dependency_injector import containers, providers
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from cron.queue.tasks.add_tags_to_client_request.processor import AddTagsToRequestProcessor
-from repo.client_requests_tags import ClientRequestTagRepo
 from repo.client_requests import ClientRequestRepo
+from repo.client_requests_tags import ClientRequestTagRepo
 from repo.queue import QueueRepo
 from service.client_request import ClientRequestService
 from service.date_time import DateTimeService
@@ -33,7 +33,7 @@ class Container(containers.DeclarativeContainer):
     # Service
     date_time_service = providers.Singleton(
         DateTimeService,
-        timezone.utc,
+        UTC,
     )
 
     client_request_service = providers.Factory(

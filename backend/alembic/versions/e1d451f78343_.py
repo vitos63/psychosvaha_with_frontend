@@ -26,7 +26,7 @@ def upgrade() -> None:
     sa.Column('type', sa.String(), nullable=False),
     sa.Column('payload', sa.JSON(), nullable=False),
     sa.Column('start_at', sa.DateTime(), nullable=False),
-    sa.Column('status', sa.Enum('READY', 'DONE', name='queuestatus'), nullable=False),
+    sa.Column('status', sa.Enum('READY', 'DONE', 'ERROR', name='queuestatus'), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###

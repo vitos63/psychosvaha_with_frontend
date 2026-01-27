@@ -1,11 +1,10 @@
 from abc import ABC, abstractmethod
-from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class BaseTask(BaseModel, ABC):
-    start_at: datetime
+    model_config = ConfigDict(extra="forbid")
 
     @staticmethod
     @abstractmethod
