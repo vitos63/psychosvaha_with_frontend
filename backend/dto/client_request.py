@@ -13,3 +13,4 @@ class CreateClientRequest(BaseModel):
     city: str | None = None
     is_online: bool
     psychotherapist_sex: Sex | None = None
+    need_psychiatrist: bool | None = None

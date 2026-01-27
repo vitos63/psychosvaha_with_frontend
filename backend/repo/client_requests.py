@@ -1,3 +1,4 @@
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.models import ClientRequest
@@ -18,7 +19,18 @@ class ClientRequestRepo:
             is_online=dto.is_online,
             currency_amount=dto.currency_amount,
             psychotherapist_sex=dto.psychotherapist_sex,
+            need_psychiatrist=dto.need_psychiatrist,
         )
         self._session.add(client_request)
         await self._session.flush()
         return client_request
+
+    async def select_by_request_id(self, request_id: int) -> ClientRequest | None:
+        stmt = (
+            select(ClientRequest)
+            .where(
+                ClientRequest.id == request_id,
+            )
+        )
+        result = await self._session.execute(stmt)
+        return result.scalars().first()

@@ -7,6 +7,7 @@ from cron.queue.tasks.add_tags_to_client_request.processor import AddTagsToReque
 from repo.client_requests import ClientRequestRepo
 from repo.client_requests_tags import ClientRequestTagRepo
 from repo.queue import QueueRepo
+from repo.tags import TagRepo
 from service.client_request import ClientRequestService
 from service.date_time import DateTimeService
 
@@ -30,6 +31,11 @@ class Container(containers.DeclarativeContainer):
         session=session,
     )
 
+    tag_repo = providers.Factory(
+        TagRepo,
+        session=session,
+    )
+
     # Service
     date_time_service = providers.Singleton(
         DateTimeService,
@@ -48,5 +54,7 @@ class Container(containers.DeclarativeContainer):
     add_tags_to_client_request_processor = providers.Factory(
         AddTagsToRequestProcessor,
         session=session,
+        tag_repo=tag_repo,
         client_request_tag_repo=client_request_tag_repo,
+        client_request_repo=client_request_repo,
     )

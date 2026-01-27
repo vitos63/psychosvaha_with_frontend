@@ -1,0 +1,4 @@
+
+
+class ClientRequestDoesNotExistError(Exception):
+    pass
