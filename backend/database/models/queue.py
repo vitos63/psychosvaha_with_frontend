@@ -8,6 +8,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column
 
 from dto.enums import QueueStatus
+
 from .base import Base
 
 
@@ -18,4 +19,5 @@ class Queue(Base):
     type: Mapped[str] = mapped_column(nullable=False)
     payload: Mapped[dict] = mapped_column(JSON, nullable=False)
     start_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    finished_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     status: Mapped[QueueStatus] = mapped_column(Enum(QueueStatus), nullable=False)

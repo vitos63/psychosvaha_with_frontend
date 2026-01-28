@@ -13,12 +13,7 @@ async def main():
         batch_size=CONSUMER_BATCH_SIZE,
         sleep_seconds=CONSUMER_SLEEP_SECONDS,
     )
-    # TODO: graceful shutdown
-    task = asyncio.create_task(consumer.run())
-    try:
-        await task
-    except (KeyboardInterrupt, asyncio.CancelledError):
-        consumer.stop()
+    await consumer.run()
 
 
 if __name__ == "__main__":

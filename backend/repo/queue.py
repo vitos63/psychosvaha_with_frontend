@@ -1,21 +1,23 @@
+from datetime import datetime
+
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from cron.queue.tasks.base_task import BaseTask
 from database.models import Queue
 from dto.enums import QueueStatus
-from sqlalchemy import select
-from datetime import datetime
 
 
 class QueueRepo:
     def __init__(self, session: AsyncSession):
         self._session = session
 
-    async def create_task(self, task: BaseTask) -> Queue:
+    async def create_task(self, task: BaseTask, start_at: datetime) -> Queue:
         item = Queue(
             type=task.get_type(),
             payload=task.to_dict(),
-            start_at=task.start_at,
+            start_at=start_at,
+            finished_at=None,
             status=QueueStatus.READY,
         )
         self._session.add(item)

@@ -26,9 +26,11 @@ class ClientRequestService:
             request = await self._client_request_repo.create_request(request)
             task = AddTagsToRequestTask(
                 request_id=request.id,
+            )
+            await self._queue_repo.create_task(
+                task=task,
                 start_at=self._date_time_service.get_current_time(),
             )
-            await self._queue_repo.create_task(task)
             await self._session.commit()
             return request
         except Exception:
