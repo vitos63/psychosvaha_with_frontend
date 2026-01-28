@@ -71,8 +71,8 @@ class QueueConsumer:
             for task in ready_tasks:
                 try:
                     await self._handle_task(task.id, task.type, task.payload)
-                except Exception as e:
-                    logger.error(f"Failed to process task: {task.id=}\n{e}")
+                except Exception:
+                    logger.exception(f"Failed to process task: task.id={task.id}")
                     task.status = QueueStatus.ERROR
                 else:
                     task.status = QueueStatus.DONE

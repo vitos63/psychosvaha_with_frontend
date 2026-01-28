@@ -27,3 +27,4 @@ class ClientRequest(Base):
     is_online: Mapped[bool] = mapped_column(nullable=False)
     currency_amount: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
     psychotherapist_sex: Mapped[Sex | None] = mapped_column(Enum(Sex), nullable=True)
+    need_psychiatrist: Mapped[bool | None] = mapped_column(nullable=True)
