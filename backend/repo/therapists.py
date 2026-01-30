@@ -2,15 +2,15 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.models import Therapist
-from dto.therapist_request import CreateTherapist
+from backend.dto.therapist import CreateTherapist
 
 
 class TherapistRepo:
     def __init__(self, session: AsyncSession):
         self._session = session
 
-    async def create_request(self, dto: CreateTherapist) -> Therapist:
-        therapist_request = Therapist(
+    async def create_therapist(self, dto: CreateTherapist) -> Therapist:
+        therapist = Therapist(
             first_name=dto.first_name,
             last_name=dto.last_name,
             city=dto.city,
@@ -38,9 +38,9 @@ class TherapistRepo:
             couple_therapist=dto.couple_therapist,
             available_to_call=dto.available_to_call,
         )
-        self._session.add(therapist_request)
+        self._session.add(therapist)
         await self._session.flush()
-        return therapist_request
+        return therapist
 
     async def select_by_tg_id(self, tg_id: int) -> Therapist | None:
         stmt = (

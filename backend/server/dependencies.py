@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from database.engine import AsyncSessionFactory
 from modules.di.container import Container
 from service.client_request import ClientRequestService
+from service.therapist import TherapistService
 
 
 async def db_session() -> AsyncSession:
@@ -19,3 +20,7 @@ async def container(session: Annotated[AsyncSession, Depends(db_session)]) -> Co
 
 async def client_request_service(container_: Annotated[Container, Depends(container)]) -> ClientRequestService:
     return container_.client_request_service()
+
+
+async def therapist_service(container_: Annotated[Container, Depends(container)]) -> TherapistService:
+    return container_.therapist_service()

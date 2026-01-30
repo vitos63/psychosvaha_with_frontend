@@ -1,0 +1,28 @@
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+
+from database.models import TherapistTag
+
+
+class TherapistTagRepo:
+    def __init__(self, session: AsyncSession):
+        self._session = session
+
+    async def create_therapist_tags(self, therapist_tg_id: int, tag_ids: list[int]) -> list[TherapistTag]:
+        therapist_tags = []
+        for tag_id in tag_ids:
+            therapist_tag = TherapistTag(
+                therapist_tg_id=therapist_tg_id,
+                tag_id=tag_id,
+            )
+            self._session.add(therapist_tag)
+            therapist_tags.append(therapist_tag)
+            await self._session.flush()
+        return therapist_tags
+
+    async def get_therapist_tags_ids(self, therapist_tg_id: int) -> list[int]:
+        stmp = select(TherapistTag).where(TherapistTag.tag_id==therapist_tg_id)
+        result = await self._session.execute(stmp)
+        therapist_tags = result.scalars().all()
+        tag_ids = [tag.id for tag in therapist_tags]
+        return tag_ids

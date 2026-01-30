@@ -1,0 +1,29 @@
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from database.models import Therapist
+from backend.dto.therapist import CreateTherapist
+from repo.therapists import TherapistRepo
+from repo.therapist_tags import TherapistTagRepo
+
+
+class TherapistService:
+    def __init__(
+            self,
+            session: AsyncSession,
+            therapist_repo: TherapistRepo,
+            therapist_tags_repo: TherapistTagRepo,
+    ):
+        self._session = session
+        self._therapist_repo = therapist_repo
+        self._therapist_tags_repo = therapist_tags_repo
+
+    async def create_therapist(self, therapist_dto: CreateTherapist) -> Therapist:
+        try:
+            therapist = await self._therapist_repo.create_therapist(therapist_dto)
+            await self._therapist_tags_repo.create_therapist_tags(therapist_tg_id=therapist.tg_id,
+                                                                  tag_ids=therapist_dto.tag_ids)
+            await self._session.commit()
+            return therapist
+        except Exception:
+            await self._session.rollback()
+            raise
