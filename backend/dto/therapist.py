@@ -1,4 +1,3 @@
-
 from pydantic import BaseModel, field_validator, Field
 from email_validator import validate_email
 
@@ -32,6 +31,8 @@ class CreateTherapist(BaseModel):
     gerontologist: bool = False
     couple_therapist: bool = False
     available_to_call: bool = False
+
+    tag_ids: list[int] = []
 
     @field_validator("email")
     @classmethod
