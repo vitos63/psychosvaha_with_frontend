@@ -8,7 +8,10 @@ from repo.client_requests import ClientRequestRepo
 from repo.client_requests_tags import ClientRequestTagRepo
 from repo.queue import QueueRepo
 from repo.tags import TagRepo
+from repo.therapists import TherapistRepo
+from repo.therapist_tags import TherapistTagRepo
 from service.client_request import ClientRequestService
+from service.therapist import TherapistService
 from service.date_time import DateTimeService
 
 
@@ -36,10 +39,27 @@ class Container(containers.DeclarativeContainer):
         session=session,
     )
 
+    therapist_repo = providers.Factory(
+        TherapistRepo,
+        session=session
+    )
+
+    therapist_tag_repo = providers.Factory(
+        TherapistTagRepo,
+        session=session
+    )
+
     # Service
     date_time_service = providers.Singleton(
         DateTimeService,
         UTC,
+    )
+
+    therapist_service = providers.Factory(
+        TherapistService,
+        session=session,
+        therapist_repo=therapist_repo,
+        therapist_tags_repo=therapist_tag_repo,
     )
 
     client_request_service = providers.Factory(
