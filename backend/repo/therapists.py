@@ -1,8 +1,8 @@
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.models import Therapist
-from dto.therapist import CreateTherapist
+from dto.therapist import CreateTherapist, UpdateTherapist
 
 
 class TherapistRepo:
@@ -17,7 +17,7 @@ class TherapistRepo:
             phone_number=dto.phone_number,
             email=dto.email,
             photo=dto.photo,
-            approved=dto.approved,
+            approved=False,
             consent=dto.consent,
             pitch=dto.pitch,
             site=dto.site,
@@ -25,7 +25,7 @@ class TherapistRepo:
             age=dto.age,
             currency_amount=dto.currency_amount,
             experience=dto.experience,
-            count_of_recomendations=dto.count_of_recomendations,
+            count_of_recomendations=0,
             min_client_age=dto.min_client_age,
             max_client_age=dto.max_client_age,
             online=dto.online,
@@ -39,6 +39,22 @@ class TherapistRepo:
         )
         self._session.add(therapist)
         await self._session.flush()
+        return therapist
+
+    async def update_therapist(self, therapist_tg_id: int, therapist_dto: UpdateTherapist) -> Therapist | None:
+        update_dict = therapist_dto.model_dump()
+
+        stmt = (update(Therapist)
+                .where(
+                    Therapist.tg_id == therapist_tg_id
+                    )
+                .values(
+                    **update_dict
+                )
+                .returning(Therapist))
+        result = await self._session.execute(stmt)
+        await self._session.commit()
+        therapist = result.scalar_one_or_none()
         return therapist
 
     async def select_by_tg_id(self, tg_id: int) -> Therapist | None:

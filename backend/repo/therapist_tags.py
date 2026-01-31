@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, delete
 
 from database.models import TherapistTag
 
@@ -17,8 +17,13 @@ class TherapistTagRepo:
             )
             self._session.add(therapist_tag)
             therapist_tags.append(therapist_tag)
-            await self._session.flush()
+        await self._session.flush()
         return therapist_tags
+
+    async def update_therapist_tags(self, therapist_tg_id: int, tag_ids: list[int]) -> list[TherapistTag]:
+        stmt = delete(TherapistTag).where(TherapistTag.therapist_id==therapist_tg_id)
+        await self._session.execute(stmt)
+        return await self.create_therapist_tags(therapist_tg_id=therapist_tg_id, tag_ids=tag_ids)
 
     async def get_therapist_tags_ids(self, therapist_tg_id: int) -> list[int]:
         stmp = select(TherapistTag).where(TherapistTag.tag_id==therapist_tg_id)
