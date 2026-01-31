@@ -6,6 +6,7 @@ from sqlalchemy import (
     Enum,
     String,
     func,
+    BigInteger
 )
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -19,7 +20,7 @@ class ClientRequest(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
-    client_id: Mapped[int] = mapped_column(nullable=False)
+    client_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
     problem_description: Mapped[str] = mapped_column(nullable=False)
     sex: Mapped[Sex] = mapped_column(Enum(Sex), nullable=False)
     age: Mapped[int] = mapped_column(nullable=False)
