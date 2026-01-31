@@ -1,5 +1,5 @@
 from dto.therapist import CreateTherapist
 
 
-class CreateTherpistRequest(CreateTherapist):
+class CreateTherapistRequest(CreateTherapist):
     pass

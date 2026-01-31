@@ -1,4 +1,4 @@
-from .request import CreateTherpistRequest
+from .request import CreateTherapistRequest
 from .response import CreateTherapistResponse
 
-__all__ = [CreateTherpistRequest, CreateTherapistResponse]
+__all__ = [CreateTherapistRequest, CreateTherapistResponse]
