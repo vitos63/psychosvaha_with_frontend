@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.models import Therapist
-from backend.dto.therapist import CreateTherapist
+from dto.therapist import CreateTherapist
 from repo.therapists import TherapistRepo
 from repo.therapist_tags import TherapistTagRepo
 
