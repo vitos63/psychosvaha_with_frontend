@@ -2,7 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.models import Therapist
-from backend.dto.therapist import CreateTherapist
+from dto.therapist import CreateTherapist
 
 
 class TherapistRepo:
@@ -23,7 +23,6 @@ class TherapistRepo:
             site=dto.site,
             sex=dto.sex,
             age=dto.age,
-            city=dto.city,
             currency_amount=dto.currency_amount,
             experience=dto.experience,
             count_of_recomendations=dto.count_of_recomendations,
