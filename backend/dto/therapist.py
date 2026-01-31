@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_validator, Field
+from pydantic import BaseModel, field_validator, Field, ConfigDict
 from email_validator import validate_email
 
 from .enums import Sex
@@ -34,6 +34,8 @@ class CreateTherapist(BaseModel):
 
     tag_ids: list[int] = []
 
+    model_config = ConfigDict(from_attributes=True)
+
     @field_validator("email")
     @classmethod
     def validate_email_field(cls, email: str) -> str:
@@ -42,7 +44,8 @@ class CreateTherapist(BaseModel):
 
     @field_validator("experience")
     @classmethod
-    def validate_experience_field(cls, experience: int) -> int:
-        if cls.age - experience < 20:
+    def validate_experience_field(cls, experience: int, info) -> int:
+        age = info.data.get('age')
+        if age - experience < 20:
             raise ValueError("Experience is not valid")
         return experience
