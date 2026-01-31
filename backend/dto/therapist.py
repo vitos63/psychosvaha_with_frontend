@@ -4,21 +4,18 @@ from email_validator import validate_email
 from .enums import Sex
 
 
-class CreateTherapist(BaseModel):
+class BaseTherapistDTO(BaseModel):
     first_name: str
     last_name: str
     city: str | None = None
     phone_number: str | None = None
     email: str | None = None
     photo: str | None = None
-    approved: bool = False
-    consent: bool = False
     pitch: str | None = None
     site: str | None = None
     sex: Sex | None = None
     age: int = Field(ge=20, le=90)
     experience: int
-    count_of_recomendations: int = 0
 
     min_client_age: int = Field(ge=1, le=120)
     max_client_age: int = Field(ge=2, le=120)
@@ -49,3 +46,11 @@ class CreateTherapist(BaseModel):
         if age - experience < 20:
             raise ValueError("Experience is not valid")
         return experience
+
+
+class CreateTherapist(BaseTherapistDTO):
+    consent: bool = False
+
+
+class UpdateTherapist(BaseTherapistDTO):
+    pass
