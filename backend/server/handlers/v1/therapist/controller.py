@@ -19,11 +19,11 @@ async def create(
     return CreateTherapistResponse.model_validate(therapist)
 
 
-@router.put("/therapist/{therapist_tg_id}", response_model=UpdateTherapistResponse)
+@router.put("/therapist/{tg_id}", response_model=UpdateTherapistResponse)
 async def update(
     therapist: UpdateTherapistRequest,
-    therapist_tg_id: int,
+    tg_id: int,
     service: Annotated[TherapistService, Depends(therapist_service)],
 ):
-    therapist = await service.update_therapist(therapist_tg_id=therapist_tg_id, therapist_dto=therapist)
+    therapist = await service.update_therapist(therapist_tg_id=tg_id, therapist_dto=therapist)
     return UpdateTherapistResponse.model_validate(therapist)
