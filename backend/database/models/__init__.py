@@ -3,5 +3,15 @@ from .client_requests import ClientRequest
 from .client_requests_tags import ClientRequestTag
 from .queue import Queue
 from .tags import Tag
+from .therapists_tags import TherapistTag
+from .therapists import Therapist
 
-__all__ = ["Base", "ClientRequest", "Tag", "ClientRequestTag", "Queue"]
+__all__ = [
+    "Base",
+    "ClientRequest",
+    "Tag",
+    "ClientRequestTag",
+    "Queue",
+    "Therapist",
+    "TherapistTag",
+]
