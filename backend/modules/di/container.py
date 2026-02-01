@@ -4,6 +4,7 @@ from dependency_injector import containers, providers
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from cron.queue.tasks.add_tags_to_client_request.processor import AddTagsToRequestProcessor
+from cron.queue.tasks.add_therapists_to_client_request.processor import AddTherapistsToRequestProcessor
 from repo.client_requests import ClientRequestRepo
 from repo.client_requests_tags import ClientRequestTagRepo
 from repo.queue import QueueRepo
@@ -77,4 +78,16 @@ class Container(containers.DeclarativeContainer):
         tag_repo=tag_repo,
         client_request_tag_repo=client_request_tag_repo,
         client_request_repo=client_request_repo,
+        queue_repo=queue_repo,
+        date_time_service=date_time_service
+    )
+
+    add_therapists_to_client_request_processor = providers.Factory(
+        AddTherapistsToRequestProcessor,
+        session=session,
+        therapist_repo=therapist_repo,
+        therapist_tag_repo=therapist_tag_repo,
+        client_request_tag_repo=client_request_tag_repo,
+        tag_repo=tag_repo,
+        client_request_repo=client_request_repo
     )

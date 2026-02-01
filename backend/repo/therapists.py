@@ -41,7 +41,7 @@ class TherapistRepo:
         await self._session.flush()
         return therapist
 
-    async def update_therapist(self, therapist_tg_id: int, therapist_dto: UpdateTherapist) -> Therapist | None:
+    async def update_therapist(self, therapist_tg_id: int, therapist_dto: UpdateTherapist) -> Therapist:
         update_dict = therapist_dto.model_dump()
 
         stmt = (update(Therapist)
@@ -53,8 +53,8 @@ class TherapistRepo:
                 )
                 .returning(Therapist))
         result = await self._session.execute(stmt)
-        await self._session.commit()
-        therapist = result.scalar_one_or_none()
+        await self._session.flush()
+        therapist = result.scalar_one()
         return therapist
 
     async def select_by_tg_id(self, tg_id: int) -> Therapist | None:
@@ -66,3 +66,13 @@ class TherapistRepo:
         )
         result = await self._session.execute(stmt)
         return result.scalars().first()
+
+    async def select_available_to_call(self) -> list[Therapist]:
+        stmt = (
+            select(Therapist)
+            .where(
+                Therapist.available_to_call
+            )
+        )
+        result = await self._session.execute(stmt)
+        return result.scalars().all()
