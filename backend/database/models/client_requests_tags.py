@@ -1,9 +1,10 @@
 from sqlalchemy import (
     ForeignKey,
 )
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
+from .tags import Tag
 
 
 class ClientRequestTag(Base):
@@ -17,3 +18,5 @@ class ClientRequestTag(Base):
         ForeignKey("tags.id", ondelete="CASCADE"),
         primary_key=True,
     )
+
+    tag: Mapped["Tag"] = relationship("Tag")
