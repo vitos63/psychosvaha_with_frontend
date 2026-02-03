@@ -18,5 +18,5 @@ class ClientRequestTherapist(Base):
         primary_key=True,
     )
     percentage_of_compliance: Mapped[float] = mapped_column(
-        server_default=0
+        server_default="0"
     )
