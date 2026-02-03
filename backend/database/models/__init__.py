@@ -5,6 +5,7 @@ from .queue import Queue
 from .tags import Tag
 from .therapists_tags import TherapistTag
 from .therapists import Therapist
+from .client_requests_therapists import ClientRequestTherapist
 
 __all__ = [
     "Base",
@@ -14,4 +15,5 @@ __all__ = [
     "Queue",
     "Therapist",
     "TherapistTag",
+    "ClientRequestTherapist"
 ]

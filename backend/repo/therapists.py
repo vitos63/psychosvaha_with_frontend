@@ -66,3 +66,13 @@ class TherapistRepo:
         )
         result = await self._session.execute(stmt)
         return result.scalars().first()
+
+    async def select_available_to_call(self) -> list[Therapist]:
+        stmt = (
+            select(Therapist)
+            .where(
+                Therapist.available_to_call
+            )
+        )
+        result = await self._session.execute(stmt)
+        return result.scalars().all()

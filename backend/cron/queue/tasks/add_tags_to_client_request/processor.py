@@ -8,6 +8,9 @@ from domain.request_tags import ClientRequestDomain
 from repo.client_requests import ClientRequestRepo
 from repo.client_requests_tags import ClientRequestTagRepo
 from repo.tags import TagRepo
+from repo.queue import QueueRepo
+from service.date_time import DateTimeService
+from ..add_therapists_to_client_request.task import AddTherapistsToRequestTask
 
 from .task import AddTagsToRequestTask
 
@@ -19,11 +22,15 @@ class AddTagsToRequestProcessor(BaseProcessor):
             tag_repo: TagRepo,
             client_request_tag_repo: ClientRequestTagRepo,
             client_request_repo: ClientRequestRepo,
+            queue_repo: QueueRepo,
+            date_time_service: DateTimeService
     ):
         self._session = session
         self._client_request_tag_repo = client_request_tag_repo
         self._tag_repo = tag_repo
         self._client_request_repo = client_request_repo
+        self._queue_repo = queue_repo
+        self._date_time_service = date_time_service
 
     async def process_task(self, task: AddTagsToRequestTask):
         client_request = await self._client_request_repo.select_by_request_id(task.request_id)
@@ -38,6 +45,13 @@ class AddTagsToRequestProcessor(BaseProcessor):
             for tag in matched_tags:
                 logger.debug(f"Applying tag {tag.id=} {tag.title=} to request_id={task.request_id}")
                 await self._client_request_tag_repo.create_request_tag(task.request_id, tag.id)
+            task = AddTherapistsToRequestTask(
+                request_id=task.request_id,
+            )
+            await self._queue_repo.create_task(
+                task=task,
+                start_at=self._date_time_service.get_current_time(),
+            )
             await self._session.commit()
         except Exception:
             await self._session.rollback()

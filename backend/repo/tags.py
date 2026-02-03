@@ -15,3 +15,11 @@ class TagRepo:
         )
         result = await self._session.execute(stmt)
         return list(result.scalars().all())
+
+    async def select_by_title(self, tag_title: str) -> Tag:
+        stmt = (
+            select(Tag)
+            .where(Tag.title == tag_title)
+        )
+        result = await self._session.execute(stmt)
+        return result.scalar_one()
