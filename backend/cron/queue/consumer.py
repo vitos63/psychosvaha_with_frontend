@@ -11,6 +11,7 @@ from config import (
 )
 from cron.queue.errors import UnknownProcessorError, UnknownTaskError
 from cron.queue.tasks.add_tags_to_client_request.task import AddTagsToRequestTask
+from cron.queue.tasks.add_therapists_to_client_request.task import AddTherapistsToRequestTask
 from cron.queue.tasks.base_processor import BaseProcessor
 from cron.queue.tasks.base_task import BaseTask
 from dto.enums import QueueStatus
@@ -32,6 +33,7 @@ class QueueConsumer:
         self._sleep_seconds = sleep_seconds
         self._type_to_task_cls: dict[str, type[BaseTask]] = {
             AddTagsToRequestTask.get_type(): AddTagsToRequestTask,
+            AddTherapistsToRequestTask.get_type(): AddTherapistsToRequestTask
         }
         self._shutdown_seconds = shutdown_seconds
         self._is_running = True

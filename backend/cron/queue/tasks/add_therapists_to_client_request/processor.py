@@ -43,7 +43,7 @@ class AddTherapistsToRequestProcessor(BaseProcessor):
                                                          therapists=all_therapists,
                                                          therapist_tag_repo=self._therpist_tag_repo,
                                                          tag_repo=self._tag_repo)
-        request_therapists = client_therapist_domain.get_therapists_by_request()
+        request_therapists = await client_therapist_domain.get_therapists_by_request()
 
         try:
             for therapist_tg_id, percentage_of_compliance in request_therapists:
