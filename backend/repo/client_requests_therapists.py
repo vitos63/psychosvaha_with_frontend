@@ -1,4 +1,15 @@
-from sqlalchemy import func, select, or_, case, and_, cast, Integer, Select, Subquery
+from sqlalchemy import (
+    func,
+    select,
+    or_,
+    case,
+    and_,
+    cast,
+    desc,
+    Integer,
+    Select,
+    Subquery,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.models import (
@@ -47,10 +58,22 @@ class ClientRequestTherapistRepo:
             .subquery()
         )
 
+        max_rank_sq = (
+            select(func.sum(Tag.value).label("max_rank"))
+            .join(ClientRequestTag, Tag.id == ClientRequestTag.tag_id)
+            .where(ClientRequestTag.request_id == client_request_id)
+            .scalar_subquery()
+        )
+
         stmt = (
             select(
                 Therapist,
-                func.coalesce(func.sum(request_tags_sq.c.weight), 0).label("rank"),
+                cast(
+                    func.coalesce(
+                        (func.sum(request_tags_sq.c.weight) / max_rank_sq) * 100, 0
+                    ).label("rank"),
+                    Integer,
+                ),
             )
             .outerjoin(
                 TherapistTag,
@@ -61,7 +84,7 @@ class ClientRequestTherapistRepo:
                 TherapistTag.tag_id == request_tags_sq.c.tag_id,
             )
             .group_by(Therapist.tg_id)
-            .order_by(func.coalesce(func.sum(request_tags_sq.c.weight), 0).desc())
+            .order_by(desc("rank"))
             .limit(3)
         )
 
@@ -167,12 +190,7 @@ class ClientRequestTherapistRepo:
 
     def __add_terrifory_filters(self, stmt: Select, request: ClientRequest) -> Select:
         if request.city and request.is_online:
-            stmt = stmt.where(
-                or_(
-                    Therapist.city == request.city,
-                    Therapist.online
-                )
-            )
+            stmt = stmt.where(or_(Therapist.city == request.city, Therapist.online))
 
         elif request.is_online:
             stmt = stmt.where(Therapist.online.is_(True))

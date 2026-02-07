@@ -39,10 +39,10 @@ class AddTherapistsToRequestProcessor(BaseProcessor):
         request_therapists = await self._client_request_therapist_repo.get_therapists_with_rank_by_request(client_request_id=task.request_id)
 
         try:
-            for therapist_tg_id, percentage_of_compliance in request_therapists:
-                logger.debug(f"Applying therapist {therapist_tg_id} to request_id={task.request_id}")
+            for therapist, percentage_of_compliance in request_therapists:
+                logger.debug(f"Applying therapist {therapist.tg_id} to request_id={task.request_id}")
                 await self._client_request_therapist_repo.create_request_therapist(request_id=task.request_id,
-                                                                                   therapist_tg_id=therapist_tg_id,
+                                                                                   therapist_tg_id=therapist.tg_id,
                                                                                    percentage_of_compliance=percentage_of_compliance)
             await self._session.commit()
         except Exception:
