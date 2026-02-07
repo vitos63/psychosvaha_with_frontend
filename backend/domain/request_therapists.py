@@ -19,7 +19,7 @@ class ClientTherapistsDomain:
         self._city = request.city
         self._therapists = set(therapists)
         self._therapist_tag_repo = therapist_tag_repo
-        self._tag_repo = tag_repo 
+        self._tag_repo = tag_repo
 
     async def _specialized_filters(self):
         if 'психиатр' in self._tags_titles:
@@ -115,7 +115,7 @@ class ClientTherapistsDomain:
             tag = await self._tag_repo.select_by_title(tag_title="групповая терапия")
             therapist_rank += tag.value if tag.value else 0
 
-        if therapist.group_therapy and "геронтолог" in self._tags_titles:
+        if therapist.gerontologist and "геронтолог" in self._tags_titles:
             tag = await self._tag_repo.select_by_title(tag_title="геронтолог")
             therapist_rank += tag.value if tag.value else 0
 

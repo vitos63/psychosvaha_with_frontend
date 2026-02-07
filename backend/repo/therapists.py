@@ -30,11 +30,6 @@ class TherapistRepo:
             max_client_age=dto.max_client_age,
             online=dto.online,
             contacts_for_client=dto.contacts_for_client,
-            psychiatrist=dto.psychiatrist,
-            group_therapy=dto.group_therapy,
-            supervisor=dto.supervisor,
-            gerontologist=dto.gerontologist,
-            couple_therapist=dto.couple_therapist,
             available_to_call=dto.available_to_call,
         )
         self._session.add(therapist)

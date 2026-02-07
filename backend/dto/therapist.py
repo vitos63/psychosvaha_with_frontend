@@ -22,11 +22,6 @@ class BaseTherapistDTO(BaseModel):
     online: bool = False
     currency_amount: dict
     contacts_for_client: str | None = None
-    psychiatrist: bool = False
-    group_therapy: bool = False
-    supervisor: bool = False
-    gerontologist: bool = False
-    couple_therapist: bool = False
     available_to_call: bool = False
 
     tag_ids: list[int] = []
