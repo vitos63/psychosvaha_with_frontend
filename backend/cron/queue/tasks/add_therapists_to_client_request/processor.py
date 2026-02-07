@@ -36,14 +36,7 @@ class AddTherapistsToRequestProcessor(BaseProcessor):
         if not client_request:
             raise ClientRequestDoesNotExistError(f"{task.request_id=} not found in database")
 
-        all_tags = await self._tag_repo.select_all()
-        all_therapists = await self._therapist_repo.select_available_to_call()
-        client_therapist_domain = ClientTherapistsDomain(request=client_request,
-                                                         tags=all_tags,
-                                                         therapists=all_therapists,
-                                                         therapist_tag_repo=self._therpist_tag_repo,
-                                                         tag_repo=self._tag_repo)
-        request_therapists = await client_therapist_domain.get_therapists_by_request()
+        request_therapists = await self._client_request_therapist_repo.get_therapists_with_rank_by_request(client_request_id=task.request_id)
 
         try:
             for therapist_tg_id, percentage_of_compliance in request_therapists:
