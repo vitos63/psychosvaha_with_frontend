@@ -4,7 +4,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from cron.queue.tasks.base_processor import BaseProcessor
 from domain.errors import ClientRequestDoesNotExistError
-from domain.request_therapists import ClientTherapistsDomain
 from repo.client_requests_therapists import ClientRequestTherapistRepo
 from repo.client_requests import ClientRequestRepo
 from repo.therapists import TherapistRepo
