@@ -1,15 +1,18 @@
 import { useState } from 'react';
 import '../Form.css'
+import { createClientRequest } from '../../api/api';
+import { ClientRequestInterface } from '../../interfaces/ClientRequestInterface';
+import { ClientFormErrors } from '@/interfaces/Errors';
 
-function ClientFormComponent() {
+function ClientFormComponent({ client_id }: { client_id: number }) {
     const [formData, setFormData] = useState({
-        problem: '',
-        psychiatrist: '',
-        gender: '',
+        problem_description: '',
+        need_psychiatrist: null,
+        sex: '',
         age: '',
         city: '',
-        onlineTherapy: false,
-        therapistGender: '',
+        is_online: false,
+        psychotherapist_sex: '',
         consent: false
     })
 
@@ -19,24 +22,41 @@ function ClientFormComponent() {
         { code: 'eur', name: 'Евро', selected: false, amount: '' }
     ]);
 
-    const [errors, setErrors] = useState({})
+    const [errors, setErrors] = useState<ClientFormErrors>({})
+    
+    type FormElement = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    type FormValue = string | boolean
 
-    const handleInputChange = (e) => {
-        const { name, value, type, checked } = e.target;
+    const handleInputChange = (e: FormElement) => {
+        const target = e.target;
+        const name = target.name as keyof FormData;
+        const { value, type } = target;
+        
+        let fieldValue: FormValue;
+        
+        if (type === 'checkbox') {
+            fieldValue = (target as HTMLInputElement).checked;
+        } else if (type === 'number') {
+            fieldValue = (target as HTMLInputElement).valueAsNumber.toString();
+        } else {
+            fieldValue = value;
+        }
+        
         setFormData(prev => ({
             ...prev,
-            [name]: type === 'checkbox' ? checked : value
+            [name]: fieldValue
         }));
+        
         if (errors[name]) {
             setErrors(prev => ({ ...prev, [name]: '' }));
         }
 
-        if (name === 'onlineTherapy' && errors.city) {
+        if (name === 'is_online' as keyof FormData && errors.city) {
             setErrors(prev => ({ ...prev, city: '' }));
         }
-    };
+};
 
-    const toggleCurrency = (code) => {
+    const toggleCurrency = (code: string) => {
         setCurrencies(currencies.map(currency => {
             if (currency.code === code) {
                 const updated = { ...currency, selected: !currency.selected };
@@ -62,37 +82,40 @@ function ClientFormComponent() {
     };
 
     const validateForm = () => {
-        const newErrors = {}
-        if (!formData.problem.trim()) {
-            newErrors.problem = "Опишите проблему клиента"
+        const newErrors: ClientFormErrors = {}
+        if (!formData.problem_description.trim()) {
+            newErrors.problem_description = "Опишите проблему клиента"
         }
 
-        else if (formData.problem.trim().length < 10) {
-            newErrors.problem = "Описание проблемы должно содержать не менее 10 символов"
+        else if (formData.problem_description.trim().length < 10) {
+            newErrors.problem_description = "Описание проблемы должно содержать не менее 10 символов"
         }
 
-        if (!formData.psychiatrist){
-            newErrors.psychiatrist = "Выберите, нужен ли психиатр"
+        if (!formData.need_psychiatrist){
+            newErrors.need_psychiatrist = "Выберите, нужен ли психиатр"
         }
 
-        if (!formData.gender) {
-            newErrors.gender = "Выберите пол клиента"
+        if (!formData.sex) {
+            newErrors.sex = "Выберите пол клиента"
         }
 
         if (!formData.age) {
             newErrors.age = "Введите возраст клиента"
         }
 
-        else if (formData.age < 1 || formData.age > 100) {
-            newErrors.age = "Возраст должен быть от 1 до 100 лет"
+        else {
+            const ageNum = parseInt(formData.age, 10);
+            if (ageNum < 1 || ageNum > 100) {
+                newErrors.age = "Возраст должен быть от 1 до 100 лет";
+            }
         }
 
-        if (!formData.city.trim() && !formData.onlineTherapy) {
+        if (!formData.city.trim() && !formData.is_online) {
             newErrors.city = "Введите город или дайте согласие на онлайн терапию"
         }
 
-        if (!formData.therapistGender) {
-            newErrors.therapistGender = 'Выберите предпочитаемый пол терапевта';
+        if (!formData.psychotherapist_sex) {
+            newErrors.psychotherapist_sex = 'Выберите предпочитаемый пол терапевта';
         }
 
         if (!formData.consent) {
@@ -118,12 +141,12 @@ function ClientFormComponent() {
 
      const handleSubmit = (e) => {
         e.preventDefault();
-        const formErrors = validateForm();
+        const ClientFormErrors = validateForm();
         
-        if (Object.keys(formErrors).length > 0) {
-            setErrors(formErrors);
-            const firstErrorField = Object.keys(formErrors)[0];
-            const errorElement = document.querySelector(`[name="${firstErrorField}"]`) || 
+        if (Object.keys(ClientFormErrors).length > 0) {
+            setErrors(ClientFormErrors);
+            const firstErrorField = Object.keys(ClientFormErrors)[0];
+            const errorElement: HTMLElement = document.querySelector(`[name="${firstErrorField}"]`) || 
                                 document.querySelector(`[data-error="${firstErrorField}"]`);
             if (errorElement) {
                 errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -134,37 +157,39 @@ function ClientFormComponent() {
 
         const submissionData = {
             ...formData,
-            currencies: currencies.filter(c => c.selected).map(c => ({
-                code: c.code,
-                name: c.name,
-                amount: c.amount
-            }))
+            client_id: client_id,
+             currency_amount: currencies.reduce((acc, curr) => {
+            if (curr.selected) {
+                acc[curr.code.toUpperCase()] = parseInt(curr.amount) || 0;
+                    }
+                    return acc;
+                }, {} as Record<string, number>)
         };
 
-        console.log('Данные для отправки:', submissionData);
+        createClientRequest(submissionData)
     };
 
      return (
         <form onSubmit={handleSubmit} className="client-form">
             <div className="form-field">
                 <textarea 
-                    name="problem"
+                    name="problem_description"
                     placeholder="Опишите проблему клиента *"
-                    value={formData.problem}
+                    value={formData.problem_description}
                     onChange={handleInputChange}
-                    className={errors.problem ? 'error' : ''}
+                    className={errors.problem_description ? 'error' : ''}
                 />
-                {errors.problem && <span className="error-message">{errors.problem}</span>}
+                {errors.problem_description && <span className="error-message">{errors.problem_description}</span>}
             </div>
 
-            <fieldset className={`form-field ${errors.psychiatrist ? 'error-fieldset' : ''}`}>
+            <fieldset className={`form-field ${errors.need_psychiatrist ? 'error-fieldset' : ''}`}>
                 <legend>Клиенту нужен психиатр? *</legend>
                 <label>
                     <input 
                         type="radio" 
-                        name="psychiatrist" 
+                        name="need_psychiatrist" 
                         value="yes" 
-                        checked={formData.psychiatrist === 'yes'}
+                        checked={formData.need_psychiatrist === 'yes'}
                         onChange={handleInputChange}
                     />
                     Да
@@ -173,9 +198,9 @@ function ClientFormComponent() {
                 <label>
                     <input 
                         type="radio" 
-                        name="psychiatrist" 
+                        name="need_psychiatrist" 
                         value="no" 
-                        checked={formData.psychiatrist === 'no'}
+                        checked={formData.need_psychiatrist === 'no'}
                         onChange={handleInputChange}
                     />
                     Нет
@@ -184,24 +209,24 @@ function ClientFormComponent() {
                 <label>
                     <input 
                         type="radio" 
-                        name="psychiatrist" 
+                        name="need_psychiatrist" 
                         value="dont_know" 
-                        checked={formData.psychiatrist === 'dont_know'}
+                        checked={formData.need_psychiatrist === 'dont_know'}
                         onChange={handleInputChange}
                     />
                     Не знаю
                 </label>
-                {errors.psychiatrist && <span className="error-message">{errors.psychiatrist}</span>}
+                {errors.need_psychiatrist && <span className="error-message">{errors.need_psychiatrist}</span>}
             </fieldset>
 
-            <fieldset className={`form-field ${errors.gender ? 'error-fieldset' : ''}`}>
+            <fieldset className={`form-field ${errors.sex ? 'error-fieldset' : ''}`}>
                 <legend>Выберите пол клиента *</legend>
                 <label>
                     <input 
                         type="radio" 
-                        name="gender" 
+                        name="sex" 
                         value="male" 
-                        checked={formData.gender === 'male'}
+                        checked={formData.sex === 'male'}
                         onChange={handleInputChange}
                     />
                     Мужской
@@ -210,9 +235,9 @@ function ClientFormComponent() {
                 <label>
                     <input 
                         type="radio" 
-                        name="gender" 
+                        name="sex" 
                         value="female" 
-                        checked={formData.gender === 'female'}
+                        checked={formData.sex === 'female'}
                         onChange={handleInputChange}
                     />
                     Женский
@@ -221,14 +246,14 @@ function ClientFormComponent() {
                 <label>
                     <input 
                         type="radio" 
-                        name="gender" 
+                        name="sex" 
                         value="not_specified" 
-                        checked={formData.gender === 'not_specified'}
+                        checked={formData.sex === 'not_specified'}
                         onChange={handleInputChange}
                     />
                     Не указывать
                 </label>
-                {errors.gender && <span className="error-message">{errors.gender}</span>}
+                {errors.sex && <span className="error-message">{errors.sex}</span>}
             </fieldset>
 
             <div className="form-field">
@@ -264,8 +289,8 @@ function ClientFormComponent() {
                 <label>
                     <input 
                         type="checkbox" 
-                        name="onlineTherapy"
-                        checked={formData.onlineTherapy}
+                        name="is_online"
+                        checked={formData.is_online}
                         onChange={handleInputChange}
                     />
                     Готов ли клиент к онлайн терапии?
@@ -293,7 +318,7 @@ function ClientFormComponent() {
                                     placeholder={`Сумма в ${currency.name.toLowerCase()} *`}
                                     value={currency.amount}
                                     onChange={(e) => updateAmount(currency.code, e.target.value)}
-                                    onInput={(e) => e.target.value = e.target.value.replace(/\D/g, '')}
+                                    onInput={(e) => (e.target as HTMLInputElement).value = (e.target as HTMLInputElement).value.replace(/\D/g, '')}
                                     className={errors[`currency_${currency.code}`] ? 'error' : ''}
                                 />
                                 {errors[`currency_${currency.code}`] && (
@@ -305,14 +330,14 @@ function ClientFormComponent() {
                 ))}
             </fieldset>
 
-            <fieldset className={`form-field ${errors.therapistGender ? 'error-fieldset' : ''}`}>
+            <fieldset className={`form-field ${errors.psychotherapist_sex ? 'error-fieldset' : ''}`}>
                 <legend>Выберите предпочитаемый пол психотерапевта *</legend>
                 <label>
                     <input 
                         type="radio" 
-                        name="therapistGender" 
+                        name="psychotherapist_sex" 
                         value="male" 
-                        checked={formData.therapistGender === 'male'}
+                        checked={formData.psychotherapist_sex === 'male'}
                         onChange={handleInputChange}
                     />
                     Мужской
@@ -321,9 +346,9 @@ function ClientFormComponent() {
                 <label>
                     <input 
                         type="radio" 
-                        name="therapistGender" 
+                        name="psychotherapist_sex" 
                         value="female" 
-                        checked={formData.therapistGender === 'female'}
+                        checked={formData.psychotherapist_sex === 'female'}
                         onChange={handleInputChange}
                     />
                     Женский
@@ -332,14 +357,14 @@ function ClientFormComponent() {
                 <label>
                     <input 
                         type="radio" 
-                        name="therapistGender" 
+                        name="psychotherapist_sex" 
                         value="no_preference" 
-                        checked={formData.therapistGender === 'no_preference'}
+                        checked={formData.psychotherapist_sex === 'no_preference'}
                         onChange={handleInputChange}
                     />
                     Не имеет значения
                 </label>
-                {errors.therapistGender && <span className="error-message">{errors.therapistGender}</span>}
+                {errors.psychotherapist_sex && <span className="error-message">{errors.psychotherapist_sex}</span>}
             </fieldset>
 
             <div className="form-field">

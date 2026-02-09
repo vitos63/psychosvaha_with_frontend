@@ -1,0 +1,15 @@
+// tsconfig.json должен содержать:
+{
+  "compilerOptions": {
+    "jsx": "react-jsx", // или "react"
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}

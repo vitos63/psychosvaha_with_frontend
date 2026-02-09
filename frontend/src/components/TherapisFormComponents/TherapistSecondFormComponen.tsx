@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import '../Form.css'
+import { TherapistSecondFormErrors } from '@/interfaces/Errors';
 
 function TherapistSecondFormComponent() {
     const [formData, setFormData] = useState({
@@ -97,9 +98,10 @@ function TherapistSecondFormComponent() {
             "схема-терапия",
         ]
     }
-
+    
+    type FormElement = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     const [selectedTags, setSelectedTags] = useState({});
-    const [errors, setErrors] = useState({})
+    const [errors, setErrors] = useState<TherapistSecondFormErrors>({})
 
 
     const toggleCurrency = (code) => {
@@ -128,8 +130,10 @@ function TherapistSecondFormComponent() {
     };
 
 
-    const handleInputChange = (e) => {
-        const { name, value, type, checked } = e.target;
+    const handleInputChange = (e: FormElement) => {
+        const { name, value, type } = e.target;
+        const target = e.target;
+        const checked = (target as HTMLInputElement).checked;
         if (name === 'isPsychiatrist') {
             if (!checked) {
                 setFormData(prev => ({
@@ -174,7 +178,7 @@ function TherapistSecondFormComponent() {
     };
 
     const validateForm = () => {
-        const newErrors = {}
+        const newErrors: TherapistSecondFormErrors = {}
 
         if (!formData.firstName.trim()) {
             newErrors.firstName = "Введите ваше имя"
@@ -198,30 +202,45 @@ function TherapistSecondFormComponent() {
 
         if (!formData.age) {
             newErrors.age = "Введите ваш возраст"
-        } else if (formData.age < 18 || formData.age > 100) {
-            newErrors.age = "Возраст должен быть от 18 до 100 лет"
-        }
+        } else {
+            const ageNum = parseInt(formData.age, 10);
+            if (ageNum < 18 || ageNum > 100){ 
+            newErrors.age = "Возраст должен быть от 18 до 100 лет"}
+        } 
 
         if (!formData.experience) {
             newErrors.experience = "Введите ваш стаж работы"
-        } else if (formData.experience < 0 || formData.experience > 80) {
+        } else {
+            const experienceNum = parseInt(formData.experience, 10);
+        if (experienceNum < 0 || experienceNum > 80) {
             newErrors.experience = "Стаж должен быть от 0 до 80 лет"
         }
-        else if (formData.age - formData.experience <= 20) {
+    }
+        
+        const experienceNum = parseInt(formData.experience, 10);
+        const ageNum = parseInt(formData.age, 10);
+        if (ageNum - experienceNum <= 20){
             newErrors.experience = "К сожалению я не верю, что вы могли начать работать в таком раннем возрасте"
         }
 
         if (!formData.minClientAge) {
             newErrors.minClientAge = "Введите минимальный возраст клиента"
-        } else if (formData.minClientAge < 1 || formData.minClientAge > 100) {
+        } else 
+            {
+            const minClientAgeNum = parseInt(formData.minClientAge, 10);
+            if (minClientAgeNum < 1 || minClientAgeNum > 100) {
             newErrors.minClientAge = "Минимальный возраст должен быть от 1 до 100 лет"
         }
+    }
 
         if (!formData.maxClientAge) {
             newErrors.maxClientAge = "Введите максимальный возраст клиента"
-        } else if (formData.maxClientAge < 1 || formData.maxClientAge > 100) {
+        } else  {
+            const maxClientAgeNum = parseInt(formData.maxClientAge, 10);
+            if(maxClientAgeNum < 1 || maxClientAgeNum > 100){
             newErrors.maxClientAge = "Максимальный возраст должен быть от 1 до 100 лет"
         }
+    }
 
         if (formData.minClientAge && formData.maxClientAge &&
             parseInt(formData.minClientAge) > parseInt(formData.maxClientAge)) {
@@ -261,7 +280,7 @@ const handleSubmit = (e) => {
     if (Object.keys(formErrors).length > 0) {
         setErrors(formErrors);
         const firstErrorField = Object.keys(formErrors)[0];
-        const errorElement = document.querySelector(`[name="${firstErrorField}"]`) ||
+        const errorElement: HTMLElement = document.querySelector(`[name="${firstErrorField}"]`) ||
             document.querySelector(`[data-error="${firstErrorField}"]`);
         if (errorElement) {
             errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -416,7 +435,7 @@ return (
                                 placeholder={`Сумма в ${currency.name.toLowerCase()} *`}
                                 value={currency.amount}
                                 onChange={(e) => updateAmount(currency.code, e.target.value)}
-                                onInput={(e) => e.target.value = e.target.value.replace(/\D/g, '')}
+                                onInput={(e) => (e.target as HTMLInputElement).value = (e.target as HTMLInputElement).value.replace(/\D/g, '')}
                                 className={errors[`currency_${currency.code}`] ? 'error' : ''}
                             />
                             {errors[`currency_${currency.code}`] && (
