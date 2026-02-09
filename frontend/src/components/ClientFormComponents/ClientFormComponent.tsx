@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import '../Form.css'
 import { createClientRequest } from '../../api/api';
-import { ClientRequestInterface } from '../../interfaces/ClientRequestInterface';
 import { ClientFormErrors } from '@/interfaces/Errors';
 
-function ClientFormComponent({ client_id }: { client_id: number }) {
+function ClientFormComponent({ client_id }) {
     const [formData, setFormData] = useState({
         problem_description: '',
         need_psychiatrist: null,
@@ -139,7 +138,7 @@ function ClientFormComponent({ client_id }: { client_id: number }) {
     };
 
 
-     const handleSubmit = (e) => {
+     const handleSubmit = async (e) => {
         e.preventDefault();
         const ClientFormErrors = validateForm();
         
@@ -165,8 +164,8 @@ function ClientFormComponent({ client_id }: { client_id: number }) {
                     return acc;
                 }, {} as Record<string, number>)
         };
-
-        createClientRequest(submissionData)
+        console.log(submissionData)
+        await createClientRequest(submissionData)
     };
 
      return (

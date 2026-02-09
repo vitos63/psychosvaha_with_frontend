@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import ClientFormComponent from './components/ClientFormComponents/ClientFormComponent';
 import TherapistFirstFormComponent from './components/TherapisFormComponents/TherapistFirstFormComponen';
 import TherapistSecondFormComponent from './components/TherapisFormComponents/TherapistSecondFormComponen';
+import { createClientRequest } from './api/api';
 
 
 function App() {
@@ -38,7 +39,7 @@ function App() {
         </nav>
 
         <Routes>
-          <Route path="/form-client" element={<ClientFormComponent client_id={user?.id || 1}/>} />
+          <Route path="/form-client" element={<ClientFormComponent client_id={user?.id || 1} />} />
           <Route path="/form-thrapist-first" element={<TherapistFirstFormComponent />} />
           <Route path="/form-thrapist-second" element={<TherapistSecondFormComponent />} />
         </Routes>
