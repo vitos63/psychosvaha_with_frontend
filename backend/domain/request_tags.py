@@ -1,5 +1,5 @@
 import re
-from enums.tags import Tags as TagTitle
+from dto.enums import Tags as TagTitle
 
 from database.models import ClientRequest, Tag
 

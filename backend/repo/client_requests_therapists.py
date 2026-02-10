@@ -19,7 +19,7 @@ from database.models import (
     Tag,
     TherapistTag,
 )
-from enums.tags import REQUIRED_TAGS, FORBIDDEN_TAGS
+from dto.enums import REQUIRED_TAGS, FORBIDDEN_TAGS
 from constants import RUB_MARKUP, EUR_MARKUP, USD_MARKUP
 
 
