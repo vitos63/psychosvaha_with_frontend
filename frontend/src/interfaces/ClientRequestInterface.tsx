@@ -6,6 +6,6 @@ export interface ClientRequestInterface {
     currency_amount: Record<string, number>
     city?: string
     is_online: boolean
-    psychotherapist_sex: string
+    psychotherapist_sex: string | null
     need_psychiatrist?: boolean | null
 }

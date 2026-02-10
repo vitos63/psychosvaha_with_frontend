@@ -154,6 +154,13 @@ function ClientFormComponent({ client_id }) {
      const handleSubmit = async (e) => {
         e.preventDefault();
         const ClientFormErrors = validateForm();
+        if (formData.psychotherapist_sex == "no_preference"){
+            formData.psychotherapist_sex = null
+        }
+
+        if (formData.sex == "no_preference"){
+            formData.sex = null
+        }
         
         if (Object.keys(ClientFormErrors).length > 0) {
             setErrors(ClientFormErrors);
@@ -348,8 +355,8 @@ function ClientFormComponent({ client_id }) {
                     <input 
                         type="radio" 
                         name="psychotherapist_sex" 
-                        value="male" 
-                        checked={formData.psychotherapist_sex === 'male'}
+                        value="Мужчина" 
+                        checked={formData.psychotherapist_sex === 'Мужчина'}
                         onChange={handleInputChange}
                     />
                     Мужской
@@ -359,8 +366,8 @@ function ClientFormComponent({ client_id }) {
                     <input 
                         type="radio" 
                         name="psychotherapist_sex" 
-                        value="female" 
-                        checked={formData.psychotherapist_sex === 'female'}
+                        value="Женщина" 
+                        checked={formData.psychotherapist_sex === 'Женщина'}
                         onChange={handleInputChange}
                     />
                     Женский
