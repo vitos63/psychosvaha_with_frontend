@@ -18,8 +18,8 @@ export interface TherapistFirstFormErrors {
 }
 
 export interface TherapistSecondFormErrors {
-    firstName?: string;
-    secondName?: string;
+    first_name?: string;
+    last_name?: string;
     city?: string;
     phone?: string;
     about?: string;
@@ -27,9 +27,10 @@ export interface TherapistSecondFormErrors {
     sex?: string;
     age?: string;
     experience?: string;
-    minClientAge?: string;
-    maxClientAge?: string;
-    contactsForClient?: string;
+    email?: string;
+    min_client_age?: string;
+    max_client_age?: string;
+    contacts_for_client?: string;
     acceptsOnline?: string;
     isPsychiatrist?: string;
     isGerontologist?: string;
@@ -37,6 +38,6 @@ export interface TherapistSecondFormErrors {
     doesGroupTherapy?: string;
     isSupervisor?: string;
     consent?: string;
-    currencies?: string;
+    currency_amount?: string;
     availableToCall?: string;
 }
