@@ -6,7 +6,7 @@ import { ClientFormErrors } from '@/interfaces/Errors';
 function ClientFormComponent({ client_id }) {
     const [formData, setFormData] = useState({
         problem_description: '',
-        need_psychiatrist: null,
+        need_psychiatrist: null, 
         sex: '',
         age: '',
         city: '',
@@ -37,7 +37,24 @@ function ClientFormComponent({ client_id }) {
             fieldValue = (target as HTMLInputElement).checked;
         } else if (type === 'number') {
             fieldValue = (target as HTMLInputElement).valueAsNumber.toString();
-        } else {
+        } 
+        else if (type === 'radio') {
+            if (name as string === 'need_psychiatrist') {
+                if (value === 'true') {
+                    fieldValue = true;
+                } else if (value === 'false') {
+                    fieldValue = false;
+                } else if (value === 'null') {
+                    fieldValue = null;
+                } else {
+                    fieldValue = null;
+                }
+            }
+        else {
+            fieldValue = value;
+        } 
+        }
+        else {
             fieldValue = value;
         }
         
@@ -88,10 +105,6 @@ function ClientFormComponent({ client_id }) {
 
         else if (formData.problem_description.trim().length < 10) {
             newErrors.problem_description = "Описание проблемы должно содержать не менее 10 символов"
-        }
-
-        if (!formData.need_psychiatrist){
-            newErrors.need_psychiatrist = "Выберите, нужен ли психиатр"
         }
 
         if (!formData.sex) {
@@ -187,8 +200,8 @@ function ClientFormComponent({ client_id }) {
                     <input 
                         type="radio" 
                         name="need_psychiatrist" 
-                        value="yes" 
-                        checked={formData.need_psychiatrist === 'yes'}
+                        value="true" 
+                        checked={formData.need_psychiatrist === true}
                         onChange={handleInputChange}
                     />
                     Да
@@ -198,8 +211,8 @@ function ClientFormComponent({ client_id }) {
                     <input 
                         type="radio" 
                         name="need_psychiatrist" 
-                        value="no" 
-                        checked={formData.need_psychiatrist === 'no'}
+                        value="false" 
+                        checked={formData.need_psychiatrist === false}
                         onChange={handleInputChange}
                     />
                     Нет
@@ -209,8 +222,8 @@ function ClientFormComponent({ client_id }) {
                     <input 
                         type="radio" 
                         name="need_psychiatrist" 
-                        value="dont_know" 
-                        checked={formData.need_psychiatrist === 'dont_know'}
+                        value="null" 
+                        checked={formData.need_psychiatrist === null}
                         onChange={handleInputChange}
                     />
                     Не знаю
@@ -224,8 +237,8 @@ function ClientFormComponent({ client_id }) {
                     <input 
                         type="radio" 
                         name="sex" 
-                        value="male" 
-                        checked={formData.sex === 'male'}
+                        value="Мужчина" 
+                        checked={formData.sex === 'Мужчина'}
                         onChange={handleInputChange}
                     />
                     Мужской
@@ -235,8 +248,8 @@ function ClientFormComponent({ client_id }) {
                     <input 
                         type="radio" 
                         name="sex" 
-                        value="female" 
-                        checked={formData.sex === 'female'}
+                        value="Женщина" 
+                        checked={formData.sex === 'Женщина'}
                         onChange={handleInputChange}
                     />
                     Женский

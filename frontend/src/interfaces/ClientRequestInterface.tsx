@@ -7,5 +7,5 @@ export interface ClientRequestInterface {
     city?: string
     is_online: boolean
     psychotherapist_sex: string
-    need_psychiatrist?: boolean
+    need_psychiatrist?: boolean | null
 }

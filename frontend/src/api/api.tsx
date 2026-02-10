@@ -2,7 +2,7 @@ import { ClientRequestInterface } from "../interfaces/ClientRequestInterface"
 import { TherapistInterface } from "@/interfaces/TherapistInterface"
 
 
-const API_BASE_URL: string = 'http://127.0.0.1:8000'
+const API_BASE_URL: string = 'http://127.0.0.1:8000/v1'
 
 
 export async function createClientRequest(clientRequest: ClientRequestInterface) {
