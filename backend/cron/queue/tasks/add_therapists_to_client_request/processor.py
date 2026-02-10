@@ -9,6 +9,7 @@ from repo.client_requests import ClientRequestRepo
 from repo.therapists import TherapistRepo
 from repo.therapist_tags import TherapistTagRepo
 from repo.tags import TagRepo
+from domain.client_therapist import ClientTherapistDomain
 
 from .task import AddTherapistsToRequestTask
 
@@ -35,14 +36,19 @@ class AddTherapistsToRequestProcessor(BaseProcessor):
         if not client_request:
             raise ClientRequestDoesNotExistError(f"{task.request_id=} not found in database")
 
-        request_therapists = await self._client_request_therapist_repo.get_therapists_with_rank_by_request(client_request_id=task.request_id)
+        request_therapists_with_tags = await self._client_request_therapist_repo.get_therapists_with_tags_by_request(client_request_id=task.request_id)
+        client_request_tags = await self._client_request_repo.select_tags_by_request_id(request_id=task.request_id)
+        client_therapist_domain = ClientTherapistDomain(request_therapists_with_tags=request_therapists_with_tags,
+                              client_request_tags=client_request_tags)
+        best_therapists = client_therapist_domain.get_best_therapists_for_request()
 
         try:
-            for therapist, percentage_of_compliance in request_therapists:
+            for therapist, percentage_of_compliance in best_therapists:
                 logger.debug(f"Applying therapist {therapist.tg_id} to request_id={task.request_id}")
                 await self._client_request_therapist_repo.create_request_therapist(request_id=task.request_id,
                                                                                    therapist_tg_id=therapist.tg_id,
                                                                                    percentage_of_compliance=percentage_of_compliance)
+                await self._therapist_repo.increase_count_of_recomendations(therapist_tg_id=therapist.tg_id)
             await self._session.commit()
         except Exception:
             await self._session.rollback()

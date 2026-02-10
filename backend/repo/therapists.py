@@ -71,3 +71,14 @@ class TherapistRepo:
         )
         result = await self._session.execute(stmt)
         return result.scalars().all()
+
+    async def increase_count_of_recomendations(self, therapist_tg_id: int) -> Therapist:
+        stmt = (update(Therapist)
+                .where(Therapist.tg_id == therapist_tg_id)
+                .values(
+                    count_of_recomendations=Therapist.count_of_recomendations + 1
+                    )
+                .returning(Therapist))
+        result = await self._session.execute(stmt)
+        therapist = result.scalar_one()
+        return therapist

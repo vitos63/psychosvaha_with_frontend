@@ -5,7 +5,6 @@ from sqlalchemy import (
     case,
     and_,
     cast,
-    desc,
     Integer,
     Select,
     Subquery,
@@ -20,7 +19,7 @@ from database.models import (
     Tag,
     TherapistTag,
 )
-from .enums.tags import Tags as TagsEnum
+from enums.tags import REQUIRED_TAGS, FORBIDDEN_TAGS
 from constants import RUB_MARKUP, EUR_MARKUP, USD_MARKUP
 
 
@@ -40,9 +39,9 @@ class ClientRequestTherapistRepo:
         await self._session.flush()
         return request_therapist
 
-    async def get_therapists_with_rank_by_request(
+    async def get_therapists_with_tags_by_request(
         self, client_request_id: int
-    ) -> list[tuple[Therapist, int]]:
+    ) -> list[tuple[Therapist, list[int]]]:
         request = await self._session.get(ClientRequest, client_request_id)
         if not request:
             return []
@@ -58,22 +57,10 @@ class ClientRequestTherapistRepo:
             .subquery()
         )
 
-        max_rank_sq = (
-            select(func.sum(Tag.value).label("max_rank"))
-            .join(ClientRequestTag, Tag.id == ClientRequestTag.tag_id)
-            .where(ClientRequestTag.request_id == client_request_id)
-            .scalar_subquery()
-        )
-
         stmt = (
             select(
                 Therapist,
-                cast(
-                    func.coalesce(
-                        (func.sum(request_tags_sq.c.weight) / max_rank_sq) * 100, 0
-                    ).label("rank"),
-                    Integer,
-                ),
+                func.array_agg(Tag.value)
             )
             .outerjoin(
                 TherapistTag,
@@ -83,9 +70,11 @@ class ClientRequestTherapistRepo:
                 request_tags_sq,
                 TherapistTag.tag_id == request_tags_sq.c.tag_id,
             )
+            .outerjoin(
+                Tag,
+                TherapistTag.tag_id == Tag.id,
+            )
             .group_by(Therapist.tg_id)
-            .order_by(desc("rank"))
-            .limit(3)
         )
 
         stmt = self.__add_terrifory_filters(stmt=stmt, request=request)
@@ -132,16 +121,6 @@ class ClientRequestTherapistRepo:
         return stmt
 
     def __add_tag_conditions(self, request_tags_sq: Subquery) -> list:
-        REQUIRED_TAGS = [
-            TagsEnum.PSYCHIATRIST.value,
-            TagsEnum.FAMILY_THERAPY.value,
-            TagsEnum.SUPERVISOR.value,
-        ]
-
-        FORBIDDEN_TAGS = {
-            TagsEnum.PSYCHIATRIST_NOT_NEEDED.value: TagsEnum.PSYCHIATRIST.value,
-        }
-
         having_conditions = []
 
         for tag_title in REQUIRED_TAGS:

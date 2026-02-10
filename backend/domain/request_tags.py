@@ -1,12 +1,7 @@
 import re
-from enum import StrEnum
+from enums.tags import Tags as TagTitle
 
 from database.models import ClientRequest, Tag
-
-
-class TagTitle(StrEnum):
-    NEED_PSYCHIATRIST = "психиатр"
-    DONT_NEED_PSYCHIATRIST = "психиатр не нужен"
 
 
 class ClientRequestDomain:

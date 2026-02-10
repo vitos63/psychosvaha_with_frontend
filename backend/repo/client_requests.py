@@ -1,7 +1,7 @@
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database.models import ClientRequest
+from database.models import ClientRequest, ClientRequestTag, Tag
 from dto.client_request import CreateClientRequest
 
 
@@ -34,3 +34,19 @@ class ClientRequestRepo:
         )
         result = await self._session.execute(stmt)
         return result.scalars().first()
+
+    async def select_tags_by_request_id(self, request_id: int) -> list[Tag]:
+        stmt = (
+            select(Tag)
+            .join(
+                ClientRequestTag,
+                Tag.id == ClientRequestTag.tag_id
+            )
+            .where(
+                ClientRequestTag.request_id == request_id,
+            )
+        )
+
+        result = await self._session.execute(stmt)
+        tags = result.scalars().all()
+        return tags

@@ -2,9 +2,9 @@ from enum import Enum
 
 
 class Tags(Enum):
-    PSYCHIATRIST_NOT_NEEDED = 'психиатр не нужен'
+    DONT_NEED_PSYCHIATRIST = 'психиатр не нужен'
     SPEECH_THERAPIST_NEUROPSYCHOLOGIST = 'логопед/нейропсихолог'
-    PSYCHIATRIST = 'психиатр'
+    NEED_PSYCHIATRIST = 'психиатр'
     BIPOLAR_DISORDER = 'БАР'
     CHILDHOOD_AUTISM = 'детский аутизм'
     BORDERLINE_PERSONALITY_DISORDER = 'ПРЛ'
@@ -45,3 +45,14 @@ class Tags(Enum):
     SUPERVISOR = 'супервизор'
     GROUP_THERAPY = 'групповая терапия'
     EMIGRATION = 'эмиграция'
+
+
+REQUIRED_TAGS = [
+    Tags.NEED_PSYCHIATRIST.value,
+    Tags.FAMILY_THERAPY.value,
+    Tags.SUPERVISOR.value,
+]
+
+FORBIDDEN_TAGS = {
+    Tags.DONT_NEED_PSYCHIATRIST.value: Tags.NEED_PSYCHIATRIST.value,
+}
