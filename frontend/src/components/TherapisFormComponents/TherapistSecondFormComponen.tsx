@@ -2,6 +2,7 @@ import { useState } from 'react';
 import '../Form.css'
 import { TherapistSecondFormErrors } from '@/interfaces/Errors';
 import { createTherapist } from '../../api/api';
+import { checkCity } from '../../api/checkCity';
 
 function TherapistSecondFormComponent() {
     const [formData, setFormData] = useState({
@@ -175,7 +176,7 @@ function TherapistSecondFormComponent() {
         });
     };
 
-    const validateForm = () => {
+    const validateForm = async () => {
         const newErrors: TherapistSecondFormErrors = {}
 
         if (!formData.first_name.trim()) {
@@ -189,6 +190,17 @@ function TherapistSecondFormComponent() {
         if (!formData.city.trim() && !formData.online) {
             newErrors.city = "Укажите город или отметьте, что принимаете онлайн"
         }
+
+        else if (formData.city) {
+                const isValidCity = await checkCity(formData.city)
+                if (!isValidCity){
+                    newErrors.city = "Мы не смогли найти такой город, пожалуйста, проверьте правильность его написания"
+                }
+                
+                else if (typeof isValidCity == 'string'){
+                    newErrors.city = `Мы не смогли найти такой город, возможно вы имели в виду ${isValidCity}?`
+                }
+            }
 
         if (formData.phone.trim() && !/^\+?[0-9\s\-\(\)]+$/.test(formData.phone.trim())) {
             newErrors.phone = "Введите корректный номер телефона"
@@ -277,7 +289,7 @@ function TherapistSecondFormComponent() {
 
 const handleSubmit = async (e) => {
     e.preventDefault();
-    const formErrors = validateForm();
+    const formErrors = await validateForm();
 
     if (formData.sex == 'not_specified') {
         formData.sex = null

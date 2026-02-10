@@ -2,6 +2,7 @@ import { useState } from 'react';
 import '../Form.css'
 import { createClientRequest } from '../../api/api';
 import { ClientFormErrors } from '@/interfaces/Errors';
+import { checkCity } from '../../api/checkCity';
 
 function ClientFormComponent({ client_id }) {
     const [formData, setFormData] = useState({
@@ -97,7 +98,7 @@ function ClientFormComponent({ client_id }) {
         ));
     };
 
-    const validateForm = () => {
+    const validateForm = async () => {
         const newErrors: ClientFormErrors = {}
         if (!formData.problem_description.trim()) {
             newErrors.problem_description = "Опишите проблему клиента"
@@ -124,6 +125,17 @@ function ClientFormComponent({ client_id }) {
 
         if (!formData.city.trim() && !formData.is_online) {
             newErrors.city = "Введите город или дайте согласие на онлайн терапию"
+        }
+
+        else if (formData.city) {
+            const isValidCity = await checkCity(formData.city)
+            if (!isValidCity){
+                newErrors.city = "Мы не смогли найти такой город, пожалуйста, проверьте правильность его написания"
+            }
+            
+            else if (typeof isValidCity == 'string'){
+                newErrors.city = `Мы не смогли найти такой город, возможно вы имели в виду ${isValidCity}?`
+            }
         }
 
         if (!formData.psychotherapist_sex) {
@@ -153,7 +165,7 @@ function ClientFormComponent({ client_id }) {
 
      const handleSubmit = async (e) => {
         e.preventDefault();
-        const ClientFormErrors = validateForm();
+        const ClientFormErrors = await validateForm();
         if (formData.psychotherapist_sex == "no_preference"){
             formData.psychotherapist_sex = null
         }
