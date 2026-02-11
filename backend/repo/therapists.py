@@ -30,11 +30,6 @@ class TherapistRepo:
             max_client_age=dto.max_client_age,
             online=dto.online,
             contacts_for_client=dto.contacts_for_client,
-            psychiatrist=dto.psychiatrist,
-            group_therapy=dto.group_therapy,
-            supervisor=dto.supervisor,
-            gerontologist=dto.gerontologist,
-            couple_therapist=dto.couple_therapist,
             available_to_call=dto.available_to_call,
         )
         self._session.add(therapist)
@@ -66,3 +61,24 @@ class TherapistRepo:
         )
         result = await self._session.execute(stmt)
         return result.scalars().first()
+
+    async def select_available_to_call(self) -> list[Therapist]:
+        stmt = (
+            select(Therapist)
+            .where(
+                Therapist.available_to_call
+            )
+        )
+        result = await self._session.execute(stmt)
+        return result.scalars().all()
+
+    async def increase_count_of_recomendations(self, therapist_tg_id: int) -> Therapist:
+        stmt = (update(Therapist)
+                .where(Therapist.tg_id == therapist_tg_id)
+                .values(
+                    count_of_recomendations=Therapist.count_of_recomendations + 1
+                    )
+                .returning(Therapist))
+        result = await self._session.execute(stmt)
+        therapist = result.scalar_one()
+        return therapist
