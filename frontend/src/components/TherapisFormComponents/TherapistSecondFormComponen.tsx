@@ -1,21 +1,25 @@
 import { useState } from 'react';
 import '../Form.css'
+import { TherapistSecondFormErrors } from '@/interfaces/Errors';
+import { createTherapist } from '../../api/api';
+import { checkCity } from '../../api/checkCity';
 
 function TherapistSecondFormComponent() {
     const [formData, setFormData] = useState({
-        firstName: '',
-        secondName: '',
-        city: '',
-        phone: '',
-        about: '',
-        website: '',
+        first_name: '',
+        last_name: '',
+        city: null,
+        phone: null,
+        about: null,
+        website: null,
         sex: '',
         age: '',
+        email: null,
         experience: '',
-        minClientAge: '',
-        maxClientAge: '',
-        contactsForClient: '',
-        acceptsOnline: false,
+        min_client_age: '',
+        max_client_age: '',
+        contacts_for_client: '',
+        online: false,
         isPsychiatrist: false,
         isGerontologist: false,
         isFamilyTherapist: false,
@@ -25,7 +29,7 @@ function TherapistSecondFormComponent() {
         availableToCall: false
     })
 
-    const [currencies, setCurrencies] = useState([
+    const [currency_amount, setCurrencies] = useState([
         { code: 'rub', name: 'Рубли', selected: false, amount: '' },
         { code: 'usd', name: 'Доллары', selected: false, amount: '' },
         { code: 'eur', name: 'Евро', selected: false, amount: '' }
@@ -33,77 +37,78 @@ function TherapistSecondFormComponent() {
 
     const TAG_CATEGORIES = {
         ANXIETY_AND_DEPRESSION: [
-            "БАР",
-            "депрессия",
-            "социофобия",
-            "тревога",
-            "сверхконтроль",
-            "ОКР"
-        ],
-        CHILDREN_TOPICS: [
-            "детский аутизм",
-            "логопед/нейропсихолог",
-            "энурез/энкопрез"
-        ],
-        ADDICTIONS: [
-            "зависимости",
-            "гэмблинг"
-        ],
-        TRAUMA_AND_GRIEF: [
-            "горе",
-            "травма"
-        ],
-        RPP: [
-            "анорексия",
-            "переедание",
-            "дисморфофобия"
-        ],
-        SOMATIC_PROBLEMS: [
-            "психосоматика",
-            "сомнология",
-            "хроническая боль"
-        ],
-        EMOTIONAL_DYSREGULATION: [
-            'НРЛ',
-            "ПРЛ",
-            "авторы насилия",
-            "селфхарм/суицид",
-            "эмоциональная регуляция",
-            "импульсивность"
-        ],
-        NEURODEVELOPMENTAL_DISORDERS: [
-            "СДВГ",
-            "нейроотличия, РАС"
-        ],
-        RELATIONSHIP: [
-            "отношения",
-            "сексология",
-            "семейная терапия"
-        ],
-        COACHING_AND_ADAPTATION: [
-            "выгорание",
-            "коучинг",
-            "трудовая адаптация",
-            "эмиграция"
-        ],
-        THERAPY_METHODS: [
-            "КПТ",
-            "ДБТ",
-            "АСТ",
-            "МВТ",
-            "РЭПТ",
-            "психоанализ",
-            "психодинамическая терапия",
-            "схема-терапия",
-        ]
+        { id: 5, title: "БАР" },
+        { id: 17, title: "депрессия" },
+        { id: 15, title: "социофобия" },
+        { id: 16, title: "тревога" },
+        { id: 47, title: "сверхконтроль" },
+        { id: 14, title: "ОКР" }
+    ],
+    CHILDREN_TOPICS: [
+        { id: 6, title: "детский аутизм" },
+        { id: 2, title: "логопед/нейропсихолог" },
+        { id: 26, title: "энурез/энкопрез" }
+    ],
+    ADDICTIONS: [
+        { id: 32, title: "зависимости" },
+        { id: 22, title: "гэмблинг" }
+    ],
+    TRAUMA_AND_GRIEF: [
+        { id: 9, title: "горе" },
+        { id: 23, title: "травма" }
+    ],
+    RPP: [
+        { id: 10, title: "анорексия" },
+        { id: 11, title: "переедание" },
+        { id: 34, title: "дисморфофобия" }
+    ],
+    SOMATIC_PROBLEMS: [
+        { id: 20, title: "психосоматика" },
+        { id: 18, title: "сомнология" },
+        { id: 19, title: "хроническая боль" }
+    ],
+    EMOTIONAL_DYSREGULATION: [
+        { id: 12, title: "НРЛ" },
+        { id: 7, title: "ПРЛ" },
+        { id: 41, title: "авторы насилия" },
+        { id: 44, title: "селфхарм/суицид" },
+        { id: 28, title: "эмоциональная регуляция" },
+        { id: 8, title: "импульсивность" }
+    ],
+    NEURODEVELOPMENTAL_DISORDERS: [
+        { id: 31, title: "СДВГ" },
+        { id: 30, title: "нейроотличия, РАС" }
+    ],
+    RELATIONSHIP: [
+        { id: 24, title: "отношения" },
+        { id: 13, title: "сексология" },
+        { id: 25, title: "семейная терапия" }
+    ],
+    COACHING_AND_ADAPTATION: [
+        { id: 29, title: "выгорание" },
+        { id: 33, title: "коучинг" },
+        { id: 46, title: "трудовая адаптация" },
+        { id: 45, title: "эмиграция" }
+    ],
+    THERAPY_METHODS: [
+        { id: 38, title: "КПТ" },
+        { id: 37, title: "ДБТ" },
+        { id: 36, title: "АСТ" },
+        { id: 3, title: "МВТ" },
+        { id: 21, title: "РЭПТ" },
+        { id: 39, title: "психоанализ" },
+        { id: 27, title: "психодинамическая терапия" },
+        { id: 40, title: "схема-терапия" }
+    ]
     }
-
-    const [selectedTags, setSelectedTags] = useState({});
-    const [errors, setErrors] = useState({})
+    
+    type FormElement = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    const [selectedTags, setSelectedTags] = useState<number[]>([]);
+    const [errors, setErrors] = useState<TherapistSecondFormErrors>({})
 
 
     const toggleCurrency = (code) => {
-        setCurrencies(currencies.map(currency => {
+        setCurrencies(currency_amount.map(currency => {
             if (currency.code === code) {
                 const updated = { ...currency, selected: !currency.selected };
                 if (!updated.selected) {
@@ -113,14 +118,14 @@ function TherapistSecondFormComponent() {
             }
             return currency;
         }));
-        if (errors.currencies) {
-            setErrors(prev => ({ ...prev, currencies: '' }));
+        if (errors.currency_amount) {
+            setErrors(prev => ({ ...prev, currency_amount: '' }));
         }
     };
 
     const updateAmount = (code, value) => {
         const numericValue = value.replace(/\D/g, '');
-        setCurrencies(currencies.map(currency =>
+        setCurrencies(currency_amount.map(currency =>
             currency.code === code
                 ? { ...currency, amount: numericValue }
                 : currency
@@ -128,8 +133,10 @@ function TherapistSecondFormComponent() {
     };
 
 
-    const handleInputChange = (e) => {
-        const { name, value, type, checked } = e.target;
+    const handleInputChange = (e: FormElement) => {
+        const { name, value, type } = e.target;
+        const target = e.target;
+        const checked = (target as HTMLInputElement).checked;
         if (name === 'isPsychiatrist') {
             if (!checked) {
                 setFormData(prev => ({
@@ -154,42 +161,53 @@ function TherapistSecondFormComponent() {
             setErrors(prev => ({ ...prev, [name]: '' }));
         }
 
-        if (name === 'acceptsOnline' && errors.city) {
+        if (name === 'online' && errors.city) {
             setErrors(prev => ({ ...prev, city: '' }));
         }
     };
 
-    const handleTagToggle = (category, tag) => {
+    const handleTagToggle = (tagId: number) => {
         setSelectedTags(prev => {
-            const categoryTags = prev[category] || [];
-            const newCategoryTags = categoryTags.includes(tag)
-                ? categoryTags.filter(t => t !== tag)
-                : [...categoryTags, tag];
-
-            return {
-                ...prev,
-                [category]: newCategoryTags
-            };
+            if (prev.includes(tagId)) {
+                return prev.filter(id => id !== tagId);
+            } else {
+                return [...prev, tagId];
+            }
         });
     };
 
-    const validateForm = () => {
-        const newErrors = {}
+    const validateForm = async () => {
+        const newErrors: TherapistSecondFormErrors = {}
 
-        if (!formData.firstName.trim()) {
-            newErrors.firstName = "Введите ваше имя"
+        if (!formData.first_name.trim()) {
+            newErrors.first_name = "Введите ваше имя"
         }
 
-        if (!formData.secondName.trim()) {
-            newErrors.secondName = "Введите вашу фамилию"
+        if (!formData.last_name.trim()) {
+            newErrors.last_name = "Введите вашу фамилию"
         }
 
-        if (!formData.city.trim() && !formData.acceptsOnline) {
+        if (!formData.city.trim() && !formData.online) {
             newErrors.city = "Укажите город или отметьте, что принимаете онлайн"
         }
 
+        else if (formData.city) {
+                const isValidCity = await checkCity(formData.city)
+                if (!isValidCity){
+                    newErrors.city = "Мы не смогли найти такой город, пожалуйста, проверьте правильность его написания"
+                }
+                
+                else if (typeof isValidCity == 'string'){
+                    newErrors.city = `Мы не смогли найти такой город, возможно вы имели в виду ${isValidCity}?`
+                }
+            }
+
         if (formData.phone.trim() && !/^\+?[0-9\s\-\(\)]+$/.test(formData.phone.trim())) {
             newErrors.phone = "Введите корректный номер телефона"
+        }
+
+        if (formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+            newErrors.email = "Введите корректный email адрес"
         }
 
         if (!formData.sex){
@@ -198,53 +216,68 @@ function TherapistSecondFormComponent() {
 
         if (!formData.age) {
             newErrors.age = "Введите ваш возраст"
-        } else if (formData.age < 18 || formData.age > 100) {
-            newErrors.age = "Возраст должен быть от 18 до 100 лет"
-        }
+        } else {
+            const ageNum = parseInt(formData.age, 10);
+            if (ageNum < 18 || ageNum > 100){ 
+            newErrors.age = "Возраст должен быть от 18 до 100 лет"}
+        } 
 
         if (!formData.experience) {
             newErrors.experience = "Введите ваш стаж работы"
-        } else if (formData.experience < 0 || formData.experience > 80) {
+        } else {
+            const experienceNum = parseInt(formData.experience, 10);
+        if (experienceNum < 0 || experienceNum > 80) {
             newErrors.experience = "Стаж должен быть от 0 до 80 лет"
         }
-        else if (formData.age - formData.experience <= 20) {
+    }
+        
+        const experienceNum = parseInt(formData.experience, 10);
+        const ageNum = parseInt(formData.age, 10);
+        if (ageNum - experienceNum <= 20){
             newErrors.experience = "К сожалению я не верю, что вы могли начать работать в таком раннем возрасте"
         }
 
-        if (!formData.minClientAge) {
-            newErrors.minClientAge = "Введите минимальный возраст клиента"
-        } else if (formData.minClientAge < 1 || formData.minClientAge > 100) {
-            newErrors.minClientAge = "Минимальный возраст должен быть от 1 до 100 лет"
+        if (!formData.min_client_age) {
+            newErrors.min_client_age = "Введите минимальный возраст клиента"
+        } else 
+            {
+            const min_client_ageNum = parseInt(formData.min_client_age, 10);
+            if (min_client_ageNum < 1 || min_client_ageNum > 100) {
+            newErrors.min_client_age = "Минимальный возраст должен быть от 1 до 100 лет"
         }
+    }
 
-        if (!formData.maxClientAge) {
-            newErrors.maxClientAge = "Введите максимальный возраст клиента"
-        } else if (formData.maxClientAge < 1 || formData.maxClientAge > 100) {
-            newErrors.maxClientAge = "Максимальный возраст должен быть от 1 до 100 лет"
+        if (!formData.max_client_age) {
+            newErrors.max_client_age = "Введите максимальный возраст клиента"
+        } else  {
+            const max_client_ageNum = parseInt(formData.max_client_age, 10);
+            if(max_client_ageNum < 1 || max_client_ageNum > 100){
+            newErrors.max_client_age = "Максимальный возраст должен быть от 1 до 100 лет"
         }
+    }
 
-        if (formData.minClientAge && formData.maxClientAge &&
-            parseInt(formData.minClientAge) > parseInt(formData.maxClientAge)) {
-            newErrors.minClientAge = "Минимальный возраст не может быть больше максимального";
-            newErrors.maxClientAge = "Максимальный возраст не может быть меньше минимального";
+        if (formData.min_client_age && formData.max_client_age &&
+            parseInt(formData.min_client_age) > parseInt(formData.max_client_age)) {
+            newErrors.min_client_age = "Минимальный возраст не может быть больше максимального";
+            newErrors.max_client_age = "Максимальный возраст не может быть меньше минимального";
         }
 
         if (!formData.consent) {
             newErrors.consent = "Дайте согласие на обработку персональных данных"
         }
 
-        if (!formData.contactsForClient) {
-            newErrors.contactsForClient = "Напишите контакты для клиента, где и как с вами можно связаться?"
+        if (!formData.contacts_for_client) {
+            newErrors.contacts_for_client = "Напишите контакты для клиента, где и как с вами можно связаться?"
         }
         
 
-    const hasSelectedCurrency = currencies.some(c => c.selected);
+    const hasSelectedCurrency = currency_amount.some(c => c.selected);
     if (!hasSelectedCurrency) {
-        newErrors.currencies = 'Выберите хотя бы одну валюту';
+        newErrors.currency_amount = 'Выберите хотя бы одну валюту';
     }
 
     else {
-        currencies.forEach(currency => {
+        currency_amount.forEach(currency => {
             if (currency.selected && !currency.amount.trim()) {
                 newErrors[`currency_${currency.code}`] = `Введите сумму в ${currency.name}`;
             }
@@ -254,14 +287,34 @@ function TherapistSecondFormComponent() {
     return newErrors;
 };
 
-const handleSubmit = (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
-    const formErrors = validateForm();
+    const formErrors = await validateForm();
+
+    if (formData.sex == 'not_specified') {
+        formData.sex = null
+    }
+
+    if (formData.isPsychiatrist){
+        setSelectedTags(prev => [...prev, 4])
+    }
+
+    if (formData.isSupervisor){
+        setSelectedTags(prev => [...prev, 42])
+    }
+
+    if (formData.isGerontologist){
+        setSelectedTags(prev => [...prev, 35])
+    }
+
+    if (formData.isFamilyTherapist){
+        setSelectedTags(prev => [...prev, 25])
+    }
 
     if (Object.keys(formErrors).length > 0) {
         setErrors(formErrors);
         const firstErrorField = Object.keys(formErrors)[0];
-        const errorElement = document.querySelector(`[name="${firstErrorField}"]`) ||
+        const errorElement: HTMLElement = document.querySelector(`[name="${firstErrorField}"]`) ||
             document.querySelector(`[data-error="${firstErrorField}"]`);
         if (errorElement) {
             errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -272,10 +325,17 @@ const handleSubmit = (e) => {
 
     const submissionData = {
         ...formData,
-        selectedTags: selectedTags
+        currency_amount: currency_amount.reduce((acc, curr) => {
+            if (curr.selected) {
+                acc[curr.code.toUpperCase()] = parseInt(curr.amount) || 0;
+                    }
+                    return acc;
+                }, {} as Record<string, number>),
+        tag_ids: selectedTags
     };
-
     console.log('Данные для отправки:', submissionData);
+    await createTherapist(submissionData)
+    
 };
 
 const categoryLabels = {
@@ -296,26 +356,26 @@ return (
     <form onSubmit={handleSubmit} className="client-form">
         <div className="form-field">
             <input
-                name="firstName"
+                name="first_name"
                 placeholder="Введите ваше имя *"
                 type="text"
-                value={formData.firstName}
+                value={formData.first_name}
                 onChange={handleInputChange}
-                className={errors.firstName ? 'error' : ''}
+                className={errors.first_name ? 'error' : ''}
             />
-            {errors.firstName && <span className="error-message">{errors.firstName}</span>}
+            {errors.first_name && <span className="error-message">{errors.first_name}</span>}
         </div>
 
         <div className="form-field">
             <input
-                name="secondName"
+                name="last_name"
                 placeholder="Введите вашу фамилию *"
                 type="text"
-                value={formData.secondName}
+                value={formData.last_name}
                 onChange={handleInputChange}
-                className={errors.secondName ? 'error' : ''}
+                className={errors.last_name ? 'error' : ''}
             />
-            {errors.secondName && <span className="error-message">{errors.secondName}</span>}
+            {errors.last_name && <span className="error-message">{errors.last_name}</span>}
         </div>
 
         <fieldset className={`form-field ${errors.sex ? 'error-fieldset' : ''}`}>
@@ -324,8 +384,8 @@ return (
                 <input
                     type="radio"
                     name="sex"
-                    value="male"
-                    checked={formData.sex === 'male'}
+                    value="Мужчина"
+                    checked={formData.sex === 'Мужчина'}
                     onChange={handleInputChange}
                 />
                 Мужской
@@ -335,8 +395,8 @@ return (
                 <input
                     type="radio"
                     name="sex"
-                    value="female"
-                    checked={formData.sex === 'female'}
+                    value="Женщина"
+                    checked={formData.sex === 'Женщина'}
                     onChange={handleInputChange}
                 />
                 Женский
@@ -387,19 +447,19 @@ return (
             <label>
                 <input
                     type="checkbox"
-                    name="acceptsOnline"
-                    checked={formData.acceptsOnline}
+                    name="online"
+                    checked={formData.online}
                     onChange={handleInputChange}
                 />
                 Принимаете ли клиентов онлайн?
             </label>
         </div>
 
-        <fieldset className={`form-field ${errors.currencies ? 'error-fieldset' : ''}`} data-error="currencies">
+        <fieldset className={`form-field ${errors.currency_amount ? 'error-fieldset' : ''}`} data-error="currency_amount">
             <legend>В каких валютах готовы платить? (можно выбрать несколько) *</legend>
-            {errors.currencies && <span className="error-message">{errors.currencies}</span>}
+            {errors.currency_amount && <span className="error-message">{errors.currency_amount}</span>}
 
-            {currencies.map(currency => (
+            {currency_amount.map(currency => (
                 <div key={currency.code} className="currency-option">
                     <label>
                         <input
@@ -416,7 +476,7 @@ return (
                                 placeholder={`Сумма в ${currency.name.toLowerCase()} *`}
                                 value={currency.amount}
                                 onChange={(e) => updateAmount(currency.code, e.target.value)}
-                                onInput={(e) => e.target.value = e.target.value.replace(/\D/g, '')}
+                                onInput={(e) => (e.target as HTMLInputElement).value = (e.target as HTMLInputElement).value.replace(/\D/g, '')}
                                 className={errors[`currency_${currency.code}`] ? 'error' : ''}
                             />
                             {errors[`currency_${currency.code}`] && (
@@ -438,6 +498,18 @@ return (
                 className={errors.phone ? 'error' : ''}
             />
             {errors.phone && <span className="error-message">{errors.phone}</span>}
+        </div>
+
+        <div className="form-field">
+            <input
+                name="email"
+                placeholder="Введите ваш email (необязательно)"
+                type="text"
+                value={formData.email}
+                onChange={handleInputChange}
+                className={errors.email ? 'error' : ''}
+            />
+            {errors.email && <span className="error-message">{errors.email}</span>}
         </div>
 
         <div className="form-field">
@@ -479,30 +551,30 @@ return (
         <div className="form-row">
             <div className="form-field">
                 <input
-                    name="minClientAge"
+                    name="min_client_age"
                     placeholder="Минимальный возраст клиента (1-100) *"
                     type="number"
                     min={1}
                     max={100}
-                    value={formData.minClientAge}
+                    value={formData.min_client_age}
                     onChange={handleInputChange}
-                    className={errors.minClientAge ? 'error' : ''}
+                    className={errors.min_client_age ? 'error' : ''}
                 />
-                {errors.minClientAge && <span className="error-message">{errors.minClientAge}</span>}
+                {errors.min_client_age && <span className="error-message">{errors.min_client_age}</span>}
             </div>
 
             <div className="form-field">
                 <input
-                    name="maxClientAge"
+                    name="max_client_age"
                     placeholder="Максимальный возраст клиента (1-100) *"
                     type="number"
                     min={1}
                     max={100}
-                    value={formData.maxClientAge}
+                    value={formData.max_client_age}
                     onChange={handleInputChange}
-                    className={errors.maxClientAge ? 'error' : ''}
+                    className={errors.max_client_age ? 'error' : ''}
                 />
-                {errors.maxClientAge && <span className="error-message">{errors.maxClientAge}</span>}
+                {errors.max_client_age && <span className="error-message">{errors.max_client_age}</span>}
             </div>
         </div>
 
@@ -572,14 +644,14 @@ return (
             <fieldset key={category} className="form-field tags-fieldset">
                 <legend>{categoryLabels[category]} (можно выбрать несколько)</legend>
                 <div className="tags-container">
-                    {tags.map(tag => (
-                        <label key={tag} className="tag-label">
+                    {tags.map(tagObj => (
+                        <label key={tagObj.id} className="tag-label">
                             <input
                                 type="checkbox"
-                                checked={(selectedTags[category] || []).includes(tag)}
-                                onChange={() => handleTagToggle(category, tag)}
+                                checked={selectedTags.includes(tagObj.id)}
+                                onChange={() => handleTagToggle(tagObj.id)}
                             />
-                            <span className="tag-text">{tag}</span>
+                            <span className="tag-text">{tagObj.title}</span>
                         </label>
                     ))}
                 </div>
@@ -601,14 +673,14 @@ return (
 
         <div className="form-field">
             <input
-                name="contactsForClient"
+                name="contacts_for_client"
                 placeholder="Напишите контакты для клиента, как и где с вам можно связаться"
                 type="text"
-                value={formData.contactsForClient}
+                value={formData.contacts_for_client}
                 onChange={handleInputChange}
-                className={errors.contactsForClient ? 'error' : ''}
+                className={errors.contacts_for_client ? 'error' : ''}
             />
-            {errors.contactsForClient && <span className="error-message">{errors.contactsForClient}</span>}
+            {errors.contacts_for_client && <span className="error-message">{errors.contacts_for_client}</span>}
         </div>
 
 

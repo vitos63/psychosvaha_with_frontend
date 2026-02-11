@@ -12,7 +12,7 @@ class TherapistTagRepo:
         therapist_tags = []
         for tag_id in tag_ids:
             therapist_tag = TherapistTag(
-                therapist_tg_id=therapist_tg_id,
+                therapist_id=therapist_tg_id,
                 tag_id=tag_id,
             )
             self._session.add(therapist_tag)

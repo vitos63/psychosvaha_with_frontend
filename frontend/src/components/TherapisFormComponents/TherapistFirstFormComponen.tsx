@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import '../Form.css'
+import { TherapistFirstFormErrors } from '@/interfaces/Errors';
 
 function TherapistFirstFormComponent() {
     const [formData, setFormData] = useState({
@@ -8,7 +9,7 @@ function TherapistFirstFormComponent() {
         consent: false,
     })
 
-    const [errors, setErrors] = useState({})
+    const [errors, setErrors] = useState<TherapistFirstFormErrors>({})
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -22,7 +23,7 @@ function TherapistFirstFormComponent() {
     };
 
     const validateForm = () => {
-        const newErrors = {}
+        const newErrors: TherapistFirstFormErrors = {}
         if (!formData.firstName.trim()) {
             newErrors.firstName = "Введите ваше имя"
         }
@@ -45,7 +46,7 @@ function TherapistFirstFormComponent() {
         if (Object.keys(formErrors).length > 0) {
             setErrors(formErrors);
             const firstErrorField = Object.keys(formErrors)[0];
-            const errorElement = document.querySelector(`[name="${firstErrorField}"]`) || 
+            const errorElement: HTMLElement = document.querySelector(`[name="${firstErrorField}"]`) || 
                                 document.querySelector(`[data-error="${firstErrorField}"]`);
             if (errorElement) {
                 errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });

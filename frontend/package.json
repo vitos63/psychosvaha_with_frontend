@@ -40,5 +40,12 @@
       "last 1 safari version"
     ]
   },
-  "homepage": "."
+  "homepage": ".",
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/react": "^19.2.13",
+    "@types/react-dom": "^19.2.3",
+    "@types/telegram-web-app": "^9.1.1",
+    "@types/testing-library__jest-dom": "^5.14.9"
+  }
 }
