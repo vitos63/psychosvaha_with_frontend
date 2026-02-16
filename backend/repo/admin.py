@@ -21,7 +21,7 @@ class AdminRepo:
 
     async def select_by_tg_id(self, tg_id: int) -> Admin | None:
         stmt = (select(Admin).
-                where(Admin.tg_id==tg_id)
+                where(Admin.tg_id == tg_id)
                 )
         admin = await self._session.execute(stmt)
         return admin.scalar_one_or_none()
