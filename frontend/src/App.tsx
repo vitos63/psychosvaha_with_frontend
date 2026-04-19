@@ -32,12 +32,6 @@ function App() {
   return (
     <div style={{ minHeight: '100vh' }}>
       <Router>
-        <nav>
-          <Link to="/form-client">Форма клиента</Link>
-          <Link to="/form-thrapist-first">Первая форма терапевта</Link>
-          <Link to="/form-thrapist-second">Вторая форма терапевта</Link>
-        </nav>
-
         <Routes>
           <Route path="/form-client" element={<ClientFormComponent client_id={user?.id || 1} />} />
           <Route path="/form-thrapist-first" element={<TherapistFirstFormComponent />} />
