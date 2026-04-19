@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../Form.css'
 import { TherapistSecondFormErrors } from '@/interfaces/Errors';
 import { createTherapist } from '../../api/api';
 import { checkCity } from '../../api/checkCity';
 
 function TherapistSecondFormComponent() {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         first_name: '',
         last_name: '',
@@ -334,8 +336,18 @@ const handleSubmit = async (e) => {
         tag_ids: selectedTags
     };
     console.log('Данные для отправки:', submissionData);
-    await createTherapist(submissionData)
-    
+    try {
+        await createTherapist(submissionData);
+        navigate('/form-success', {
+            state: {
+                title: 'Анкета терапевта отправлена',
+                message:
+                    'Спасибо! Мы получили вашу анкету. После проверки данные появятся в каталоге, если всё в порядке.',
+            },
+        });
+    } catch {
+        window.alert('Не удалось отправить анкету. Проверьте подключение к интернету и попробуйте снова.');
+    }
 };
 
 const categoryLabels = {

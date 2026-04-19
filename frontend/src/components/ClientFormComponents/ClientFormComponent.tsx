@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../Form.css'
 import { createClientRequest } from '../../api/api';
 import { ClientFormErrors } from '@/interfaces/Errors';
 import { checkCity } from '../../api/checkCity';
 
 function ClientFormComponent({ client_id }) {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         problem_description: '',
         need_psychiatrist: null, 
@@ -197,7 +199,18 @@ function ClientFormComponent({ client_id }) {
                 }, {} as Record<string, number>)
         };
         console.log(submissionData)
-        await createClientRequest(submissionData)
+        try {
+            await createClientRequest(submissionData);
+            navigate('/form-success', {
+                state: {
+                    title: 'Заявка отправлена',
+                    message:
+                        'Спасибо! Мы получили заявку на подбор терапевта и свяжемся с вами, когда появятся варианты.',
+                },
+            });
+        } catch {
+            window.alert('Не удалось отправить заявку. Проверьте подключение к интернету и попробуйте снова.');
+        }
     };
 
      return (

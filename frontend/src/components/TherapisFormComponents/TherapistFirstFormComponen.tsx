@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../Form.css'
 import { TherapistFirstFormErrors } from '@/interfaces/Errors';
 
 function TherapistFirstFormComponent() {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         firstName: '',
         secondName: '',
@@ -54,8 +56,13 @@ function TherapistFirstFormComponent() {
             }
             return;
         }
-
         console.log('Данные для отправки:', formData);
+        navigate('/form-success', {
+            state: {
+                title: 'Заявка отправлена',
+                message: 'Спасибо! Мы получили вашу короткую заявку и свяжемся с вами при необходимости.',
+            },
+        });
     };
 
     return (

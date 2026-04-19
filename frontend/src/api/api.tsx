@@ -14,8 +14,15 @@ export async function createClientRequest(clientRequest: ClientRequestInterface)
             },
             body: JSON.stringify(clientRequest),
         })
-    const data = await response.json()
-    return data
+        const data: unknown = await response.json().catch(() => ({}))
+        if (!response.ok) {
+            const detail =
+                typeof data === 'object' && data !== null && 'detail' in data
+                    ? String((data as { detail: unknown }).detail)
+                    : `HTTP ${response.status}`
+            throw new Error(detail)
+        }
+        return data
     }
     catch (error){
         console.error('Ошибка при создании заявки клиента')
@@ -33,8 +40,15 @@ export async function createTherapist(therapist: TherapistInterface) {
             },
             body: JSON.stringify(therapist),
         })
-    const data = await response.json()
-    return data
+        const data: unknown = await response.json().catch(() => ({}))
+        if (!response.ok) {
+            const detail =
+                typeof data === 'object' && data !== null && 'detail' in data
+                    ? String((data as { detail: unknown }).detail)
+                    : `HTTP ${response.status}`
+            throw new Error(detail)
+        }
+        return data
     }
     catch (error){
         console.error('Ошибка при создании терапевта')
