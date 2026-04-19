@@ -11,6 +11,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 RUN mkdir -p /var/lib/postgresql/data
+RUN chmod +x /app/entrypoint.sh
 
 
 ENTRYPOINT ["./entrypoint.sh"]
