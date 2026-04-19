@@ -1,3 +1,5 @@
+const LOG = "[psychosvaha-checkCity]"
+
 export async function checkCity(cityName: string){
     const url = "https://nominatim.openstreetmap.org/search"
     const params = {
@@ -23,10 +25,12 @@ export async function checkCity(cityName: string){
     const urlWithParams = `${url}?${queryParams.toString()}`;
 
     try {
+        console.info(LOG, "fetch:start", { city: cityName })
         const response = await fetch(urlWithParams, {
             method: 'GET',
             headers: headers,
         })
+        console.info(LOG, "fetch:response", { status: response.status, ok: response.ok })
     const data = await response.json()
     if (!data){
         return false
@@ -71,6 +75,8 @@ export async function checkCity(cityName: string){
     return false
     }
     catch (error){
+        const err = error instanceof Error ? error : new Error(String(error))
+        console.error(LOG, "fetch:failed", { name: err.name, message: err.message })
         console.error('Ошибка при проверке города')
         throw error
     }

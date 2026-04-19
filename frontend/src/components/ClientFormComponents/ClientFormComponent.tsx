@@ -167,6 +167,7 @@ function ClientFormComponent({ client_id }) {
 
      const handleSubmit = async (e) => {
         e.preventDefault();
+        console.info('[client-form]', 'submit:start')
         const ClientFormErrors = await validateForm();
         if (formData.psychotherapist_sex == "no_preference"){
             formData.psychotherapist_sex = null
