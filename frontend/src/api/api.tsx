@@ -1,13 +1,13 @@
 import { ClientRequestInterface } from "../interfaces/ClientRequestInterface"
 import { TherapistInterface } from "@/interfaces/TherapistInterface"
 
+// Must match FastAPI paths exactly (no trailing slash) — otherwise Starlette 307 redirect
+// can point to http:// behind nginx and trigger mixed-content blocking in the browser.
 const API_BASE_URL: string = process.env.REACT_APP_API_URL
-console.log("[API] REACT_APP_API_URL (в бандле):", API_BASE_URL)
 
 export async function createClientRequest(clientRequest: ClientRequestInterface) {
     try {
-        console.log("[API] POST client-request →", `${API_BASE_URL}/client-request/`)
-        const response = await fetch(`${API_BASE_URL}/client-request/`, {
+        const response = await fetch(`${API_BASE_URL}/client-request`, {
             method: 'POST',
              headers: {
                 'Content-Type': 'application/json',
@@ -25,7 +25,6 @@ export async function createClientRequest(clientRequest: ClientRequestInterface)
         return data
     }
     catch (error){
-        console.log("[API] createClientRequest ошибка:", error)
         console.error('Ошибка при создании заявки клиента')
         throw error
     }
@@ -34,8 +33,7 @@ export async function createClientRequest(clientRequest: ClientRequestInterface)
 
 export async function createTherapist(therapist: TherapistInterface) {
     try {
-        console.log("[API] POST therapist →", `${API_BASE_URL}/therapist/`)
-        const response = await fetch(`${API_BASE_URL}/therapist/`, {
+        const response = await fetch(`${API_BASE_URL}/therapist`, {
             method: 'POST',
              headers: {
                 'Content-Type': 'application/json',
@@ -53,7 +51,6 @@ export async function createTherapist(therapist: TherapistInterface) {
         return data
     }
     catch (error){
-        console.log("[API] createTherapist ошибка:", error)
         console.error('Ошибка при создании терапевта')
         throw error
     }
