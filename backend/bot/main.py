@@ -12,7 +12,7 @@ from .handlers import commands
 
 logging.basicConfig(level=logging.INFO)
 
-bot = Bot(token=BOT_TOKEN)
+bot = Bot(token=BOT_TOKEN, proxy="socks5://IP:1080")
 dp = Dispatcher(storage=MemoryStorage())
 dp.include_router(command_router)
 

@@ -4,10 +4,21 @@ services:
       - ./backend/.env
     build: ./backend
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+      socks5:
+        condition: service_started
     restart: unless-stopped
     ports:
       - "8000:8000"
+  
+  socks5:
+    image: serjs/go-socks5-proxy
+    ports:
+      - "1080:1080"
+    environment:
+      - PROXY_USER=user
+      - PROXY_PASSWORD=pass
   
   frontend:
     build:
@@ -32,6 +43,12 @@ services:
       TZ: UTC
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
     ports:
       - "5432:5432"
 
