@@ -50,3 +50,13 @@ class ClientRequestRepo:
         result = await self._session.execute(stmt)
         tags = result.scalars().all()
         return tags
+
+    async def select_by_tg_id(self, tg_id: int) -> ClientRequest | None:
+        stmt = (
+            select(ClientRequest)
+            .where(
+                ClientRequest.client_id == tg_id,
+            )
+        )
+        result = await self._session.execute(stmt)
+        return result.scalars().first()
