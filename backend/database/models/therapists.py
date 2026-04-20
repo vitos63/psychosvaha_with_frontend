@@ -11,6 +11,7 @@ from datetime import datetime
 
 from .base import Base
 from dto.enums import Sex
+from enums.therapist_statuses import TherapistStatuses
 
 
 class Therapist(Base):
@@ -29,13 +30,16 @@ class Therapist(Base):
     pitch: Mapped[Optional[str]] = mapped_column(String(350), nullable=True)
     site: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     sex: Mapped[Sex | None] = mapped_column(Enum(Sex), nullable=True)
-    age: Mapped[int] = mapped_column(nullable=False)
-    experience: Mapped[int] = mapped_column(nullable=False)
+    age: Mapped[int] = mapped_column(nullable=True)
+    experience: Mapped[int] = mapped_column(nullable=True)
     count_of_recomendations: Mapped[int] = mapped_column(server_default='0')
 
-    min_client_age: Mapped[int] = mapped_column(nullable=False)
-    max_client_age: Mapped[int] = mapped_column(nullable=False)
+    min_client_age: Mapped[int] = mapped_column(nullable=True)
+    max_client_age: Mapped[int] = mapped_column(nullable=True)
     online: Mapped[bool] = mapped_column(server_default='false')
     currency_amount: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
     contacts_for_client: Mapped[Optional[str]] = mapped_column(String(150), nullable=True)
     available_to_call: Mapped[bool] = mapped_column(server_default='false')
+
+    status: Mapped[TherapistStatuses] = mapped_column(Enum(TherapistStatuses),
+                                                      server_default=TherapistStatuses.NO_QUESTIONARY.value)
