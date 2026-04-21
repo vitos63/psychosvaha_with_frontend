@@ -14,7 +14,7 @@ class BaseTherapistDTO(BaseModel):
     photo: str | None = None
     pitch: str | None = None
     site: str | None = None
-    sex: Sex | None = None
+    sex: Sex
     age: int = Field(ge=20, le=90)
     experience: int
 
