@@ -29,7 +29,7 @@ services:
     build:
       context: ./frontend
       args:
-        REACT_APP_API_URL: ${REACT_APP_API_URL:-https://psychosvaha.ru/api/v1}
+        REACT_APP_API_URL: ${REACT_APP_API_URL:-http://localhost:8000/api/v1}
     depends_on:
       - backend
     restart: unless-stopped
@@ -38,7 +38,6 @@ services:
 
   db:
     image: postgres:15
-    container_name: db
     restart: always
     env_file:
       - ./backend/.env
@@ -56,8 +55,8 @@ services:
       timeout: 3s
       retries: 5
       start_period: 5s
-    ports:
-      - "5432:5432"
+#    ports:
+#      - "5432:5432"
 
 volumes:
   postgres_data:

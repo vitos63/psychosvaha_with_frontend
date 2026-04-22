@@ -21,8 +21,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-app.include_router(client_requests_router)
-app.include_router(therapist_router)
+app.include_router(client_requests_router, prefix='/api')
+app.include_router(therapist_router, prefix='/api')
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,

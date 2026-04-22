@@ -8,9 +8,9 @@ from enums.bot_messages import BotMessages
 from service.admin_service import AdminService
 from service.therapist import TherapistService
 from service.client_request import ClientRequestService
-from ...enums.therapist_statuses import TherapistStatuses
+from enums.therapist_statuses import TherapistStatuses
 from modules.di.container import Container
-from keyboards.command_keyboards import CommandKeyboardBuilder
+from bot.keyboards.command_keyboards import CommandKeyboardBuilder
 
 command_router = Router()
 

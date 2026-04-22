@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
-from ...enums.therapist_statuses import TherapistStatuses
+from enums.therapist_statuses import TherapistStatuses
 
 
 class CommandKeyboardBuilder:
