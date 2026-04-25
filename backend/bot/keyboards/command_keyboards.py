@@ -28,13 +28,13 @@ class CommandKeyboardBuilder:
 
     def __add_therapist_button(self, buttons: list) -> list:
         if self.therapist_status == TherapistStatuses.NO_QUESTIONARY.value:
-            buttons.append([InlineKeyboardButton(text="Я специалист", web_app=WebAppInfo(url="https://psychosvaha.ru/form-thrapist-first"))])
+            buttons.append([InlineKeyboardButton(text="Я специалист", web_app=WebAppInfo(url="https://psychosvaha.ru/form-therapist-first"))])
 
         elif self.therapist_status == TherapistStatuses.APPROVED.value:
-            buttons.append([InlineKeyboardButton(text="Я специалист", web_app=WebAppInfo(url="https://psychosvaha.ru/form-thrapist-second"))])
+            buttons.append([InlineKeyboardButton(text="Я специалист", web_app=WebAppInfo(url="https://psychosvaha.ru/form-therapist-second"))])
 
         elif self.therapist_status == TherapistStatuses.NOT_APPROVED.value:
-            buttons.append([InlineKeyboardButton(text="Я специалист", web_app=WebAppInfo(url="https://psychosvaha.ru/form-thrapist-success"))])
+            buttons.append([InlineKeyboardButton(text="Я специалист", web_app=WebAppInfo(url="https://psychosvaha.ru/form-success"))])
 
         elif self.therapist_status == TherapistStatuses.HAVE_QUESTIONARY.value:
             buttons.append([InlineKeyboardButton(text="Я специалист", web_app=WebAppInfo(url=f"https://psychosvaha.ru/therapist/{self.tg_id}"))])
@@ -46,6 +46,6 @@ class CommandKeyboardBuilder:
             buttons.append([InlineKeyboardButton(text="Я ищу специалиста", web_app=WebAppInfo(url="https://psychosvaha.ru/form-client"))])
 
         else:
-            buttons.append([InlineKeyboardButton(text="Я ищу специалиста", web_app=WebAppInfo(url="https://psychosvaha.ru/form-client-success"))])
+            buttons.append([InlineKeyboardButton(text="Я ищу специалиста", web_app=WebAppInfo(url="https://psychosvaha.ru/form-success"))])
 
         return buttons
