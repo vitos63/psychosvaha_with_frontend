@@ -2,7 +2,7 @@ from pydantic import BaseModel, field_validator, Field, ConfigDict
 from email_validator import validate_email
 
 from .enums import Sex
-from ..enums.therapist_statuses import TherapistStatuses
+from enums.therapist_statuses import TherapistStatuses
 
 
 class BaseTherapistDTO(BaseModel):
@@ -14,7 +14,7 @@ class BaseTherapistDTO(BaseModel):
     photo: str | None = None
     pitch: str | None = None
     site: str | None = None
-    sex: Sex | None = None
+    sex: Sex
     age: int = Field(ge=20, le=90)
     experience: int
 
@@ -50,7 +50,6 @@ class CreateTherapist():
     first_name: str
     last_name: str
     consent: bool = False
-
 
 class UpdateTherapist(BaseTherapistDTO):
     pass

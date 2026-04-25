@@ -293,10 +293,6 @@ const handleSubmit = async (e) => {
     e.preventDefault();
     const formErrors = await validateForm();
 
-    if (formData.sex == 'not_specified') {
-        formData.sex = null
-    }
-
     if (formData.isPsychiatrist){
         setSelectedTags(prev => [...prev, 4])
     }
@@ -327,6 +323,7 @@ const handleSubmit = async (e) => {
 
     const submissionData = {
         ...formData,
+        sex: formData.sex,
         currency_amount: currency_amount.reduce((acc, curr) => {
             if (curr.selected) {
                 acc[curr.code.toUpperCase()] = parseInt(curr.amount) || 0;
@@ -418,8 +415,8 @@ return (
                 <input
                     type="radio"
                     name="sex"
-                    value="not_specified"
-                    checked={formData.sex === 'not_specified'}
+                    value="Не указывать"
+                    checked={formData.sex === 'Не указывать'}
                     onChange={handleInputChange}
                 />
                 Не указывать

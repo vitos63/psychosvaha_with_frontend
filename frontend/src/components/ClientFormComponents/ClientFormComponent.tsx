@@ -172,10 +172,6 @@ function ClientFormComponent({ client_id }) {
             formData.psychotherapist_sex = null
         }
 
-        if (formData.sex == "no_preference"){
-            formData.sex = null
-        }
-        
         if (Object.keys(ClientFormErrors).length > 0) {
             setErrors(ClientFormErrors);
             const firstErrorField = Object.keys(ClientFormErrors)[0];
@@ -290,8 +286,8 @@ function ClientFormComponent({ client_id }) {
                     <input 
                         type="radio" 
                         name="sex" 
-                        value="not_specified" 
-                        checked={formData.sex === 'not_specified'}
+                        value="Не указывать" 
+                        checked={formData.sex === 'Не указывать'}
                         onChange={handleInputChange}
                     />
                     Не указывать

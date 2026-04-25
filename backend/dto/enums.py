@@ -4,6 +4,7 @@ from enum import Enum
 class Sex(str, Enum):
     male = "Мужчина"
     female = "Женщина"
+    not_specified = "Не указывать"
 
 
 class Status(str, Enum):

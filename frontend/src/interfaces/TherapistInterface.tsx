@@ -15,7 +15,7 @@ export interface TherapistUpdateInterface {
     photo?: string | null
     pitch?:  string | null
     site?: string | null
-    sex: string | null
+    sex: string
     age: string
     experience: string
     min_client_age: string
