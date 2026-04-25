@@ -18,6 +18,7 @@ class CommandKeyboardBuilder:
         buttons = self.__add_admin_button(buttons=buttons)
         buttons = self.__add_client_button(buttons=buttons)
         buttons = self.__add_therapist_button(buttons=buttons)
+        return InlineKeyboardMarkup(inline_keyboard=buttons)
 
     def __add_admin_button(self, buttons: list) -> list:
         if self.is_admin:
@@ -36,7 +37,7 @@ class CommandKeyboardBuilder:
             buttons.append([InlineKeyboardButton(text="Я специалист", web_app=WebAppInfo(url="https://psychosvaha.ru/form-thrapist-success"))])
 
         elif self.therapist_status == TherapistStatuses.HAVE_QUESTIONARY:
-            buttons.append([InlineKeyboardButton(text="Я специалист", web_app=WebAppInfo(url=f"https://psychosvaha.ru/therapist/{tg_id}"))])
+            buttons.append([InlineKeyboardButton(text="Я специалист", web_app=WebAppInfo(url=f"https://psychosvaha.ru/therapist/{self.tg_id}"))])
 
         return buttons
 
