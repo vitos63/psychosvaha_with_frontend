@@ -34,8 +34,8 @@ function App() {
       <Router>
         <Routes>
           <Route path="/form-client" element={<ClientFormComponent client_id={user?.id || 1} />} />
-          <Route path="/form-thrapist-first" element={<TherapistFirstFormComponent />} />
-          <Route path="/form-thrapist-second" element={<TherapistSecondFormComponent />} />
+          <Route path="/form-thrapist-first" element={<TherapistFirstFormComponent client_id={user?.id || 1}/>} />
+          <Route path="/form-thrapist-second" element={<TherapistSecondFormComponent client_id={user?.id || 1}/>} />
           <Route path="/form-success" element={<SuccessPage />} />
         </Routes>
       </Router>

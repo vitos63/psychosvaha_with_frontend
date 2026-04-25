@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Form.css'
 import { TherapistFirstFormErrors } from '@/interfaces/Errors';
+import { createTherapist } from '@/api/api';
 
-function TherapistFirstFormComponent() {
+function TherapistFirstFormComponent({client_id}) {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        firstName: '',
-        secondName: '',
+        tg_id: 0,
+        first_name: '',
+        second_name: '',
         consent: false,
     })
 
@@ -26,12 +28,12 @@ function TherapistFirstFormComponent() {
 
     const validateForm = () => {
         const newErrors: TherapistFirstFormErrors = {}
-        if (!formData.firstName.trim()) {
-            newErrors.firstName = "Введите ваше имя"
+        if (!formData.first_name.trim()) {
+            newErrors.first_name = "Введите ваше имя"
         }
 
-        if (!formData.secondName){
-            newErrors.secondName = "Введите вашу фамилию"
+        if (!formData.second_name){
+            newErrors.second_name = "Введите вашу фамилию"
         }
 
         if (!formData.consent) {
@@ -41,7 +43,7 @@ function TherapistFirstFormComponent() {
         return newErrors;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const formErrors = validateForm();
         
@@ -56,39 +58,46 @@ function TherapistFirstFormComponent() {
             }
             return;
         }
-        console.log('Данные для отправки:', formData);
-        navigate('/form-success', {
-            state: {
-                title: 'Заявка отправлена',
-                message: 'Спасибо! Мы получили вашу короткую заявку и свяжемся с вами при необходимости.',
-            },
-        });
+        formData.tg_id = client_id;
+        formData.consent = true;
+        try {
+                await createTherapist(formData);
+                navigate('/form-success', {
+                    state: {
+                        title: 'Анкета терапевта отправлена',
+                        message:
+                            'Спасибо! Мы получили вашу анкету. После проверки данные появятся в каталоге, если всё в порядке.',
+                    },
+                });
+            } catch {
+                window.alert('Не удалось отправить анкету. Проверьте подключение к интернету и попробуйте снова.');
+            }
     };
 
     return (
         <form onSubmit={handleSubmit} className="client-form">
             <div className="form-field">
                 <input 
-                    name="firstName"
+                    name="first_name"
                     placeholder="Введите ваше имя *" 
                     type="text" 
-                    value={formData.firstName}
+                    value={formData.first_name}
                     onChange={handleInputChange}
-                    className={errors.firstName ? 'error' : ''}
+                    className={errors.first_name ? 'error' : ''}
                 />
-                {errors.firstName && <span className="error-message">{errors.firstName}</span>}
+                {errors.first_name && <span className="error-message">{errors.first_name}</span>}
             </div>
 
             <div className="form-field">
                 <input 
-                    name="secondName"
+                    name="second_name"
                     placeholder="Введите вашу фамилию *" 
                     type="text" 
-                    value={formData.secondName}
+                    value={formData.second_name}
                     onChange={handleInputChange}
-                    className={errors.secondName ? 'error' : ''}
+                    className={errors.second_name ? 'error' : ''}
                 />
-                {errors.secondName && <span className="error-message">{errors.secondName}</span>}
+                {errors.second_name && <span className="error-message">{errors.second_name}</span>}
             </div>
 
             <div className="form-field">

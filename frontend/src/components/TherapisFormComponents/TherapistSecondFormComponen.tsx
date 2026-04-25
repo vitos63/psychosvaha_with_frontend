@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Form.css'
 import { TherapistSecondFormErrors } from '@/interfaces/Errors';
-import { createTherapist } from '../../api/api';
+import { updateTherapist } from '../../api/api';
 import { checkCity } from '../../api/checkCity';
 
-function TherapistSecondFormComponent() {
+function TherapistSecondFormComponent({ client_id }) {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         first_name: '',
@@ -337,7 +337,7 @@ const handleSubmit = async (e) => {
     };
     console.log('Данные для отправки:', submissionData);
     try {
-        await createTherapist(submissionData);
+        await updateTherapist(submissionData, client_id);
         navigate('/form-success', {
             state: {
                 title: 'Анкета терапевта отправлена',

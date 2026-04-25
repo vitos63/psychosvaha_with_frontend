@@ -1,4 +1,12 @@
-export interface TherapistInterface {
+export interface TherapistCreateInterface {
+    tg_id: number
+    first_name: string
+    last_name: string
+    consent: boolean
+}
+
+
+export interface TherapistUpdateInterface {
     first_name: string
     last_name: string
     city?: string | null

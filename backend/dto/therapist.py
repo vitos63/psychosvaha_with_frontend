@@ -46,6 +46,7 @@ class BaseTherapistDTO(BaseModel):
 
 
 class CreateTherapist():
+    tg_id: int
     first_name: str
     last_name: str
     consent: bool = False
