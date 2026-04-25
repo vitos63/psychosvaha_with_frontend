@@ -30,13 +30,13 @@ class CommandKeyboardBuilder:
         if self.therapist_status == TherapistStatuses.NO_QUESTIONARY.value:
             buttons.append([InlineKeyboardButton(text="Я специалист", web_app=WebAppInfo(url="https://psychosvaha.ru/form-thrapist-first"))])
 
-        elif self.therapist_status == TherapistStatuses.APPROVED:
+        elif self.therapist_status == TherapistStatuses.APPROVED.value:
             buttons.append([InlineKeyboardButton(text="Я специалист", web_app=WebAppInfo(url="https://psychosvaha.ru/form-thrapist-second"))])
 
-        elif self.therapist_status == TherapistStatuses.NOT_APPROVED:
+        elif self.therapist_status == TherapistStatuses.NOT_APPROVED.value:
             buttons.append([InlineKeyboardButton(text="Я специалист", web_app=WebAppInfo(url="https://psychosvaha.ru/form-thrapist-success"))])
 
-        elif self.therapist_status == TherapistStatuses.HAVE_QUESTIONARY:
+        elif self.therapist_status == TherapistStatuses.HAVE_QUESTIONARY.value:
             buttons.append([InlineKeyboardButton(text="Я специалист", web_app=WebAppInfo(url=f"https://psychosvaha.ru/therapist/{self.tg_id}"))])
 
         return buttons
