@@ -189,12 +189,16 @@ function TherapistSecondFormComponent({ client_id }) {
             newErrors.last_name = "Введите вашу фамилию"
         }
 
-        if (!formData.city.trim() && !formData.online) {
+        const cityValue = (formData.city ?? '').trim();
+        const phoneValue = (formData.phone ?? '').trim();
+        const emailValue = (formData.email ?? '').trim();
+
+        if (!cityValue && !formData.online) {
             newErrors.city = "Укажите город или отметьте, что принимаете онлайн"
         }
 
-        else if (formData.city) {
-                const isValidCity = await checkCity(formData.city)
+        else if (cityValue) {
+                const isValidCity = await checkCity(cityValue)
                 if (!isValidCity){
                     newErrors.city = "Мы не смогли найти такой город, пожалуйста, проверьте правильность его написания"
                 }
@@ -204,11 +208,11 @@ function TherapistSecondFormComponent({ client_id }) {
                 }
             }
 
-        if (formData.phone.trim() && !/^\+?[0-9\s\-\(\)]+$/.test(formData.phone.trim())) {
+        if (phoneValue && !/^\+?[0-9\s\-\(\)]+$/.test(phoneValue)) {
             newErrors.phone = "Введите корректный номер телефона"
         }
 
-        if (formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+        if (emailValue && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
             newErrors.email = "Введите корректный email адрес"
         }
 
