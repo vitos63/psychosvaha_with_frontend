@@ -51,5 +51,7 @@ class CreateTherapist(BaseModel):
     last_name: str
     consent: bool = False
 
+    model_config = ConfigDict(from_attributes=True)
+
 class UpdateTherapist(BaseTherapistDTO):
     pass
