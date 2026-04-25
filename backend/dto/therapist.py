@@ -45,7 +45,7 @@ class BaseTherapistDTO(BaseModel):
         return experience
 
 
-class CreateTherapist():
+class CreateTherapist(BaseModel):
     tg_id: int
     first_name: str
     last_name: str
