@@ -9,7 +9,7 @@ function TherapistFirstFormComponent({client_id}) {
     const [formData, setFormData] = useState({
         tg_id: 0,
         first_name: '',
-        second_name: '',
+        last_name: '',
         consent: false,
     })
 
@@ -32,8 +32,8 @@ function TherapistFirstFormComponent({client_id}) {
             newErrors.first_name = "Введите ваше имя"
         }
 
-        if (!formData.second_name){
-            newErrors.second_name = "Введите вашу фамилию"
+        if (!formData.last_name){
+            newErrors.last_name = "Введите вашу фамилию"
         }
 
         if (!formData.consent) {
@@ -90,14 +90,14 @@ function TherapistFirstFormComponent({client_id}) {
 
             <div className="form-field">
                 <input 
-                    name="second_name"
+                    name="last_name"
                     placeholder="Введите вашу фамилию *" 
                     type="text" 
-                    value={formData.second_name}
+                    value={formData.last_name}
                     onChange={handleInputChange}
-                    className={errors.second_name ? 'error' : ''}
+                    className={errors.last_name ? 'error' : ''}
                 />
-                {errors.second_name && <span className="error-message">{errors.second_name}</span>}
+                {errors.last_name && <span className="error-message">{errors.last_name}</span>}
             </div>
 
             <div className="form-field">

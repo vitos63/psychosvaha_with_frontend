@@ -13,7 +13,7 @@ export interface ClientFormErrors {
 
 export interface TherapistFirstFormErrors {
   first_name?: string;
-  second_name?: string;
+  last_name?: string;
   consent?: string
 }
 
