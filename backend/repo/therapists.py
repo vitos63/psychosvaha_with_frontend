@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.models import Therapist
 from dto.therapist import CreateTherapist, UpdateTherapist
+from enums.therapist_statuses import TherapistStatuses
 
 
 class TherapistRepo:
@@ -15,6 +16,7 @@ class TherapistRepo:
             first_name=dto.first_name,
             last_name=dto.last_name,
             consent=dto.consent,
+            status=TherapistStatuses.NOT_APPROVED.value,
         )
         self._session.add(therapist)
         await self._session.flush()
