@@ -24,7 +24,7 @@ class BaseTherapistDTO(BaseModel):
     currency_amount: dict
     contacts_for_client: str | None = None
     available_to_call: bool = False
-    status: TherapistStatuses = TherapistStatuses.NO_QUESTIONARY
+    status: TherapistStatuses = TherapistStatuses.HAVE_QUESTIONARY
 
     tag_ids: list[int] = []
 
