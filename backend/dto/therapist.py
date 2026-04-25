@@ -32,7 +32,7 @@ class BaseTherapistDTO(BaseModel):
 
     @field_validator("email")
     @classmethod
-    def validate_email_field(cls, email: str | None) -> str:
+    def validate_email_field(cls, email: str | None) -> str | None:
         if email:
             validate_email(email)
         return email

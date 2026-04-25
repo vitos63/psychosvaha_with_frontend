@@ -23,7 +23,7 @@ class TherapistRepo:
         return therapist
 
     async def update_therapist(self, therapist_tg_id: int, therapist_dto: UpdateTherapist) -> Therapist:
-        update_dict = therapist_dto.model_dump()
+        update_dict = therapist_dto.model_dump(exclude={"tag_ids"})
 
         stmt = (update(Therapist)
                 .where(
