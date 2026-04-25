@@ -36,3 +36,7 @@ class ClientRequestService:
         except Exception:
             await self._session.rollback()
             raise
+
+    async def get_client_request_by_tg_id(self, tg_id: int) -> ClientRequest | None:
+        client_request = await self._client_request_repo.select_by_tg_id(tg_id=tg_id)
+        return client_request

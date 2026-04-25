@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../Form.css'
-import { TherapistSecondFormErrors } from '@/interfaces/Errors';
-import { createTherapist } from '../../api/api';
+import { TherapistSecondFormErrors } from 'interfaces/Errors';
+import { updateTherapist } from '../../api/api';
 import { checkCity } from '../../api/checkCity';
 
-function TherapistSecondFormComponent() {
+function TherapistSecondFormComponent({ client_id }) {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         first_name: '',
         last_name: '',
@@ -187,12 +189,16 @@ function TherapistSecondFormComponent() {
             newErrors.last_name = "Введите вашу фамилию"
         }
 
-        if (!formData.city.trim() && !formData.online) {
+        const cityValue = (formData.city ?? '').trim();
+        const phoneValue = (formData.phone ?? '').trim();
+        const emailValue = (formData.email ?? '').trim();
+
+        if (!cityValue && !formData.online) {
             newErrors.city = "Укажите город или отметьте, что принимаете онлайн"
         }
 
-        else if (formData.city) {
-                const isValidCity = await checkCity(formData.city)
+        else if (cityValue) {
+                const isValidCity = await checkCity(cityValue)
                 if (!isValidCity){
                     newErrors.city = "Мы не смогли найти такой город, пожалуйста, проверьте правильность его написания"
                 }
@@ -202,11 +208,11 @@ function TherapistSecondFormComponent() {
                 }
             }
 
-        if (formData.phone.trim() && !/^\+?[0-9\s\-\(\)]+$/.test(formData.phone.trim())) {
+        if (phoneValue && !/^\+?[0-9\s\-\(\)]+$/.test(phoneValue)) {
             newErrors.phone = "Введите корректный номер телефона"
         }
 
-        if (formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+        if (emailValue && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
             newErrors.email = "Введите корректный email адрес"
         }
 
@@ -291,10 +297,6 @@ const handleSubmit = async (e) => {
     e.preventDefault();
     const formErrors = await validateForm();
 
-    if (formData.sex == 'not_specified') {
-        formData.sex = null
-    }
-
     if (formData.isPsychiatrist){
         setSelectedTags(prev => [...prev, 4])
     }
@@ -325,6 +327,7 @@ const handleSubmit = async (e) => {
 
     const submissionData = {
         ...formData,
+        sex: formData.sex,
         currency_amount: currency_amount.reduce((acc, curr) => {
             if (curr.selected) {
                 acc[curr.code.toUpperCase()] = parseInt(curr.amount) || 0;
@@ -334,8 +337,18 @@ const handleSubmit = async (e) => {
         tag_ids: selectedTags
     };
     console.log('Данные для отправки:', submissionData);
-    await createTherapist(submissionData)
-    
+    try {
+        await updateTherapist(submissionData, client_id);
+        navigate('/form-success', {
+            state: {
+                title: 'Анкета терапевта отправлена',
+                message:
+                    'Спасибо! Мы получили вашу анкету. После проверки данные появятся в каталоге, если всё в порядке.',
+            },
+        });
+    } catch {
+        window.alert('Не удалось отправить анкету. Проверьте подключение к интернету и попробуйте снова.');
+    }
 };
 
 const categoryLabels = {
@@ -406,8 +419,8 @@ return (
                 <input
                     type="radio"
                     name="sex"
-                    value="not_specified"
-                    checked={formData.sex === 'not_specified'}
+                    value="Не указывать"
+                    checked={formData.sex === 'Не указывать'}
                     onChange={handleInputChange}
                 />
                 Не указывать

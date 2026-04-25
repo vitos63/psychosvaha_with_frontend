@@ -20,8 +20,6 @@ class TherapistService:
     async def create_therapist(self, therapist_dto: CreateTherapist) -> Therapist:
         try:
             therapist = await self._therapist_repo.create_therapist(therapist_dto)
-            await self._therapist_tags_repo.create_therapist_tags(therapist_tg_id=therapist.tg_id,
-                                                                  tag_ids=therapist_dto.tag_ids)
             await self._session.commit()
             return therapist
         except Exception:
@@ -39,3 +37,7 @@ class TherapistService:
         except Exception:
             await self._session.rollback()
             raise
+
+    async def get_therapist_by_tg_id(self, therapist_tg_id: int) -> Therapist | None:
+        therapist = await self._therapist_repo.select_by_tg_id(tg_id=therapist_tg_id)
+        return therapist

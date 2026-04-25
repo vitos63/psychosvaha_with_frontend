@@ -2,6 +2,7 @@ from pydantic import BaseModel, field_validator, Field, ConfigDict
 from email_validator import validate_email
 
 from .enums import Sex
+from enums.therapist_statuses import TherapistStatuses
 
 
 class BaseTherapistDTO(BaseModel):
@@ -13,7 +14,7 @@ class BaseTherapistDTO(BaseModel):
     photo: str | None = None
     pitch: str | None = None
     site: str | None = None
-    sex: Sex | None = None
+    sex: Sex
     age: int = Field(ge=20, le=90)
     experience: int
 
@@ -23,6 +24,7 @@ class BaseTherapistDTO(BaseModel):
     currency_amount: dict
     contacts_for_client: str | None = None
     available_to_call: bool = False
+    status: TherapistStatuses = TherapistStatuses.HAVE_QUESTIONARY
 
     tag_ids: list[int] = []
 
@@ -30,8 +32,9 @@ class BaseTherapistDTO(BaseModel):
 
     @field_validator("email")
     @classmethod
-    def validate_email_field(cls, email: str) -> str:
-        validate_email(email)
+    def validate_email_field(cls, email: str | None) -> str | None:
+        if email:
+            validate_email(email)
         return email
 
     @field_validator("experience")
@@ -43,9 +46,13 @@ class BaseTherapistDTO(BaseModel):
         return experience
 
 
-class CreateTherapist(BaseTherapistDTO):
+class CreateTherapist(BaseModel):
+    tg_id: int
+    first_name: str
+    last_name: str
     consent: bool = False
 
+    model_config = ConfigDict(from_attributes=True)
 
 class UpdateTherapist(BaseTherapistDTO):
     pass

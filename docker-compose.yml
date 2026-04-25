@@ -28,6 +28,8 @@ services:
   frontend:
     build:
       context: ./frontend
+      args:
+        REACT_APP_API_URL: ${REACT_APP_API_URL:-https://psychosvaha.ru/api/v1}
     depends_on:
       - backend
     restart: unless-stopped

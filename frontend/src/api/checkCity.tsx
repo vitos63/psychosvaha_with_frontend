@@ -71,6 +71,8 @@ export async function checkCity(cityName: string){
     return false
     }
     catch (error){
+        const err = error instanceof Error ? error : new Error(String(error))
+        console.error("fetch:failed", { name: err.name, message: err.message })
         console.error('Ошибка при проверке города')
         throw error
     }

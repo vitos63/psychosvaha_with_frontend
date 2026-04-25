@@ -38,8 +38,8 @@ class AddTherapistsToRequestProcessor(BaseProcessor):
 
         request_therapists_with_tags = await self._client_request_therapist_repo.get_therapists_with_tags_by_request(client_request_id=task.request_id)
         client_request_tags = await self._client_request_repo.select_tags_by_request_id(request_id=task.request_id)
-        client_therapist_domain = ClientTherapistDomain(request_therapists_with_tags=request_therapists_with_tags,
-                              client_request_tags=client_request_tags)
+        client_therapist_domain = ClientTherapistDomain(therapists_with_tags=request_therapists_with_tags,
+                                                        client_request_tags=client_request_tags)
         best_therapists = client_therapist_domain.get_best_therapists_for_request()
 
         try:

@@ -4,10 +4,8 @@ from database.models import Therapist, Tag
 class ClientTherapistDomain:
     def __init__(self,
                  therapists_with_tags: list[Therapist, list[int]],
-                 tags: list[Tag],
                  client_request_tags: list[Tag]):
         self.therapists_with_tags = therapists_with_tags
-        self.tags = tags
         self.client_request_tags = client_request_tags
 
     def __calculate_max_rank(self) -> int:
