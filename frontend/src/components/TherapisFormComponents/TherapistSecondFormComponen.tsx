@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Form.css'
-import { TherapistSecondFormErrors } from '@/interfaces/Errors';
+import { TherapistSecondFormErrors } from 'interfaces/Errors';
 import { updateTherapist } from '../../api/api';
 import { checkCity } from '../../api/checkCity';
 

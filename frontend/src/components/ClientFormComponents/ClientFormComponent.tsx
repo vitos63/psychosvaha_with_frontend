@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Form.css'
 import { createClientRequest } from '../../api/api';
-import { ClientFormErrors } from '@/interfaces/Errors';
+import { ClientFormErrors } from 'interfaces/Errors';
 import { checkCity } from '../../api/checkCity';
 
 function ClientFormComponent({ client_id }) {

@@ -1,5 +1,5 @@
 import { ClientRequestInterface } from "../interfaces/ClientRequestInterface"
-import { TherapistCreateInterface, TherapistUpdateInterface } from "@/interfaces/TherapistInterface"
+import { TherapistCreateInterface, TherapistUpdateInterface } from "interfaces/TherapistInterface"
 
 // Must match FastAPI paths exactly (no trailing slash) — otherwise Starlette 307 redirect
 // can point to http:// behind nginx and trigger mixed-content blocking in the browser.

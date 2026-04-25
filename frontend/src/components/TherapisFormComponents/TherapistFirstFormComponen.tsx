@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Form.css'
-import { TherapistFirstFormErrors } from '@/interfaces/Errors';
-import { createTherapist } from '@/api/api';
+import { TherapistFirstFormErrors } from 'interfaces/Errors';
+import { createTherapist } from 'api/api';
 
 function TherapistFirstFormComponent({client_id}) {
     const navigate = useNavigate();
