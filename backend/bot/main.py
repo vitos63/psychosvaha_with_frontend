@@ -4,7 +4,7 @@ import logging
 from aiogram import Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 
-from .client import get_bot
+from .instance import bot
 from .dependencies import get_container
 from .handlers import commands
 from .handlers.commands import command_router
@@ -12,8 +12,6 @@ from .handlers.web_app import web_app_router
 
 logging.basicConfig(level=logging.INFO)
 
-
-bot = get_bot()
 dp = Dispatcher(storage=MemoryStorage())
 dp.include_router(command_router)
 dp.include_router(web_app_router)

@@ -4,15 +4,18 @@ export const notifyTelegramWebAppFormSubmitted = async (
     form: WebAppFormName,
     tgId?: number,
 ): Promise<void> => {
-    const webApp = window.Telegram?.WebApp;
+    const telegramUserId = tgId ?? window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
 
-    if (!webApp?.sendData) {
+    if (!telegramUserId) {
         return;
     }
 
-    webApp.sendData(JSON.stringify({
-        type: 'form_submitted',
-        form_type: form,
-        tg_id: tgId ?? webApp.initDataUnsafe?.user?.id,
-    }));
+    await fetch(`${process.env.REACT_APP_API_URL}/tg-webapp/form-submitted`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            tg_id: telegramUserId,
+            form_type: form,
+        }),
+    });
 };

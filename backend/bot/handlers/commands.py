@@ -1,3 +1,5 @@
+import logging
+
 from aiogram import Router
 from aiogram.filters.command import Command
 from aiogram.types import Message
@@ -14,6 +16,7 @@ from bot.keyboards.command_keyboards import CommandKeyboardBuilder
 from bot.storage.start_messages import set_start_message_id
 
 command_router = Router()
+logger = logging.getLogger(__name__)
 
 
 @command_router.message(Command("start"))
@@ -41,3 +44,9 @@ async def start_handler(message: Message,
 
     sent_message = await message.answer(answer, reply_markup=keyboard)
     set_start_message_id(chat_id=message.chat.id, user_id=user_id, message_id=sent_message.message_id)
+    logger.info(
+        "Saved start message chat_id=%s user_id=%s message_id=%s",
+        message.chat.id,
+        user_id,
+        sent_message.message_id,
+    )
