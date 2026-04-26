@@ -340,7 +340,7 @@ const handleSubmit = async (e) => {
     console.log('Данные для отправки:', submissionData);
     try {
         await updateTherapist(submissionData, client_id);
-        notifyTelegramWebAppFormSubmitted('therapist_second');
+        await notifyTelegramWebAppFormSubmitted('therapist_second', client_id);
         navigate('/form-success', {
             state: {
                 title: 'Анкета терапевта отправлена',

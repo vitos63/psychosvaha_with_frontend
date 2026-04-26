@@ -11,6 +11,7 @@ from service.client_request import ClientRequestService
 from enums.therapist_statuses import TherapistStatuses
 from modules.di.container import Container
 from bot.keyboards.command_keyboards import CommandKeyboardBuilder
+from bot.storage.start_messages import set_start_message_id
 
 command_router = Router()
 
@@ -38,4 +39,5 @@ async def start_handler(message: Message,
                                           therapist_status=TherapistStatuses.NO_QUESTIONARY.value,
                                           tg_id=user_id).get_start_keyboard()
 
-    await message.answer(answer, reply_markup=keyboard)
+    sent_message = await message.answer(answer, reply_markup=keyboard)
+    set_start_message_id(chat_id=message.chat.id, user_id=user_id, message_id=sent_message.message_id)

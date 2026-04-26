@@ -197,7 +197,7 @@ function ClientFormComponent({ client_id }) {
         };
         try {
             await createClientRequest(submissionData);
-            notifyTelegramWebAppFormSubmitted('client');
+            await notifyTelegramWebAppFormSubmitted('client', client_id);
             navigate('/form-success', {
                 state: {
                     title: 'Заявка отправлена',

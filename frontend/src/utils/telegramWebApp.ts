@@ -1,20 +1,25 @@
 type WebAppFormName = 'client' | 'therapist_first' | 'therapist_second';
 
-export const notifyTelegramWebAppFormSubmitted = (form: WebAppFormName): void => {
-    const webApp = window.Telegram?.WebApp;
+const API_BASE_URL: string = process.env.REACT_APP_API_URL;
 
-    if (!webApp || typeof webApp.sendData !== 'function') {
+export const notifyTelegramWebAppFormSubmitted = async (
+    form: WebAppFormName,
+    tgId?: number,
+): Promise<void> => {
+    const telegramUserId = tgId ?? window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+
+    if (!telegramUserId || !API_BASE_URL) {
         return;
     }
 
-    webApp.sendData(
-        JSON.stringify({
-            action: 'form_submitted',
-            form,
+    await fetch(`${API_BASE_URL}/tg-webapp/form-submitted`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            tg_id: telegramUserId,
+            type: form,
         }),
-    );
-
-    if (typeof webApp.close === 'function') {
-        webApp.close();
-    }
+    });
 };

@@ -5,6 +5,8 @@ from aiogram import F, Router
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import Message
 
+from bot.storage.start_messages import pop_start_message_id_by_user
+
 web_app_router = Router()
 logger = logging.getLogger(__name__)
 
@@ -20,23 +22,25 @@ async def webapp_data_handler(message: Message):
     except json.JSONDecodeError:
         logger.warning("Received non-JSON web_app_data from user_id=%s: %s", user_id, payload_raw)
 
-    reply_message = message.reply_to_message
-    if not reply_message:
-        logger.info("No reply_to_message for web_app_data message_id=%s", message.message_id)
-    else:
-        try:
-            await message.bot.edit_message_reply_markup(
-                chat_id=message.chat.id,
-                message_id=reply_message.message_id,
-                reply_markup=None,
-            )
-        except TelegramBadRequest as exc:
-            logger.warning(
-                "Failed to remove inline keyboard chat_id=%s message_id=%s: %s",
-                message.chat.id,
-                reply_message.message_id,
-                exc,
-            )
+    if user_id is not None:
+        chat_id, message_id = pop_start_message_id_by_user(user_id)
+
+        if chat_id is None or message_id is None:
+            logger.info("No saved start message for web_app_data user_id=%s", user_id)
+        else:
+            try:
+                await message.bot.edit_message_reply_markup(
+                    chat_id=chat_id,
+                    message_id=message_id,
+                    reply_markup=None,
+                )
+            except TelegramBadRequest as exc:
+                logger.warning(
+                    "Failed to remove inline keyboard chat_id=%s message_id=%s: %s",
+                    chat_id,
+                    message_id,
+                    exc,
+                )
 
     logger.info("Received web_app_data from user_id=%s payload=%s", user_id, payload)
     await message.answer("Данные формы получены ✅")
