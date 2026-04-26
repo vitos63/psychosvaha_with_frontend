@@ -1,6 +1,8 @@
 interface TelegramWebApp {
   ready: () => void;
   expand: () => void;
+  sendData?: (data: string) => void;
+  close?: () => void;
   initDataUnsafe?: {
     user?: {
       id: number;

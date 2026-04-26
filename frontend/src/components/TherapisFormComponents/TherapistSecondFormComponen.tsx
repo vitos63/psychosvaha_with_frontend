@@ -4,6 +4,7 @@ import '../Form.css'
 import { TherapistSecondFormErrors } from 'interfaces/Errors';
 import { updateTherapist } from '../../api/api';
 import { checkCity } from '../../api/checkCity';
+import { notifyTelegramWebAppFormSubmitted } from '../../utils/telegramWebApp';
 
 function TherapistSecondFormComponent({ client_id }) {
     const navigate = useNavigate();
@@ -339,6 +340,7 @@ const handleSubmit = async (e) => {
     console.log('Данные для отправки:', submissionData);
     try {
         await updateTherapist(submissionData, client_id);
+        notifyTelegramWebAppFormSubmitted('therapist_second');
         navigate('/form-success', {
             state: {
                 title: 'Анкета терапевта отправлена',
