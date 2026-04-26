@@ -1,10 +1,9 @@
 import logging
 
-from aiogram.exceptions import TelegramBadRequest
 from fastapi import APIRouter
 
 from bot.instance import bot
-from bot.storage.start_messages import pop_start_message_id_by_user
+from bot.services.start_keyboard import remove_start_keyboard_for_user
 
 from .request import TgWebAppFormSubmittedRequest
 from .response import TgWebAppFormSubmittedResponse
@@ -22,29 +21,6 @@ async def form_submitted(request: TgWebAppFormSubmittedRequest):
         request.form_type,
     )
 
-    chat_id, message_id = pop_start_message_id_by_user(request.tg_id)
-
-    if chat_id is None or message_id is None:
-        logger.info("No saved start message for tg_id=%s", request.tg_id)
-        return TgWebAppFormSubmittedResponse(
-            success=True,
-            keyboard_removed=False,
-            reason="message_not_found",
-        )
-
-    logger.info("Removing keyboard chat_id=%s message_id=%s", chat_id, message_id)
-    try:
-        await bot.edit_message_reply_markup(
-            chat_id=chat_id,
-            message_id=message_id,
-            reply_markup=None,
-        )
-    except TelegramBadRequest as exc:
-        logger.warning(
-            "Failed to remove inline keyboard chat_id=%s message_id=%s: %s",
-            chat_id,
-            message_id,
-            exc,
-        )
-
-    return TgWebAppFormSubmittedResponse(success=True, keyboard_removed=True)
+    keyboard_removed = await remove_start_keyboard_for_user(bot=bot, user_id=request.tg_id)
+    reason = None if keyboard_removed else "message_not_found_or_uneditable"
+    return TgWebAppFormSubmittedResponse(success=True, keyboard_removed=keyboard_removed, reason=reason)
