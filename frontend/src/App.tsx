@@ -1,7 +1,7 @@
 import './App.css';
 import { useEffect, useState } from 'react';
 
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ClientFormComponent from './components/ClientFormComponents/ClientFormComponent';
 import TherapistFirstFormComponent from './components/TherapisFormComponents/TherapistFirstFormComponen';
 import TherapistSecondFormComponent from './components/TherapisFormComponents/TherapistSecondFormComponen';
@@ -10,13 +10,11 @@ import SuccessPage from './components/SuccessPage/SuccessPage';
 
 function App() {
   const [user, setUser] = useState(null);
-  const [tgApp, setTgApp] = useState(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
       if (window.Telegram?.WebApp) {
         const tg = window.Telegram.WebApp;
-        setTgApp(tg);
         tg.ready();
         tg.expand();
         const userData = tg.initDataUnsafe?.user;

@@ -63,7 +63,7 @@ function TherapistFirstFormComponent({client_id}) {
         formData.consent = true;
         try {
                 await createTherapist(formData);
-                notifyTelegramWebAppFormSubmitted('therapist_first');
+                await notifyTelegramWebAppFormSubmitted('therapist_first', client_id);
                 navigate('/form-success', {
                     state: {
                         title: 'Анкета терапевта отправлена',
