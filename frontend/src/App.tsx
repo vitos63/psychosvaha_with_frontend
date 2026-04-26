@@ -19,6 +19,12 @@ function App() {
         setTgApp(tg);
         tg.ready();
         tg.expand();
+        if (typeof tg.setHeaderColor === 'function' && tg.themeParams?.bg_color) {
+          tg.setHeaderColor(tg.themeParams.bg_color);
+        }
+        if (typeof tg.requestFullscreen === 'function' && !tg.isFullscreen) {
+          tg.requestFullscreen();
+        }
         const userData = tg.initDataUnsafe?.user;
         if (userData) {
           setUser(userData);
