@@ -1,0 +1,53 @@
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from database.models import Admin
+from dto.admin import Admin as AdminDTO, MainInfoForAdmin
+from dto.client_request import ClientRequestForAdmin
+from dto.therapist import TherapistForAdmin
+from repo.admin import AdminRepo
+from repo.therapists import TherapistRepo
+from repo.client_requests import ClientRequestRepo
+
+
+class AdminService:
+    def __init__(
+            self,
+            session: AsyncSession,
+            admin_repo: AdminRepo,
+            therapist_repo: TherapistRepo,
+            client_request_repo: ClientRequestRepo
+    ):
+        self._session = session
+        self._admin_repo = admin_repo
+        self._therapist_repo = therapist_repo
+        self._client_request_repo = client_request_repo
+
+    async def create_admin(self, admin: AdminDTO) -> Admin:
+        try:
+            admin = await self._admin_repo.create_admin(admin)
+            await self._session.commit()
+            return admin
+        except Exception:
+            await self._session.rollback()
+            raise
+
+    async def __get_admin_by_tg_id(self, tg_id: int) -> Admin | None:
+        admin = await self._admin_repo.select_by_tg_id(tg_id=tg_id)
+        return admin
+
+    async def check_is_admin(self, tg_id: int) -> bool:
+        admin = await self.__get_admin_by_tg_id(tg_id=tg_id)
+
+        if admin:
+            return True
+        return False
+
+    async def get_main_info_for_admin(self) -> MainInfoForAdmin:
+        not_approved_client_requests = await self._client_request_repo.get_not_approved_client_requests()
+        not_approved_therapists = await self._therapist_repo.get_not_approved_therapists()
+        not_approved_client_requests = [ClientRequestForAdmin.model_validate(request) for request in not_approved_client_requests]
+        not_approved_therapists = [TherapistForAdmin.model_validate(therapist) for therapist in not_approved_therapists]
+        return MainInfoForAdmin(
+            not_approved_client_requests=not_approved_client_requests,
+            not_approved_therapists=not_approved_therapists
+        )

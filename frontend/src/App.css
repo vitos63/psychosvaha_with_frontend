@@ -1,5 +1,4 @@
 html, body, #root {
-  height: 100%;
   height: var(--tg-viewport-stable-height, 100vh);
   margin: 0;
   padding: 0;

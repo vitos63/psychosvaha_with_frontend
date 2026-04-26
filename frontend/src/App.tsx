@@ -6,6 +6,7 @@ import ClientFormComponent from './components/ClientFormComponents/ClientFormCom
 import TherapistFirstFormComponent from './components/TherapisFormComponents/TherapistFirstFormComponen';
 import TherapistSecondFormComponent from './components/TherapisFormComponents/TherapistSecondFormComponen';
 import SuccessPage from './components/SuccessPage/SuccessPage';
+import AdminDashboardPage from './components/AdminDashboard/AdminDashboardPage';
 
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
           <Route path="/form-therapist-first" element={<TherapistFirstFormComponent client_id={user?.id || 1}/>} />
           <Route path="/form-therapist-second" element={<TherapistSecondFormComponent client_id={user?.id || 1}/>} />
           <Route path="/form-success" element={<SuccessPage />} />
+          <Route path="/admin" element={<AdminDashboardPage tgId={user?.id} />} />
         </Routes>
       </Router>
     </div>

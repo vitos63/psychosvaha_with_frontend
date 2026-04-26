@@ -16,7 +16,7 @@ from repo.therapist_tags import TherapistTagRepo
 from service.client_request import ClientRequestService
 from service.therapist import TherapistService
 from service.date_time import DateTimeService
-from service.admin_service import AdminService
+from service.admin import AdminService
 
 
 class Container(containers.DeclarativeContainer):
@@ -72,7 +72,9 @@ class Container(containers.DeclarativeContainer):
     admin_service = providers.Factory(
         AdminService,
         session=session,
-        admin_repo=admin_repo
+        admin_repo=admin_repo,
+        therapist_repo=therapist_repo,
+        client_request_repo=client_request_repo
     )
 
     therapist_service = providers.Factory(
