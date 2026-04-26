@@ -30,4 +30,4 @@ class ClientRequest(Base):
     psychotherapist_sex: Mapped[Sex | None] = mapped_column(Enum(Sex), nullable=True)
     need_psychiatrist: Mapped[bool | None] = mapped_column(nullable=True)
 
-    is_approved: Mapped[bool] = mapped_column(nullable=False, server_default=False)
+    is_approved: Mapped[bool] = mapped_column(nullable=False, default=False)
