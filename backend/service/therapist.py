@@ -32,6 +32,7 @@ class TherapistService:
             raise
 
     async def update_therapist(self, therapist_tg_id: int, therapist_dto: UpdateTherapist, file: UploadFile|None) -> Therapist:
+        new_path: str | None = None
         try:
             old_therapist = await self.get_therapist_by_tg_id(therapist_tg_id)
 

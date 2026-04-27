@@ -12,7 +12,6 @@ export interface TherapistUpdateInterface {
     city?: string | null
     phone_number?: string | null
     email?: string | null
-    photo?: string | null
     pitch?:  string | null
     site?: string | null
     sex: string
@@ -21,6 +20,8 @@ export interface TherapistUpdateInterface {
     min_client_age: string
     max_client_age: string
     online: boolean
+    consent: boolean
+    available_to_call: boolean
     currency_amount: Record<string, number>
     contacts_for_client: string
     tag_ids: number[]
