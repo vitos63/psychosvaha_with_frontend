@@ -18,6 +18,7 @@ dependencies = [
     "ruff>=0.14.14",
     "pytest>=9.0.2",
     "httpx>=0.28.1",
+    "psycopg[binary]>=3.3.3",
 ]
 
 [tool.ruff]

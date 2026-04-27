@@ -10,20 +10,22 @@ class TherapistRepo:
     def __init__(self, session: AsyncSession):
         self._session = session
 
-    async def create_therapist(self, dto: CreateTherapist) -> Therapist:
+    async def create_therapist(self, dto: CreateTherapist, path_photo: str|None) -> Therapist:
         therapist = Therapist(
             tg_id=dto.tg_id,
             first_name=dto.first_name,
             last_name=dto.last_name,
             consent=dto.consent,
             status=TherapistStatuses.NOT_APPROVED.value,
+            avatar_path=path_photo
         )
         self._session.add(therapist)
         await self._session.flush()
         return therapist
 
-    async def update_therapist(self, therapist_tg_id: int, therapist_dto: UpdateTherapist) -> Therapist:
+    async def update_therapist(self, therapist_tg_id: int, therapist_dto: UpdateTherapist, path_photo: str|None) -> Therapist:
         update_dict = therapist_dto.model_dump(exclude={"tag_ids"})
+        update_dict["avatar_path"] = path_photo
 
         stmt = (update(Therapist)
                 .where(
