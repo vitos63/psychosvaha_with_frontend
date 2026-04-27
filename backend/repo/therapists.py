@@ -10,14 +10,13 @@ class TherapistRepo:
     def __init__(self, session: AsyncSession):
         self._session = session
 
-    async def create_therapist(self, dto: CreateTherapist, path_photo: str|None) -> Therapist:
+    async def create_therapist(self, dto: CreateTherapist) -> Therapist:
         therapist = Therapist(
             tg_id=dto.tg_id,
             first_name=dto.first_name,
             last_name=dto.last_name,
             consent=dto.consent,
             status=TherapistStatuses.NOT_APPROVED.value,
-            avatar_path=path_photo
         )
         self._session.add(therapist)
         await self._session.flush()

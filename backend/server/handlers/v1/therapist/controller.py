@@ -16,9 +16,8 @@ router = APIRouter(prefix="/v1", tags=["therapist"])
 async def create(
     therapist: CreateTherapistRequest,
     service: Annotated[TherapistService, Depends(therapist_service)],
-    file: UploadFile|None = File(None),
 ):
-    therapist = await service.create_therapist(therapist, file)
+    therapist = await service.create_therapist(therapist)
     await remove_start_keyboard_for_user(bot=bot, user_id=therapist.tg_id)
     return CreateTherapistResponse.model_validate(therapist)
 

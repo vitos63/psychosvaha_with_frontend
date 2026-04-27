@@ -21,10 +21,9 @@ class TherapistService:
         self._therapist_tags_repo = therapist_tags_repo
         self._file_serv = file_serv
 
-    async def create_therapist(self, therapist_dto: CreateTherapist, file: UploadFile|None) -> Therapist:
+    async def create_therapist(self, therapist_dto: CreateTherapist) -> Therapist:
         try:
-            db_path = await self._file_serv.upload_avatar(file)
-            therapist = await self._therapist_repo.create_therapist(therapist_dto, db_path)
+            therapist = await self._therapist_repo.create_therapist(therapist_dto)
             await self._session.commit()
             return therapist
         except Exception:
