@@ -35,7 +35,6 @@ class FileService:
         file_path = self.AVATAR_DIR / filename
 
         async with aiofiles.open(file_path, "wb") as out_file:
-            content = await file.read()
             await out_file.write(content)
 
         return f"avatars/{filename}"

@@ -36,8 +36,8 @@ class TherapistService:
             old_therapist = await self.get_therapist_by_tg_id(therapist_tg_id)
 
             if file is not None:
-                await self._file_serv.delete_photo(old_therapist.avatar_path)
                 path = await self._file_serv.upload_avatar(file)
+                new_path = path
             else:
                 path = old_therapist.avatar_path
             therapist = await self._therapist_repo.update_therapist(therapist_tg_id=therapist_tg_id, 
@@ -53,6 +53,10 @@ class TherapistService:
             return therapist
         except Exception:
             await self._session.rollback()
+
+            if new_path is not None:
+                await self._file_serv.delete_photo(new_path)
+
             raise
 
     async def get_therapist_by_tg_id(self, therapist_tg_id: int) -> Therapist | None:
