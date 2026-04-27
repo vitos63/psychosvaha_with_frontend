@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Form.css'
 import { TherapistSecondFormErrors } from 'interfaces/Errors';
@@ -108,6 +108,18 @@ function TherapistSecondFormComponent({ client_id }) {
     type FormElement = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     const [selectedTags, setSelectedTags] = useState<number[]>([]);
     const [errors, setErrors] = useState<TherapistSecondFormErrors>({})
+    const [avatarFile, setAvatarFile] = useState<File | null>(null)
+    const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
+    const [avatarError, setAvatarError] = useState<string>('')
+    const fileInputRef = useRef<HTMLInputElement | null>(null)
+
+    useEffect(() => {
+        return () => {
+            if (avatarPreview) {
+                URL.revokeObjectURL(avatarPreview)
+            }
+        }
+    }, [avatarPreview])
 
 
     const toggleCurrency = (code) => {
@@ -178,6 +190,55 @@ function TherapistSecondFormComponent({ client_id }) {
             }
         });
     };
+
+    const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file) {
+            return
+        }
+
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
+        if (!allowedTypes.includes(file.type)) {
+            setAvatarFile(null)
+            if (avatarPreview) {
+                URL.revokeObjectURL(avatarPreview)
+            }
+            setAvatarPreview(null)
+            setAvatarError('Можно загрузить только JPG, PNG или WEBP')
+            e.target.value = ''
+            return
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            setAvatarFile(null)
+            if (avatarPreview) {
+                URL.revokeObjectURL(avatarPreview)
+            }
+            setAvatarPreview(null)
+            setAvatarError('Размер файла не должен превышать 5 МБ')
+            e.target.value = ''
+            return
+        }
+
+        if (avatarPreview) {
+            URL.revokeObjectURL(avatarPreview)
+        }
+        setAvatarFile(file)
+        setAvatarPreview(URL.createObjectURL(file))
+        setAvatarError('')
+    }
+
+    const handleRemoveAvatar = () => {
+        if (avatarPreview) {
+            URL.revokeObjectURL(avatarPreview)
+        }
+        setAvatarFile(null)
+        setAvatarPreview(null)
+        setAvatarError('')
+        if (fileInputRef.current) {
+            fileInputRef.current.value = ''
+        }
+    }
 
     const validateForm = async () => {
         const newErrors: TherapistSecondFormErrors = {}
@@ -298,22 +359,6 @@ const handleSubmit = async (e) => {
     e.preventDefault();
     const formErrors = await validateForm();
 
-    if (formData.isPsychiatrist){
-        setSelectedTags(prev => [...prev, 4])
-    }
-
-    if (formData.isSupervisor){
-        setSelectedTags(prev => [...prev, 42])
-    }
-
-    if (formData.isGerontologist){
-        setSelectedTags(prev => [...prev, 35])
-    }
-
-    if (formData.isFamilyTherapist){
-        setSelectedTags(prev => [...prev, 25])
-    }
-
     if (Object.keys(formErrors).length > 0) {
         setErrors(formErrors);
         const firstErrorField = Object.keys(formErrors)[0];
@@ -326,20 +371,40 @@ const handleSubmit = async (e) => {
         return;
     }
 
+    const tagIds = new Set(selectedTags)
+    if (formData.isPsychiatrist) tagIds.add(4)
+    if (formData.isSupervisor) tagIds.add(42)
+    if (formData.isGerontologist) tagIds.add(35)
+    if (formData.isFamilyTherapist) tagIds.add(25)
+
     const submissionData = {
-        ...formData,
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        city: formData.city,
+        phone_number: formData.phone,
+        pitch: formData.about,
+        site: formData.website,
         sex: formData.sex,
+        age: formData.age,
+        email: formData.email,
+        experience: formData.experience,
+        min_client_age: formData.min_client_age,
+        max_client_age: formData.max_client_age,
+        contacts_for_client: formData.contacts_for_client,
+        online: formData.online,
+        consent: formData.consent,
+        available_to_call: formData.availableToCall,
         currency_amount: currency_amount.reduce((acc, curr) => {
             if (curr.selected) {
                 acc[curr.code.toUpperCase()] = parseInt(curr.amount) || 0;
                     }
                     return acc;
                 }, {} as Record<string, number>),
-        tag_ids: selectedTags
+        tag_ids: Array.from(tagIds)
     };
     console.log('Данные для отправки:', submissionData);
     try {
-        await updateTherapist(submissionData, client_id);
+        await updateTherapist(submissionData, client_id, avatarFile);
         await notifyTelegramWebAppFormSubmitted('therapist_second', client_id);
         navigate('/form-success', {
             state: {
@@ -502,6 +567,28 @@ return (
                 </div>
             ))}
         </fieldset>
+
+        <div className="form-field">
+            <label className="avatar-upload">
+                Фотография профиля (необязательно)
+                <span className="avatar-helper">JPG, PNG или WEBP, до 5 МБ</span>
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={handleAvatarChange}
+                />
+            </label>
+            {avatarError && <span className="error-message avatar-error">{avatarError}</span>}
+            {avatarPreview && (
+                <div className="avatar-preview">
+                    <img src={avatarPreview} alt="Превью фотографии профиля" />
+                    <button type="button" className="avatar-remove-btn" onClick={handleRemoveAvatar}>
+                        Удалить фото
+                    </button>
+                </div>
+            )}
+        </div>
 
         <div className="form-field">
             <input

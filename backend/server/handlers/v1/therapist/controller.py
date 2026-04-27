@@ -25,8 +25,8 @@ async def create(
 
 @router.put("/therapist/{tg_id}", response_model=UpdateTherapistResponse)
 async def update(
-    therapist: UpdateTherapistRequest,
     tg_id: int,
+    therapist: Annotated[UpdateTherapistRequest, Depends(UpdateTherapistRequest.as_form)],
     service: Annotated[TherapistService, Depends(therapist_service)],
     file: UploadFile | None = File(None),
 
