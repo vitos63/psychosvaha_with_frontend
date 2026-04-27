@@ -8,6 +8,7 @@ class FileService:
     def __init__(self):
         self.MEDIA_DIR = Path("media")
         self.AVATAR_DIR = self.MEDIA_DIR / "avatars"
+        self.MAX_FILE_SIZE = 5 * 1024 * 1024
 
     async def upload_avatar(self, file: UploadFile|None):
         if file is None:
@@ -16,6 +17,15 @@ class FileService:
 
         if file.content_type not in ["image/jpeg", "image/png", "image/webp"]:
             raise HTTPException(status_code=400, detail="Можно загружать только изображения")
+
+        if not file.filename:
+            raise HTTPException(status_code=400, detail="Некорректное имя файла")
+
+
+        content = await file.read()
+
+        if len(content) > self.MAX_FILE_SIZE:
+           raise HTTPException(status_code=400, detail="Файл слишком большой")
 
         self.AVATAR_DIR.mkdir(parents=True, exist_ok=True)
 

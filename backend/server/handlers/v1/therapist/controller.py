@@ -31,6 +31,6 @@ async def update(
     file: UploadFile | None = File(None),
 
 ):
-    therapist = await service.update_therapist(therapist_tg_id=tg_id, therapist_dto=therapist)
+    therapist = await service.update_therapist(therapist_tg_id=tg_id, therapist_dto=therapist, file=file)
     await remove_start_keyboard_for_user(bot=bot, user_id=tg_id)
     return UpdateTherapistResponse.model_validate(therapist)

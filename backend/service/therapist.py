@@ -5,7 +5,7 @@ from database.models import Therapist
 from dto.therapist import CreateTherapist, UpdateTherapist
 from repo.therapists import TherapistRepo
 from repo.therapist_tags import TherapistTagRepo
-from file_service import FileService
+from service.file_service import FileService
 
 
 class TherapistService:
@@ -33,15 +33,23 @@ class TherapistService:
 
     async def update_therapist(self, therapist_tg_id: int, therapist_dto: UpdateTherapist, file: UploadFile|None) -> Therapist:
         try:
-            tnera= await self.get_therapist_by_tg_id(therapist_tg_id)
-            await self._file_serv.delete_photo(tnera.avatar_path)
-            path = await self._file_serv.upload_avatar(file)
+            old_therapist = await self.get_therapist_by_tg_id(therapist_tg_id)
+
+            if file is not None:
+                await self._file_serv.delete_photo(old_therapist.avatar_path)
+                path = await self._file_serv.upload_avatar(file)
+            else:
+                path = old_therapist.avatar_path
             therapist = await self._therapist_repo.update_therapist(therapist_tg_id=therapist_tg_id, 
                                                                     therapist_dto=therapist_dto,
                                                                     path_photo=path)
             await self._therapist_tags_repo.update_therapist_tags(therapist_tg_id=therapist.tg_id,
                                                                   tag_ids=therapist_dto.tag_ids)
             await self._session.commit()
+
+            if file is not None:
+                await self._file_serv.delete_photo(old_therapist.avatar_path)
+
             return therapist
         except Exception:
             await self._session.rollback()
