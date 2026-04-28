@@ -20,13 +20,13 @@ function TherapistSecondFormComponent({
     const [formData, setFormData] = useState({
         first_name: '',
         last_name: '',
-        city: null,
-        phone: null,
-        about: null,
-        website: null,
+        city: '',
+        phone: '',
+        about: '',
+        website: '',
         sex: '',
         age: '',
-        email: null,
+        email: '',
         experience: '',
         min_client_age: '',
         max_client_age: '',
@@ -124,11 +124,32 @@ function TherapistSecondFormComponent({
 
     useEffect(() => {
         return () => {
-            if (avatarPreview) {
+            if (avatarPreview?.startsWith('blob:')) {
                 URL.revokeObjectURL(avatarPreview)
             }
         }
     }, [avatarPreview])
+
+    const buildAvatarUrl = (photoPath: string | null | undefined): string | null => {
+        if (!photoPath) {
+            return null
+        }
+        if (/^https?:\/\//i.test(photoPath) || photoPath.startsWith('blob:')) {
+            return photoPath
+        }
+
+        const apiUrl = process.env.REACT_APP_API_URL
+        if (!apiUrl) {
+            return null
+        }
+
+        try {
+            const baseUrl = new URL(apiUrl)
+            return new URL(photoPath, `${baseUrl.origin}/`).toString()
+        } catch {
+            return null
+        }
+    }
 
     useEffect(() => {
         if (!initialData) {
@@ -139,13 +160,13 @@ function TherapistSecondFormComponent({
         setFormData({
             first_name: initialData.first_name ?? '',
             last_name: initialData.last_name ?? '',
-            city: initialData.city ?? null,
-            phone: initialData.phone_number ?? null,
-            about: initialData.pitch ?? null,
-            website: initialData.site ?? null,
+            city: initialData.city ?? '',
+            phone: initialData.phone_number ?? '',
+            about: initialData.pitch ?? '',
+            website: initialData.site ?? '',
             sex: initialData.sex ?? '',
             age: String(initialData.age ?? ''),
-            email: initialData.email ?? null,
+            email: initialData.email ?? '',
             experience: String(initialData.experience ?? ''),
             min_client_age: String(initialData.min_client_age ?? ''),
             max_client_age: String(initialData.max_client_age ?? ''),
@@ -166,11 +187,11 @@ function TherapistSecondFormComponent({
             { code: 'usd', name: 'Доллары', selected: 'USD' in (initialData.currency_amount ?? {}), amount: String(initialData.currency_amount?.USD ?? '') },
             { code: 'eur', name: 'Евро', selected: 'EUR' in (initialData.currency_amount ?? {}), amount: String(initialData.currency_amount?.EUR ?? '') },
         ])
-        setAvatarPreview(initialData.avatar_path ?? null)
+        setAvatarPreview(buildAvatarUrl(initialData.photo))
     }, [initialData])
 
 
-    const toggleCurrency = (code) => {
+    const toggleCurrency = (code: string) => {
         setCurrencies(currency_amount.map(currency => {
             if (currency.code === code) {
                 const updated = { ...currency, selected: !currency.selected };
@@ -186,7 +207,7 @@ function TherapistSecondFormComponent({
         }
     };
 
-    const updateAmount = (code, value) => {
+    const updateAmount = (code: string, value: string) => {
         const numericValue = value.replace(/\D/g, '');
         setCurrencies(currency_amount.map(currency =>
             currency.code === code
@@ -248,7 +269,7 @@ function TherapistSecondFormComponent({
         const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
         if (!allowedTypes.includes(file.type)) {
             setAvatarFile(null)
-            if (avatarPreview) {
+            if (avatarPreview?.startsWith('blob:')) {
                 URL.revokeObjectURL(avatarPreview)
             }
             setAvatarPreview(null)
@@ -259,7 +280,7 @@ function TherapistSecondFormComponent({
 
         if (file.size > 5 * 1024 * 1024) {
             setAvatarFile(null)
-            if (avatarPreview) {
+            if (avatarPreview?.startsWith('blob:')) {
                 URL.revokeObjectURL(avatarPreview)
             }
             setAvatarPreview(null)
@@ -268,7 +289,7 @@ function TherapistSecondFormComponent({
             return
         }
 
-        if (avatarPreview) {
+        if (avatarPreview?.startsWith('blob:')) {
             URL.revokeObjectURL(avatarPreview)
         }
         setAvatarFile(file)
@@ -277,7 +298,7 @@ function TherapistSecondFormComponent({
     }
 
     const handleRemoveAvatar = () => {
-        if (avatarPreview) {
+        if (avatarPreview?.startsWith('blob:')) {
             URL.revokeObjectURL(avatarPreview)
         }
         setAvatarFile(null)
@@ -318,7 +339,7 @@ function TherapistSecondFormComponent({
                 }
             }
 
-        if (phoneValue && !/^\+?[0-9\s\-\(\)]+$/.test(phoneValue)) {
+        if (phoneValue && !/^\+?[0-9\s\-()]+$/.test(phoneValue)) {
             newErrors.phone = "Введите корректный номер телефона"
         }
 
@@ -403,7 +424,7 @@ function TherapistSecondFormComponent({
     return newErrors;
 };
 
-const handleSubmit = async (e) => {
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formErrors = await validateForm();
 

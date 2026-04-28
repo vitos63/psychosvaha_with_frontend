@@ -33,6 +33,7 @@ export interface TherapistByTgIdResponse {
     city?: string | null
     phone_number?: string | null
     email?: string | null
+    photo?: string | null
     pitch?: string | null
     site?: string | null
     sex: string
@@ -43,8 +44,7 @@ export interface TherapistByTgIdResponse {
     online: boolean
     consent: boolean
     available_to_call: boolean
-    currency_amount: Record<string, number>
-    contacts_for_client: string
-    tag_ids: number[]
-    avatar_path?: string | null
+    currency_amount?: Record<string, number>
+    contacts_for_client?: string | null
+    tag_ids?: number[]
 }
