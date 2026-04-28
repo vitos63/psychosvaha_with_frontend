@@ -1,9 +1,22 @@
 import { ClientRequestInterface } from "../interfaces/ClientRequestInterface"
-import { TherapistCreateInterface, TherapistUpdateInterface } from "interfaces/TherapistInterface"
+import {
+    TherapistByTgIdResponse,
+    TherapistCreateInterface,
+    TherapistUpdateInterface,
+} from "interfaces/TherapistInterface"
 
 // Must match FastAPI paths exactly (no trailing slash) — otherwise Starlette 307 redirect
 // can point to http:// behind nginx and trigger mixed-content blocking in the browser.
 const API_BASE_URL: string = process.env.REACT_APP_API_URL
+
+export class ApiError extends Error {
+    status: number
+
+    constructor(message: string, status: number) {
+        super(message)
+        this.status = status
+    }
+}
 
 export async function createClientRequest(clientRequest: ClientRequestInterface) {
     try {
@@ -100,4 +113,19 @@ export async function updateTherapist(therapist: TherapistUpdateInterface, tg_id
         console.error('Ошибка при обновлении терапевта')
         throw error
     }
+}
+
+export async function getTherapistByTgId(tg_id: number): Promise<TherapistByTgIdResponse> {
+    const response = await fetch(`${API_BASE_URL}/therapist/by-tg-id/${tg_id}`)
+    const data: unknown = await response.json().catch(() => ({}))
+
+    if (!response.ok) {
+        const detail =
+            typeof data === 'object' && data !== null && 'detail' in data
+                ? String((data as { detail: unknown }).detail)
+                : `HTTP ${response.status}`
+        throw new ApiError(detail, response.status)
+    }
+
+    return data as TherapistByTgIdResponse
 }
