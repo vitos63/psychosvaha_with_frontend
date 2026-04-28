@@ -156,7 +156,11 @@ function TherapistSecondFormComponent({
             return
         }
 
-        const tagIds = initialData.tag_ids ?? []
+        const tagIds = Array.isArray(initialData.tag_ids) ? initialData.tag_ids : []
+        const currencyAmount: Record<string, number> =
+            initialData.currency_amount && typeof initialData.currency_amount === 'object'
+                ? initialData.currency_amount
+                : {}
         setFormData({
             first_name: initialData.first_name ?? '',
             last_name: initialData.last_name ?? '',
@@ -183,9 +187,9 @@ function TherapistSecondFormComponent({
 
         setSelectedTags(tagIds.filter((tagId) => ![4, 25, 35, 42].includes(tagId)))
         setCurrencies([
-            { code: 'rub', name: 'Рубли', selected: 'RUB' in (initialData.currency_amount ?? {}), amount: String(initialData.currency_amount?.RUB ?? '') },
-            { code: 'usd', name: 'Доллары', selected: 'USD' in (initialData.currency_amount ?? {}), amount: String(initialData.currency_amount?.USD ?? '') },
-            { code: 'eur', name: 'Евро', selected: 'EUR' in (initialData.currency_amount ?? {}), amount: String(initialData.currency_amount?.EUR ?? '') },
+            { code: 'rub', name: 'Рубли', selected: 'RUB' in currencyAmount, amount: String(currencyAmount.RUB ?? '') },
+            { code: 'usd', name: 'Доллары', selected: 'USD' in currencyAmount, amount: String(currencyAmount.USD ?? '') },
+            { code: 'eur', name: 'Евро', selected: 'EUR' in currencyAmount, amount: String(currencyAmount.EUR ?? '') },
         ])
         setAvatarPreview(buildAvatarUrl(initialData.photo))
     }, [initialData])
