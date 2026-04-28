@@ -4,9 +4,18 @@ import '../Form.css'
 import { TherapistSecondFormErrors } from 'interfaces/Errors';
 import { updateTherapist } from '../../api/api';
 import { checkCity } from '../../api/checkCity';
+import { TherapistByTgIdResponse } from '../../interfaces/TherapistInterface';
 import { notifyTelegramWebAppFormSubmitted } from '../../utils/telegramWebApp';
 
-function TherapistSecondFormComponent({ client_id }) {
+function TherapistSecondFormComponent({
+    client_id,
+    initialData = null,
+    mode = 'create',
+}: {
+    client_id: number
+    initialData?: TherapistByTgIdResponse | null
+    mode?: 'create' | 'edit'
+}) {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         first_name: '',
@@ -120,6 +129,45 @@ function TherapistSecondFormComponent({ client_id }) {
             }
         }
     }, [avatarPreview])
+
+    useEffect(() => {
+        if (!initialData) {
+            return
+        }
+
+        const tagIds = initialData.tag_ids ?? []
+        setFormData({
+            first_name: initialData.first_name ?? '',
+            last_name: initialData.last_name ?? '',
+            city: initialData.city ?? null,
+            phone: initialData.phone_number ?? null,
+            about: initialData.pitch ?? null,
+            website: initialData.site ?? null,
+            sex: initialData.sex ?? '',
+            age: String(initialData.age ?? ''),
+            email: initialData.email ?? null,
+            experience: String(initialData.experience ?? ''),
+            min_client_age: String(initialData.min_client_age ?? ''),
+            max_client_age: String(initialData.max_client_age ?? ''),
+            contacts_for_client: initialData.contacts_for_client ?? '',
+            online: Boolean(initialData.online),
+            isPsychiatrist: tagIds.includes(4),
+            isGerontologist: tagIds.includes(35),
+            isFamilyTherapist: tagIds.includes(25),
+            doesGroupTherapy: false,
+            isSupervisor: tagIds.includes(42),
+            consent: Boolean(initialData.consent),
+            availableToCall: Boolean(initialData.available_to_call),
+        })
+
+        setSelectedTags(tagIds.filter((tagId) => ![4, 25, 35, 42].includes(tagId)))
+        setCurrencies([
+            { code: 'rub', name: 'Рубли', selected: 'RUB' in (initialData.currency_amount ?? {}), amount: String(initialData.currency_amount?.RUB ?? '') },
+            { code: 'usd', name: 'Доллары', selected: 'USD' in (initialData.currency_amount ?? {}), amount: String(initialData.currency_amount?.USD ?? '') },
+            { code: 'eur', name: 'Евро', selected: 'EUR' in (initialData.currency_amount ?? {}), amount: String(initialData.currency_amount?.EUR ?? '') },
+        ])
+        setAvatarPreview(initialData.avatar_path ?? null)
+    }, [initialData])
 
 
     const toggleCurrency = (code) => {
@@ -408,9 +456,11 @@ const handleSubmit = async (e) => {
         await notifyTelegramWebAppFormSubmitted('therapist_second', client_id);
         navigate('/form-success', {
             state: {
-                title: 'Анкета терапевта отправлена',
+                title: mode === 'edit' ? 'Анкета терапевта обновлена' : 'Анкета терапевта отправлена',
                 message:
-                    'Спасибо! Мы получили вашу анкету. После проверки данные появятся в каталоге, если всё в порядке.',
+                    mode === 'edit'
+                        ? 'Изменения сохранены.'
+                        : 'Спасибо! Мы получили вашу анкету. После проверки данные появятся в каталоге, если всё в порядке.',
             },
         });
     } catch {
@@ -799,7 +849,7 @@ return (
         </div>
 
         <div className="form-actions">
-            <button type="submit" className="submit-btn">Отправить заявку</button>
+            <button type="submit" className="submit-btn">{mode === 'edit' ? 'Сохранить изменения' : 'Отправить заявку'}</button>
         </div>
     </form>
 );
