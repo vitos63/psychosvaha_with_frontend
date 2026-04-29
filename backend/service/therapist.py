@@ -62,3 +62,10 @@ class TherapistService:
     async def get_therapist_by_tg_id(self, therapist_tg_id: int) -> Therapist | None:
         therapist = await self._therapist_repo.select_by_tg_id(tg_id=therapist_tg_id)
         return therapist
+
+    async def get_tag_ids_by_tg_id(self, therapist_tg_id: int) -> list[int]:
+        tags = await self._therapist_repo.get_therapist_tags(
+        therapist_tg_id=therapist_tg_id
+    )
+        tag_ids = [tag.id for tag in tags]
+        return tag_ids
