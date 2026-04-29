@@ -7,7 +7,7 @@ import {
 
 // Must match FastAPI paths exactly (no trailing slash) — otherwise Starlette 307 redirect
 // can point to http:// behind nginx and trigger mixed-content blocking in the browser.
-const API_BASE_URL: string = process.env.REACT_APP_API_URL
+export const API_BASE_URL: string = process.env.REACT_APP_API_URL || process.env.VITE_API_BASE_URL || ""
 
 export class ApiError extends Error {
     status: number

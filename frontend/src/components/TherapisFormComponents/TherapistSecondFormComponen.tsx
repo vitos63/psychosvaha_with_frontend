@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Form.css'
 import { TherapistSecondFormErrors } from 'interfaces/Errors';
-import { updateTherapist } from '../../api/api';
+import { API_BASE_URL, updateTherapist } from '../../api/api';
 import { checkCity } from '../../api/checkCity';
 import { TherapistByTgIdResponse } from '../../interfaces/TherapistInterface';
 import { notifyTelegramWebAppFormSubmitted } from '../../utils/telegramWebApp';
@@ -138,14 +138,14 @@ function TherapistSecondFormComponent({
             return photoPath
         }
 
-        const apiUrl = process.env.REACT_APP_API_URL
-        if (!apiUrl) {
+        if (!API_BASE_URL) {
             return null
         }
 
         try {
-            const baseUrl = new URL(apiUrl)
-            return new URL(photoPath, `${baseUrl.origin}/`).toString()
+            const cleanPath = photoPath.replace(/^\/+/, '')
+            const baseUrl = new URL(API_BASE_URL)
+            return new URL(`media/${cleanPath}`, `${baseUrl.origin}/`).toString()
         } catch {
             return null
         }
@@ -191,6 +191,9 @@ function TherapistSecondFormComponent({
             { code: 'usd', name: 'Доллары', selected: 'USD' in currencyAmount, amount: String(currencyAmount.USD ?? '') },
             { code: 'eur', name: 'Евро', selected: 'EUR' in currencyAmount, amount: String(currencyAmount.EUR ?? '') },
         ])
+        console.log('avatar_path:', initialData.avatar_path)
+        console.log('avatar_url:', initialData.avatar_url)
+        console.log('avatarPreview:', initialData.avatar_url ?? buildAvatarUrl(initialData.avatar_path))
         setAvatarPreview(initialData.avatar_url ?? buildAvatarUrl(initialData.avatar_path))
     }, [initialData])
 
