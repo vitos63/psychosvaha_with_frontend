@@ -134,21 +134,23 @@ function TherapistSecondFormComponent({
         if (!photoPath) {
             return null
         }
-        if (/^https?:\/\//i.test(photoPath) || photoPath.startsWith('blob:')) {
+
+        if (photoPath.startsWith('blob:')) {
             return photoPath
         }
 
-        if (!API_BASE_URL) {
-            return null
+        if (/^https?:\/\//i.test(photoPath)) {
+            try {
+                const url = new URL(photoPath)
+                return `${window.location.origin}${url.pathname}`
+            } catch {
+                return photoPath
+            }
         }
 
-        try {
-            const cleanPath = photoPath.replace(/^\/+/, '')
-            const baseUrl = new URL(API_BASE_URL)
-            return new URL(`media/${cleanPath}`, `${baseUrl.origin}/`).toString()
-        } catch {
-            return null
-        }
+        const cleanPath = photoPath.replace(/^\/+/, '').replace(/^media\//, '')
+
+        return `${window.location.origin}/media/${cleanPath}`
     }
 
     useEffect(() => {
@@ -194,7 +196,7 @@ function TherapistSecondFormComponent({
         console.log('avatar_path:', initialData.avatar_path)
         console.log('avatar_url:', initialData.avatar_url)
         console.log('avatarPreview:', initialData.avatar_url ?? buildAvatarUrl(initialData.avatar_path))
-        setAvatarPreview(initialData.avatar_url ?? buildAvatarUrl(initialData.avatar_path))
+        setAvatarPreview(buildAvatarUrl(initialData.avatar_path ?? initialData.avatar_url))
     }, [initialData])
 
 
