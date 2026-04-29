@@ -29,8 +29,10 @@ async def get_user(tg_id: int,
     therapist = await service.get_therapist_by_tg_id(tg_id)
     if therapist is None:
         raise HTTPException(status_code=404, detail="Therapist not found")
-    return UpdateTherapistResponse.model_validate(therapist)
+    response = UpdateTherapistResponse.model_validate(therapist)
+    response.tag_ids = await service.get_tag_ids_by_tg_id(tg_id)
 
+    return response
 
 @router.put("/therapist/{tg_id}", response_model=UpdateTherapistResponse)
 async def update(

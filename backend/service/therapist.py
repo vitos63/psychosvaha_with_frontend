@@ -64,7 +64,7 @@ class TherapistService:
         return therapist
 
     async def get_tag_ids_by_tg_id(self, therapist_tg_id: int) -> list[int]:
-        tags = await self._therapist_repo.get_therapist_tags(
+        tags = await self._therapist_tags_repo.get_therapist_tags(
         therapist_tg_id=therapist_tg_id
     )
         tag_ids = [tag.id for tag in tags]
