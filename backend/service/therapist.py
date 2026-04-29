@@ -31,15 +31,10 @@ class TherapistService:
             raise
 
     async def update_therapist(self, therapist_tg_id: int, therapist_dto: UpdateTherapist, file: UploadFile|None) -> Therapist:
-        new_path: str | None = None
+        path: str | None = None
         try:
             old_therapist = await self.get_therapist_by_tg_id(therapist_tg_id)
-
-            if file is not None:
-                path = await self._file_serv.upload_avatar(file)
-                new_path = path
-            else:
-                path = old_therapist.avatar_path
+            path = await self._file_serv.upload_avatar(file)
             therapist = await self._therapist_repo.update_therapist(therapist_tg_id=therapist_tg_id, 
                                                                     therapist_dto=therapist_dto,
                                                                     path_photo=path)
@@ -47,15 +42,13 @@ class TherapistService:
                                                                   tag_ids=therapist_dto.tag_ids)
             await self._session.commit()
 
-            if file is not None:
-                await self._file_serv.delete_photo(old_therapist.avatar_path)
+            await self._file_serv.delete_photo(old_therapist.avatar_path)
 
             return therapist
         except Exception:
             await self._session.rollback()
 
-            if new_path is not None:
-                await self._file_serv.delete_photo(new_path)
+            await self._file_serv.delete_photo(path)
 
             raise
 
