@@ -69,8 +69,11 @@ export async function createTherapist(therapist: TherapistCreateInterface) {
     }
 }
 
-
-export async function updateTherapist(therapist: TherapistUpdateInterface, tg_id: number, file?: File | null) {
+export async function updateTherapist(
+    therapist: TherapistUpdateInterface,
+    tg_id: number,
+    file?: File | null,
+): Promise<TherapistByTgIdResponse> {
     try {
         const formData = new FormData()
         formData.append('first_name', therapist.first_name)
@@ -91,6 +94,7 @@ export async function updateTherapist(therapist: TherapistUpdateInterface, tg_id
         formData.append('contacts_for_client', therapist.contacts_for_client)
         formData.append('available_to_call', String(therapist.available_to_call))
         formData.append('tag_ids', JSON.stringify(therapist.tag_ids))
+
         if (file) {
             formData.append('file', file)
         }
@@ -99,7 +103,9 @@ export async function updateTherapist(therapist: TherapistUpdateInterface, tg_id
             method: 'PUT',
             body: formData,
         })
+
         const data: unknown = await response.json().catch(() => ({}))
+
         if (!response.ok) {
             const detail =
                 typeof data === 'object' && data !== null && 'detail' in data
@@ -107,9 +113,9 @@ export async function updateTherapist(therapist: TherapistUpdateInterface, tg_id
                     : `HTTP ${response.status}`
             throw new Error(detail)
         }
-        return data
-    }
-    catch (error){
+
+        return data as TherapistByTgIdResponse
+    } catch (error) {
         console.error('Ошибка при обновлении терапевта')
         throw error
     }

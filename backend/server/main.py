@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request
+from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,6 +14,7 @@ origins = [
     "http://localhost:3000",
 ]
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     import asyncio
@@ -22,9 +24,12 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+app.mount("/media", StaticFiles(directory="media"), name="media")
+
 app.include_router(client_requests_router)
 app.include_router(therapist_router)
 app.include_router(tg_webapp_router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,

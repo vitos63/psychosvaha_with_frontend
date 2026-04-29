@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, Request
 
 from bot.instance import bot
 from bot.services.start_keyboard import remove_start_keyboard_for_user
@@ -24,6 +24,7 @@ async def create(
 
 @router.get('/therapist/by-tg-id/{tg_id}', response_model=UpdateTherapistResponse)
 async def get_user(tg_id: int,
+                   request: Request,
                    service: Annotated[TherapistService, Depends(therapist_service)],
 ):
     therapist = await service.get_therapist_by_tg_id(tg_id)
@@ -32,11 +33,17 @@ async def get_user(tg_id: int,
     response = UpdateTherapistResponse.model_validate(therapist)
     response.tag_ids = await service.get_tag_ids_by_tg_id(tg_id)
 
+
+    if therapist.avatar_path:
+        response.avatar_url = str(request.base_url) + f"media/{therapist.avatar_path}"
+
+
     return response
 
 @router.put("/therapist/{tg_id}", response_model=UpdateTherapistResponse)
 async def update(
     tg_id: int,
+    request: Request,
     therapist: Annotated[UpdateTherapistRequest, Depends(UpdateTherapistRequest.as_form)],
     service: Annotated[TherapistService, Depends(therapist_service)],
     file: UploadFile | None = File(None),
@@ -44,4 +51,8 @@ async def update(
 ):
     therapist = await service.update_therapist(therapist_tg_id=tg_id, therapist_dto=therapist, file=file)
     await remove_start_keyboard_for_user(bot=bot, user_id=tg_id)
-    return UpdateTherapistResponse.model_validate(therapist)
+    response = UpdateTherapistResponse.model_validate(therapist)
+
+    if therapist.avatar_path:
+        response.avatar_url = str(request.base_url) + f"media/{therapist.avatar_path}"
+    return response

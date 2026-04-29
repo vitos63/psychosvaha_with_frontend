@@ -43,6 +43,8 @@ export interface TherapistByTgIdResponse {
     max_client_age: number
     online: boolean
     consent: boolean
+    avatar_path?: string | null
+    avatar_url?: string | null
     available_to_call: boolean
     currency_amount?: Record<string, number>
     contacts_for_client?: string | null

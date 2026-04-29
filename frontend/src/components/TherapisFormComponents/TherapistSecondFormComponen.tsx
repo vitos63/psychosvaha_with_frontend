@@ -191,7 +191,7 @@ function TherapistSecondFormComponent({
             { code: 'usd', name: 'Доллары', selected: 'USD' in currencyAmount, amount: String(currencyAmount.USD ?? '') },
             { code: 'eur', name: 'Евро', selected: 'EUR' in currencyAmount, amount: String(currencyAmount.EUR ?? '') },
         ])
-        setAvatarPreview(buildAvatarUrl(initialData.photo))
+        setAvatarPreview(initialData.avatar_url ?? buildAvatarUrl(initialData.avatar_path))
     }, [initialData])
 
 
