@@ -329,31 +329,6 @@ input[type="radio"] {
     }
 }
 
-/* Убираем все анимации, которые могут скрывать поля */
-.form-field {
-    animation: none !important; /* Убираем все анимации скрытия */
-}
-
-/* Убеждаемся, что все поля видны */
-.form-field,
-.currency-option,
-.tag-label,
-fieldset {
-    opacity: 1 !important;
-    visibility: visible !important;
-    display: block !important;
-    transform: none !important;
-}
-
-/* Для скрытых полей, которые должны показываться при условии (как геронтолог) */
-.form-field[style*="display: none"] {
-    display: none !important;
-}
-
-/* Но для всех остальных - всегда показывать */
-.form-field:not([style*="display: none"]) {
-    display: block !important;
-}
 .avatar-upload {
     display: flex;
     flex-direction: column;
@@ -403,6 +378,12 @@ fieldset {
     padding: 0;
     background: transparent;
     border-radius: 0;
+    box-shadow: none;
+}
+
+.therapist-profile-edit-page {
+    border: none;
+    outline: none;
     box-shadow: none;
 }
 
