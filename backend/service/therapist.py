@@ -30,25 +30,46 @@ class TherapistService:
             await self._session.rollback()
             raise
 
-    async def update_therapist(self, therapist_tg_id: int, therapist_dto: UpdateTherapist, file: UploadFile|None) -> Therapist:
-        path: str | None = None
+    async def update_therapist(
+            self,
+            therapist_tg_id: int,
+            therapist_dto: UpdateTherapist,
+            file: UploadFile | None,
+    ) -> Therapist:
+        new_avatar_path: str | None = None
+        old_avatar_path: str | None = None
+
         try:
             old_therapist = await self.get_therapist_by_tg_id(therapist_tg_id)
-            path = await self._file_serv.upload_avatar(file)
-            therapist = await self._therapist_repo.update_therapist(therapist_tg_id=therapist_tg_id, 
-                                                                    therapist_dto=therapist_dto,
-                                                                    path_photo=path)
-            await self._therapist_tags_repo.update_therapist_tags(therapist_tg_id=therapist.tg_id,
-                                                                  tag_ids=therapist_dto.tag_ids)
+
+            if old_therapist is not None:
+                old_avatar_path = old_therapist.avatar_path
+
+            new_avatar_path = await self._file_serv.upload_avatar(file)
+
+            therapist = await self._therapist_repo.update_therapist(
+                therapist_tg_id=therapist_tg_id,
+                therapist_dto=therapist_dto,
+                path_photo=new_avatar_path,
+            )
+
+            await self._therapist_tags_repo.update_therapist_tags(
+                therapist_tg_id=therapist.tg_id,
+                tag_ids=therapist_dto.tag_ids,
+            )
+
             await self._session.commit()
 
-            await self._file_serv.delete_photo(old_therapist.avatar_path)
+            if old_avatar_path:
+                await self._file_serv.delete_photo(old_avatar_path)
 
             return therapist
+
         except Exception:
             await self._session.rollback()
 
-            await self._file_serv.delete_photo(path)
+            if new_avatar_path:
+                await self._file_serv.delete_photo(new_avatar_path)
 
             raise
 
