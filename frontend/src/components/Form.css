@@ -395,3 +395,34 @@ fieldset {
 .avatar-error {
     margin-top: 6px;
 }
+
+
+.therapist-profile-edit-page .client-form {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.avatar-file-input {
+    display: none;
+}
+
+.avatar-upload-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #6c5ce7;
+    color: #6c5ce7;
+    background: #fff;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.avatar-upload-btn:hover {
+    background: #f5f2ff;
+}

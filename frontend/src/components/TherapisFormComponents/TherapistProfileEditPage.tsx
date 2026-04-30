@@ -129,7 +129,7 @@ function TherapistProfileEditPage() {
     }
 
     return (
-        <div style={{ padding: 20 }}>
+        <div className="therapist-profile-edit-page" style={{ padding: 20 }}>
             <TherapistFormErrorBoundary>
                 <TherapistSecondFormComponent client_id={tgId} initialData={profile} mode="edit" />
             </TherapistFormErrorBoundary>

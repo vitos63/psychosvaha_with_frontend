@@ -652,13 +652,24 @@ return (
             <label className="avatar-upload">
                 Фотография профиля (необязательно)
                 <span className="avatar-helper">JPG, PNG или WEBP, до 5 МБ</span>
-                <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    onChange={handleAvatarChange}
-                />
             </label>
+
+            {!avatarPreview && (
+                <>
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        onChange={handleAvatarChange}
+                        className="avatar-file-input"
+                        id="therapist-avatar-input"
+                    />
+                    <label htmlFor="therapist-avatar-input" className="avatar-upload-btn">
+                        Выбрать фото
+                    </label>
+                </>
+            )}
+
             {avatarError && <span className="error-message avatar-error">{avatarError}</span>}
             {avatarPreview && (
                 <div className="avatar-preview">
