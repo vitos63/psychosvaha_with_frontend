@@ -51,3 +51,20 @@ class AdminService:
             not_approved_client_requests=not_approved_client_requests,
             not_approved_therapists=not_approved_therapists
         )
+
+    async def approve_client_request(self, client_request: ClientRequestForAdmin):
+        try:
+            await self._client_request_repo.approve_client_request(client_request.id)
+            await self._session.commit()
+
+        except Exception:
+            await self._session.rollback()
+            raise
+
+    async def approve_therapist(self, therapist: TherapistForAdmin):
+        try:
+            await self._therapist_repo.approve_therapist(therapist.tg_id)
+            await self._session.commit()
+        except Exception:
+            await self._session.rollback()
+            raise

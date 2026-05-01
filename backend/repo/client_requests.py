@@ -71,3 +71,15 @@ class ClientRequestRepo:
             )
         result = await self._session.execute(stmt)
         return result.mappings().all()
+
+    async def approve_client_request(self, client_request_id: int):
+        stmt = (
+            select(ClientRequest)
+            .where(
+                ClientRequest.id == client_request_id
+            )
+        )
+        result = await self._session.execute(stmt)
+        client_request = result.scalar_one()
+        client_request.is_approved = True
+        await self._session.flush()

@@ -78,3 +78,15 @@ class TherapistRepo:
         )
         result = await self._session.execute(stmt)
         return result.mappings().all()
+
+    async def approve_therapist(self, tg_id: int):
+        stmt = (
+            select(Therapist)
+            .where(
+                Therapist.tg_id == tg_id
+            )
+        )
+        result = await self._session.execute(stmt)
+        therapist = result.scalar_one()
+        therapist.is_approved = True
+        await self._session.flush()
