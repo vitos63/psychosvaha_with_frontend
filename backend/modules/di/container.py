@@ -17,6 +17,8 @@ from service.client_request import ClientRequestService
 from service.therapist import TherapistService
 from service.date_time import DateTimeService
 from service.admin import AdminService
+from cron.queue.tasks.send_notification_to_admin.processor import SendNotificationTOAdminProcessor
+from bot.dependencies import _build_bot
 
 
 class Container(containers.DeclarativeContainer):
@@ -74,7 +76,9 @@ class Container(containers.DeclarativeContainer):
         session=session,
         admin_repo=admin_repo,
         therapist_repo=therapist_repo,
-        client_request_repo=client_request_repo
+        client_request_repo=client_request_repo,
+        queue_repo=queue_repo,
+        date_time_service=date_time_service
     )
 
     therapist_service = providers.Factory(
@@ -112,3 +116,12 @@ class Container(containers.DeclarativeContainer):
         tag_repo=tag_repo,
         client_request_repo=client_request_repo
     )
+
+    send_notification_to_admin = providers.Factory(
+        SendNotificationTOAdminProcessor,
+        session=session,
+        admin_repo=admin_repo,
+        admin_service=admin_service,
+        bot=_build_bot()
+    )
+

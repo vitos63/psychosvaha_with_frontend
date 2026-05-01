@@ -9,16 +9,10 @@ from config import BOT_TOKEN, TG_PROXY_URL
 from .dependencies import get_container
 from .handlers.commands import command_router
 from .handlers import commands
+from .dependencies import _build_bot
 
 
 logging.basicConfig(level=logging.INFO)
-
-
-def _build_bot() -> Bot:
-    if TG_PROXY_URL:
-        session = AiohttpSession(proxy=TG_PROXY_URL)
-        return Bot(token=BOT_TOKEN, session=session)
-    return Bot(token=BOT_TOKEN)
 
 
 bot = _build_bot()

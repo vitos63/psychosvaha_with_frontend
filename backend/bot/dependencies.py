@@ -12,3 +12,9 @@ async def db_session() -> AsyncSession:
 async def get_container() -> Container:
     session = await db_session()
     return Container(session=session)
+
+def _build_bot() -> Bot:
+    if TG_PROXY_URL:
+        session = AiohttpSession(proxy=TG_PROXY_URL)
+        return Bot(token=BOT_TOKEN, session=session)
+    return Bot(token=BOT_TOKEN)

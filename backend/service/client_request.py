@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from cron.queue.tasks.add_tags_to_client_request.task import AddTagsToRequestTask
+from cron.queue.tasks.send_notification_to_admin.task import SendNotificationTOAdminTask
 from database.models import ClientRequest
 from dto.client_request import CreateClientRequest
 from repo.client_requests import ClientRequestRepo
@@ -30,6 +31,9 @@ class ClientRequestService:
             await self._queue_repo.create_task(
                 task=task,
                 start_at=self._date_time_service.get_current_time(),
+            )
+            await self._queue_repo.create_task(
+                task=SendNotificationTOAdminTask()
             )
             await self._session.commit()
             return request

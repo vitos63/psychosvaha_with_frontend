@@ -45,13 +45,6 @@ class AddTagsToRequestProcessor(BaseProcessor):
             for tag in matched_tags:
                 logger.debug(f"Applying tag {tag.id=} {tag.title=} to request_id={task.request_id}")
                 await self._client_request_tag_repo.create_request_tag(task.request_id, tag.id)
-            task = AddTherapistsToRequestTask(
-                request_id=task.request_id,
-            )
-            await self._queue_repo.create_task(
-                task=task,
-                start_at=self._date_time_service.get_current_time(),
-            )
             await self._session.commit()
         except Exception:
             await self._session.rollback()

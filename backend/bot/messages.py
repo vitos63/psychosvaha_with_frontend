@@ -1,0 +1,1 @@
+NOTIFICATION_FOR_ADMIN_MESSAGE = "У вас {not_approved_client_requests} не одобренных клиентских заявок и {not_approved_therapists} не одобренных заявок от терапевтов"

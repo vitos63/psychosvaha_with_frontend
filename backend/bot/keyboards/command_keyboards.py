@@ -1,6 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
 from enums.therapist_statuses import TherapistStatuses
+from constants import BASE_URL
 
 
 class CommandKeyboardBuilder:
@@ -22,30 +23,30 @@ class CommandKeyboardBuilder:
 
     def __add_admin_button(self, buttons: list) -> list:
         if self.is_admin:
-            buttons.append([InlineKeyboardButton(text="Я администратор", callback_data="https://psychosvaha.ru/admin")])
+            buttons.append([InlineKeyboardButton(text="Я администратор", callback_data=f"{BASE_URL}/admin")])
 
         return buttons
 
     def __add_therapist_button(self, buttons: list) -> list:
         if self.therapist_status == TherapistStatuses.NO_QUESTIONARY.value:
-            buttons.append([InlineKeyboardButton(text="Я специалист", web_app=WebAppInfo(url="https://psychosvaha.ru/form-therapist-first"))])
+            buttons.append([InlineKeyboardButton(text="Я специалист", web_app=WebAppInfo(url=f"{BASE_URL}/form-therapist-first"))])
 
         elif self.therapist_status == TherapistStatuses.APPROVED.value:
-            buttons.append([InlineKeyboardButton(text="Я специалист", web_app=WebAppInfo(url="https://psychosvaha.ru/form-therapist-second"))])
+            buttons.append([InlineKeyboardButton(text="Я специалист", web_app=WebAppInfo(url=f"{BASE_URL}/form-therapist-second"))])
 
         elif self.therapist_status == TherapistStatuses.NOT_APPROVED.value:
-            buttons.append([InlineKeyboardButton(text="Я специалист", web_app=WebAppInfo(url="https://psychosvaha.ru/form-success"))])
+            buttons.append([InlineKeyboardButton(text="Я специалист", web_app=WebAppInfo(url=f"{BASE_URL}/form-success"))])
 
         elif self.therapist_status == TherapistStatuses.HAVE_QUESTIONARY.value:
-            buttons.append([InlineKeyboardButton(text="Я специалист", web_app=WebAppInfo(url=f"https://psychosvaha.ru/therapist/{self.tg_id}"))])
+            buttons.append([InlineKeyboardButton(text="Я специалист", web_app=WebAppInfo(url=f"{BASE_URL}/therapist/{self.tg_id}"))])
 
         return buttons
 
     def __add_client_button(self, buttons: list) -> list:
         if not self.has_client_request:
-            buttons.append([InlineKeyboardButton(text="Я ищу специалиста", web_app=WebAppInfo(url="https://psychosvaha.ru/form-client"))])
+            buttons.append([InlineKeyboardButton(text="Я ищу специалиста", web_app=WebAppInfo(url=f"{BASE_URL}/form-client"))])
 
         else:
-            buttons.append([InlineKeyboardButton(text="Я ищу специалиста", web_app=WebAppInfo(url="https://psychosvaha.ru/form-success"))])
+            buttons.append([InlineKeyboardButton(text="Я ищу специалиста", web_app=WebAppInfo(url=f"{BASE_URL}/form-success"))])
 
         return buttons

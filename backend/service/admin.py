@@ -1,12 +1,15 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from service.date_time import DateTimeService
 from database.models import Admin
 from dto.admin import Admin as AdminDTO, MainInfoForAdmin
 from dto.client_request import ClientRequestForAdmin
 from dto.therapist import TherapistForAdmin
 from repo.admin import AdminRepo
+from repo.queue import QueueRepo
 from repo.therapists import TherapistRepo
 from repo.client_requests import ClientRequestRepo
+from cron.queue.tasks.add_therapists_to_client_request.task import AddTherapistsToRequestTask
 
 
 class AdminService:
@@ -15,12 +18,16 @@ class AdminService:
             session: AsyncSession,
             admin_repo: AdminRepo,
             therapist_repo: TherapistRepo,
-            client_request_repo: ClientRequestRepo
+            client_request_repo: ClientRequestRepo,
+            queue_repo: QueueRepo,
+            date_time_service: DateTimeService
     ):
         self._session = session
         self._admin_repo = admin_repo
         self._therapist_repo = therapist_repo
         self._client_request_repo = client_request_repo
+        self._queue_repo = queue_repo
+        self._date_time_service = date_time_service
 
     async def create_admin(self, admin: AdminDTO) -> Admin:
         try:
@@ -56,6 +63,13 @@ class AdminService:
         try:
             await self._client_request_repo.approve_client_request(client_request.id)
             await self._session.commit()
+            task = AddTherapistsToRequestTask(
+                request_id=client_request.id,
+            )
+            await self._queue_repo.create_task(
+                task=task,
+                start_at=self._date_time_service.get_current_time(),
+            )
 
         except Exception:
             await self._session.rollback()
