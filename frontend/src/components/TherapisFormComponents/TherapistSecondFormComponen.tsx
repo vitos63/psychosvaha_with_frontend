@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Form.css'
 import { TherapistSecondFormErrors } from 'interfaces/Errors';
-import { updateTherapist } from '../../api/api';
+import { updateTherapist } from '../../api/therapistApi';
 import { checkCity } from '../../api/checkCity';
 
 function TherapistSecondFormComponent({ client_id }) {

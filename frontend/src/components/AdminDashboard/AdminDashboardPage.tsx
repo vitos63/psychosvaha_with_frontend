@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
-import { fetchAdminMainInfo } from '../../api/api';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { approveClientRequest, approveTherapist, fetchAdminMainInfo } from '../../api/adminApi';
+import { TAG_OPTIONS } from '../../constants/tags';
 import { AdminMainInfoResponse } from '../../interfaces/AdminMainInfoInterface';
 import '../Form.css';
 import './AdminDashboardPage.css';
@@ -12,6 +13,22 @@ function AdminDashboardPage({ tgId }: AdminDashboardPageProps) {
   const [data, setData] = useState<AdminMainInfoResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [view, setView] = useState<'main' | 'clients' | 'therapists'>('main');
+  const [clientIndex, setClientIndex] = useState(0);
+  const [therapistIndex, setTherapistIndex] = useState(0);
+  const [saving, setSaving] = useState(false);
+  const [selectedClientTags, setSelectedClientTags] = useState<string[]>([]);
+
+  const availableTags = useMemo(() => {
+    const tagSet = new Set<string>();
+    TAG_OPTIONS.forEach((tag) => tagSet.add(tag));
+    data?.not_approved_client_requests.forEach((request) => {
+      request.tags.forEach((tag) => {
+        tagSet.add(tag);
+      });
+    });
+    return Array.from(tagSet).sort((a, b) => a.localeCompare(b, 'ru'));
+  }, [data]);
 
   const load = useCallback(async () => {
     if (tgId === undefined) {
@@ -34,10 +51,105 @@ function AdminDashboardPage({ tgId }: AdminDashboardPageProps) {
     void load();
   }, [load]);
 
-  const therapists = data?.not_approved_therapists;
-  const clients = data?.not_approved_client_requests;
+  const therapists = data?.not_approved_therapists ?? [];
+  const clients = data?.not_approved_client_requests ?? [];
   const therapistsCount = Array.isArray(therapists) ? therapists.length : 0;
   const clientsCount = Array.isArray(clients) ? clients.length : 0;
+  const currentClient = clients[clientIndex];
+  const currentTherapist = therapists[therapistIndex];
+
+  useEffect(() => {
+    if (currentClient) {
+      setSelectedClientTags(currentClient.tags);
+    } else {
+      setSelectedClientTags([]);
+    }
+  }, [currentClient]);
+
+  const handleClientTagToggle = (tag: string) => {
+    setSelectedClientTags((prevTags) => {
+      if (prevTags.includes(tag)) {
+        return prevTags.filter((item) => item !== tag);
+      }
+      return [...prevTags, tag];
+    });
+  };
+
+  const handleOpenClients = () => {
+    setClientIndex(0);
+    setView('clients');
+  };
+
+  const handleOpenTherapists = () => {
+    setTherapistIndex(0);
+    setView('therapists');
+  };
+
+  const handleApproveClient = async () => {
+    if (!currentClient) {
+      return;
+    }
+    setSaving(true);
+    setError(null);
+    try {
+      await approveClientRequest({
+        id: currentClient.id,
+        problem_description: currentClient.problem_description,
+        tags: selectedClientTags,
+      });
+
+      setData((prevData) => {
+        if (!prevData) {
+          return prevData;
+        }
+        return {
+          ...prevData,
+          not_approved_client_requests: prevData.not_approved_client_requests.filter(
+            (request) => request.id !== currentClient.id,
+          ),
+        };
+      });
+      setClientIndex(0);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Не удалось одобрить заявку клиента');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleApproveTherapist = async () => {
+    if (!currentTherapist) {
+      return;
+    }
+    setSaving(true);
+    setError(null);
+    try {
+      await approveTherapist(currentTherapist);
+      setData((prevData) => {
+        if (!prevData) {
+          return prevData;
+        }
+        return {
+          ...prevData,
+          not_approved_therapists: prevData.not_approved_therapists.filter(
+            (therapist) => therapist.tg_id !== currentTherapist.tg_id,
+          ),
+        };
+      });
+      setTherapistIndex(0);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Не удалось одобрить терапевта');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handlePostponeTherapist = () => {
+    if (therapists.length <= 1) {
+      return;
+    }
+    setTherapistIndex((prevIndex) => (prevIndex + 1) % therapists.length);
+  };
 
   if (tgId === undefined) {
     return (
@@ -60,7 +172,7 @@ function AdminDashboardPage({ tgId }: AdminDashboardPageProps) {
         </p>
       )}
 
-      {!loading && !error && data && (
+      {!loading && !error && data && view === 'main' && (
         <div className="admin-dashboard__grid">
           <section className="admin-dashboard__card" aria-labelledby="admin-therapists-heading">
             <h2 id="admin-therapists-heading" className="admin-dashboard__card-title">
@@ -77,7 +189,12 @@ function AdminDashboardPage({ tgId }: AdminDashboardPageProps) {
                 ? 'Нет терапевтов для модерации'
                 : therapistsCount}
             </p>
-            <button type="button" className="admin-dashboard__action">
+            <button
+              type="button"
+              className="admin-dashboard__action"
+              disabled={therapistsCount === 0}
+              onClick={handleOpenTherapists}
+            >
               Посмотреть
             </button>
           </section>
@@ -97,11 +214,118 @@ function AdminDashboardPage({ tgId }: AdminDashboardPageProps) {
                 ? 'Нет клиентов для модерации'
                 : clientsCount}
             </p>
-            <button type="button" className="admin-dashboard__action">
+            <button
+              type="button"
+              className="admin-dashboard__action"
+              disabled={clientsCount === 0}
+              onClick={handleOpenClients}
+            >
               Посмотреть
             </button>
           </section>
         </div>
+      )}
+
+      {!loading && data && view === 'clients' && (
+        <section className="admin-dashboard__details" aria-labelledby="admin-client-details-heading">
+          <h2 id="admin-client-details-heading" className="admin-dashboard__card-title">
+            Заявки клиентов на модерации
+          </h2>
+          <button
+            type="button"
+            className="admin-dashboard__back"
+            onClick={() => setView('main')}
+            disabled={saving}
+          >
+            Назад
+          </button>
+
+          {!currentClient && <p className="admin-dashboard__status">Нет заявок клиентов для модерации</p>}
+
+          {currentClient && (
+            <>
+              <p className="admin-dashboard__meta">
+                Заявка {clientIndex + 1} из {clients.length}
+              </p>
+              <p className="admin-dashboard__problem">{currentClient.problem_description}</p>
+
+              <fieldset className="form-field tags-fieldset">
+                <legend>Теги заявки (можно выбрать несколько)</legend>
+                <div className="tags-container">
+                  {availableTags.map((tag) => (
+                    <label key={tag} className="tag-label">
+                      <input
+                        type="checkbox"
+                        checked={selectedClientTags.includes(tag)}
+                        onChange={() => handleClientTagToggle(tag)}
+                        disabled={saving}
+                      />
+                      <span className="tag-text">{tag}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+
+              <div className="admin-dashboard__actions">
+                <button
+                  type="button"
+                  className="admin-dashboard__action"
+                  onClick={handleApproveClient}
+                  disabled={saving}
+                >
+                  {saving ? 'Сохраняем...' : 'Одобрить заявку'}
+                </button>
+              </div>
+            </>
+          )}
+        </section>
+      )}
+
+      {!loading && data && view === 'therapists' && (
+        <section className="admin-dashboard__details" aria-labelledby="admin-therapist-details-heading">
+          <h2 id="admin-therapist-details-heading" className="admin-dashboard__card-title">
+            Терапевты на модерации
+          </h2>
+          <button
+            type="button"
+            className="admin-dashboard__back"
+            onClick={() => setView('main')}
+            disabled={saving}
+          >
+            Назад
+          </button>
+
+          {!currentTherapist && <p className="admin-dashboard__status">Нет терапевтов для модерации</p>}
+
+          {currentTherapist && (
+            <>
+              <p className="admin-dashboard__meta">
+                Терапевт {therapistIndex + 1} из {therapists.length}
+              </p>
+              <p className="admin-dashboard__problem">
+                {currentTherapist.last_name} {currentTherapist.first_name}
+              </p>
+              <div className="admin-dashboard__actions">
+                <button
+                  type="button"
+                  className="admin-dashboard__action admin-dashboard__action--secondary"
+                  onClick={handlePostponeTherapist}
+                  disabled={saving || therapists.length <= 1}
+                >
+                  Отложить
+                </button>
+                <button
+                  type="button"
+                  className="admin-dashboard__action"
+                  onClick={handleApproveTherapist}
+                  disabled={saving}
+                >
+                  {saving ? 'Сохраняем...' : 'Одобрить'}
+                </button>
+              </div>
+            </>
+          )}
+        </section>
       )}
     </div>
   );

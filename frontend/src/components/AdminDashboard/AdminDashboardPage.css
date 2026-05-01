@@ -70,10 +70,59 @@
   background: linear-gradient(90deg, #6c5ce7, #a29bfe);
 }
 
+.admin-dashboard__action:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  filter: none;
+}
+
 .admin-dashboard__action:hover {
   filter: brightness(1.05);
 }
 
 .admin-dashboard__action:active {
   filter: brightness(0.95);
+}
+
+.admin-dashboard__details {
+  border: 2px solid #e9ecef;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.admin-dashboard__back {
+  border: none;
+  background: transparent;
+  color: #6c5ce7;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.admin-dashboard__back:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.admin-dashboard__meta {
+  margin: 0 0 8px;
+  color: #636e72;
+}
+
+.admin-dashboard__problem {
+  margin: 0 0 18px;
+  line-height: 1.5;
+  color: #2d3436;
+}
+
+.admin-dashboard__actions {
+  display: flex;
+  gap: 10px;
+}
+
+.admin-dashboard__action--secondary {
+  background: #dfe6e9;
+  color: #2d3436;
 }

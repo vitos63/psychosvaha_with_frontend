@@ -1,11 +1,11 @@
-interface ClientRequestForAdmin {
+export interface ClientRequestForAdmin {
   id: number
   problem_description: string
   tags: string[]
 }
 
 
-interface TherapistForAdmin {
+export interface TherapistForAdmin {
   tg_id: number
   first_name: string
   last_name: string
