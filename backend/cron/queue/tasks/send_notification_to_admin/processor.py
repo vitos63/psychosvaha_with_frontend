@@ -9,6 +9,7 @@ from domain.errors import AdminDoesNotExistError
 from .task import SendNotificationTOAdminTask
 from service.admin import AdminService
 from bot.messages import NOTIFICATION_FOR_ADMIN_MESSAGE
+from bot.keyboards.admin_keyboard import admin_keyboard
 
 
 class SendNotificationTOAdminProcessor(BaseProcessor):
@@ -40,5 +41,6 @@ class SendNotificationTOAdminProcessor(BaseProcessor):
                     not_approved_requests.not_approved_therapists
                 ),
             ),
+            reply_markup=admin_keyboard
         )
         
