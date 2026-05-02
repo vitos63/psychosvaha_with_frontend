@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Form.css'
-import { createClientRequest } from '../../api/api';
+import { createClientRequest } from '../../api/clientRequestApi';
 import { ClientFormErrors } from 'interfaces/Errors';
 import { checkCity } from '../../api/checkCity';
 import { notifyTelegramWebAppFormSubmitted } from '../../utils/telegramWebApp';

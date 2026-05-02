@@ -16,6 +16,9 @@ from repo.therapist_tags import TherapistTagRepo
 from service.client_request import ClientRequestService
 from service.therapist import TherapistService
 from service.date_time import DateTimeService
+from service.admin import AdminService
+from cron.queue.tasks.send_notification_to_admin.processor import SendNotificationTOAdminProcessor
+from bot.bot_factory import build_bot
 from service.admin_service import AdminService
 from service.file_service import FileService
 
@@ -73,7 +76,11 @@ class Container(containers.DeclarativeContainer):
     admin_service = providers.Factory(
         AdminService,
         session=session,
-        admin_repo=admin_repo
+        admin_repo=admin_repo,
+        therapist_repo=therapist_repo,
+        client_request_repo=client_request_repo,
+        queue_repo=queue_repo,
+        date_time_service=date_time_service
     )
 
     file_serv = providers.Factory(
@@ -117,3 +124,12 @@ class Container(containers.DeclarativeContainer):
         tag_repo=tag_repo,
         client_request_repo=client_request_repo
     )
+
+    send_notification_to_admin_processor = providers.Factory(
+        SendNotificationTOAdminProcessor,
+        session=session,
+        admin_repo=admin_repo,
+        admin_service=admin_service,
+        bot=build_bot(),
+    )
+

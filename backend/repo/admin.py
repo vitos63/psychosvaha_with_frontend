@@ -25,3 +25,8 @@ class AdminRepo:
                 )
         admin = await self._session.execute(stmt)
         return admin.scalar_one_or_none()
+
+    async def get_admin_tg_id(self) -> int | None:
+        stmt = select(Admin.tg_id)
+        admin = await self._session.execute(stmt)
+        return admin.scalar_one_or_none()

@@ -7,6 +7,7 @@ import TherapistFirstFormComponent from './components/TherapisFormComponents/The
 import TherapistSecondFormComponent from './components/TherapisFormComponents/TherapistSecondFormComponen';
 import TherapistProfileEditPage from './components/TherapisFormComponents/TherapistProfileEditPage';
 import SuccessPage from './components/SuccessPage/SuccessPage';
+import AdminDashboardPage from './components/AdminDashboard/AdminDashboardPage';
 
 
 function App() {
@@ -18,6 +19,9 @@ function App() {
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
+        if (typeof tg.setHeaderColor === 'function' && tg.themeParams?.bg_color) {
+          tg.setHeaderColor(tg.themeParams.bg_color);
+        }
         const userData = tg.initDataUnsafe?.user;
         if (userData) {
           setUser(userData);
@@ -29,7 +33,7 @@ function App() {
   }, []);
 
   return (
-    <div style={{ minHeight: '100vh' }}>
+    <div style={{ minHeight: 'var(--tg-viewport-stable-height, 100vh)', width: '100%', boxSizing: 'border-box' }}>
       <Router>
         <Routes>
           <Route path="/form-client" element={<ClientFormComponent client_id={user?.id || 1} />} />
@@ -37,6 +41,7 @@ function App() {
           <Route path="/form-therapist-second" element={<TherapistSecondFormComponent client_id={user?.id || 1}/>} />
           <Route path="/therapist/profile" element={<TherapistProfileEditPage />} />
           <Route path="/form-success" element={<SuccessPage />} />
+          <Route path="/admin" element={<AdminDashboardPage tgId={user?.id} />} />
         </Routes>
       </Router>
     </div>

@@ -54,5 +54,14 @@ class CreateTherapist(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+
 class UpdateTherapist(BaseTherapistDTO):
     avatar_path: str|None = None
+
+
+class TherapistForAdmin(BaseModel):
+    tg_id: int
+    first_name: str
+    last_name: str
+
+    model_config = ConfigDict(from_attributes=True)

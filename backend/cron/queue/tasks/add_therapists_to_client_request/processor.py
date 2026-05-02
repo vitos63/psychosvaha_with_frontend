@@ -10,7 +10,6 @@ from repo.therapists import TherapistRepo
 from repo.therapist_tags import TherapistTagRepo
 from repo.tags import TagRepo
 from domain.client_therapist import ClientTherapistDomain
-
 from .task import AddTherapistsToRequestTask
 
 

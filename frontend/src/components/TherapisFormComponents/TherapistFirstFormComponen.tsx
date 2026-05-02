@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Form.css'
 import { TherapistFirstFormErrors } from 'interfaces/Errors';
-import { createTherapist } from 'api/api';
+import { createTherapist } from '../../api/therapistApi';
 import { notifyTelegramWebAppFormSubmitted } from '../../utils/telegramWebApp';
 
 function TherapistFirstFormComponent({client_id}) {

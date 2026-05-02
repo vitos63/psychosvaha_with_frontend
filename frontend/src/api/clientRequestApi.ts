@@ -1,0 +1,24 @@
+import { API_BASE_URL } from "./config";
+import { getErrorDetail } from "./http";
+import { ClientRequestInterface } from "../interfaces/ClientRequestInterface";
+
+export async function createClientRequest(clientRequest: ClientRequestInterface) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/client-request`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(clientRequest),
+        });
+        const data: unknown = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            throw new Error(getErrorDetail(response, data));
+        }
+        return data;
+    }
+    catch (error){
+        console.error('Ошибка при создании заявки клиента');
+        throw error;
+    }
+}

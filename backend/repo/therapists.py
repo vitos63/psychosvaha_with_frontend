@@ -68,3 +68,25 @@ class TherapistRepo:
         result = await self._session.execute(stmt)
         therapist = result.scalar_one()
         return therapist
+
+    async def get_not_approved_therapists(self) -> list[dict]:
+        stmt = (
+            select(Therapist.tg_id, Therapist.first_name, Therapist.last_name)
+            .where(
+                Therapist.status == TherapistStatuses.NOT_APPROVED.value
+                )
+        )
+        result = await self._session.execute(stmt)
+        return result.mappings().all()
+
+    async def approve_therapist(self, tg_id: int):
+        stmt = (
+            select(Therapist)
+            .where(
+                Therapist.tg_id == tg_id
+            )
+        )
+        result = await self._session.execute(stmt)
+        therapist = result.scalar_one()
+        therapist.status = TherapistStatuses.APPROVED.value
+        await self._session.flush()

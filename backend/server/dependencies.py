@@ -7,6 +7,7 @@ from database.engine import AsyncSessionFactory
 from modules.di.container import Container
 from service.client_request import ClientRequestService
 from service.therapist import TherapistService
+from service.admin import AdminService
 
 
 async def db_session() -> AsyncSession:
@@ -24,3 +25,7 @@ async def client_request_service(container_: Annotated[Container, Depends(contai
 
 async def therapist_service(container_: Annotated[Container, Depends(container)]) -> TherapistService:
     return container_.therapist_service()
+
+
+async def admin_service(container_: Annotated[Container, Depends(container)]) -> AdminService:
+    return container_.admin_service()

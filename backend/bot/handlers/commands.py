@@ -7,7 +7,7 @@ from dependency_injector.wiring import Provide, inject
 from typing import Annotated
 
 from enums.bot_messages import BotMessages
-from service.admin_service import AdminService
+from service.admin import AdminService
 from service.therapist import TherapistService
 from service.client_request import ClientRequestService
 from enums.therapist_statuses import TherapistStatuses

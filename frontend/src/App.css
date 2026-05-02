@@ -1,10 +1,19 @@
-html, body, #root {
-height: 100%;
-margin: 0;
-padding: 0;
+/* Заполняем область Mini App; без уменьшения #root — иначе в TG вебвью окно визуально «крошечное». */
+html,
+body,
+#root {
+  height: var(--tg-viewport-stable-height, 100vh);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-
 body {
-overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  min-height: 100%;
 }
