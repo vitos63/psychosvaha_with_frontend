@@ -1,6 +1,9 @@
 interface TelegramWebApp {
   ready: () => void;
   expand: () => void;
+  initData?: string;
+  sendData?: (data: string) => void;
+  close?: () => void;
   isFullscreen?: boolean;
   requestFullscreen?: () => void;
   exitFullscreen?: () => void;

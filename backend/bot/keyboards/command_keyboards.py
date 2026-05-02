@@ -38,7 +38,7 @@ class CommandKeyboardBuilder:
             buttons.append([InlineKeyboardButton(text="Я специалист", web_app=WebAppInfo(url=f"{BASE_URL}/form-success"))])
 
         elif self.therapist_status == TherapistStatuses.HAVE_QUESTIONARY.value:
-            buttons.append([InlineKeyboardButton(text="Я специалист", web_app=WebAppInfo(url=f"{BASE_URL}/therapist/{self.tg_id}"))])
+            buttons.append([InlineKeyboardButton(text="Я специалист", web_app=WebAppInfo(url=f"{BASE_URL}/therapist/profile"))])
 
         return buttons
 

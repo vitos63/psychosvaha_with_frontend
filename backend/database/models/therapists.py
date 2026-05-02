@@ -68,3 +68,5 @@ class Therapist(Base):
         ),
         server_default=TherapistStatuses.NO_QUESTIONARY.value,
     )
+
+    avatar_path: Mapped[str | None] = mapped_column(String, nullable=True)

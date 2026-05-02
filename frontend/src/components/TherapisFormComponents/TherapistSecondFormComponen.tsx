@@ -1,23 +1,34 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Form.css'
 import { TherapistSecondFormErrors } from 'interfaces/Errors';
 import { updateTherapist } from '../../api/therapistApi';
+import { API_BASE_URL } from '../../api/api';
 import { checkCity } from '../../api/checkCity';
 import { TAG_CATEGORIES, TAG_CATEGORY_LABELS, type TagCategoryKey } from '../../constants/tags';
+import { TherapistByTgIdResponse } from '../../interfaces/TherapistInterface';
+import { notifyTelegramWebAppFormSubmitted } from '../../utils/telegramWebApp';
 
-function TherapistSecondFormComponent({ client_id }) {
+function TherapistSecondFormComponent({
+    client_id,
+    initialData = null,
+    mode = 'create',
+}: {
+    client_id: number
+    initialData?: TherapistByTgIdResponse | null
+    mode?: 'create' | 'edit'
+}) {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         first_name: '',
         last_name: '',
-        city: null,
-        phone: null,
-        about: null,
-        website: null,
+        city: '',
+        phone: '',
+        about: '',
+        website: '',
         sex: '',
         age: '',
-        email: null,
+        email: '',
         experience: '',
         min_client_age: '',
         max_client_age: '',
@@ -41,9 +52,90 @@ function TherapistSecondFormComponent({ client_id }) {
     type FormElement = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     const [selectedTags, setSelectedTags] = useState<number[]>([]);
     const [errors, setErrors] = useState<TherapistSecondFormErrors>({})
+    const [avatarFile, setAvatarFile] = useState<File | null>(null)
+    const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
+    const [avatarError, setAvatarError] = useState<string>('')
+    const fileInputRef = useRef<HTMLInputElement | null>(null)
+
+    useEffect(() => {
+        return () => {
+            if (avatarPreview?.startsWith('blob:')) {
+                URL.revokeObjectURL(avatarPreview)
+            }
+        }
+    }, [avatarPreview])
+
+    const buildAvatarUrl = (photoPath: string | null | undefined): string | null => {
+        if (!photoPath) {
+            return null
+        }
+
+        if (photoPath.startsWith('blob:')) {
+            return photoPath
+        }
+
+        if (/^https?:\/\//i.test(photoPath)) {
+            try {
+                const url = new URL(photoPath)
+                return `${window.location.origin}${url.pathname}`
+            } catch {
+                return photoPath
+            }
+        }
+
+        const cleanPath = photoPath.replace(/^\/+/, '').replace(/^media\//, '')
+
+        return `${window.location.origin}/media/${cleanPath}`
+    }
+
+    useEffect(() => {
+        if (!initialData) {
+            return
+        }
+
+        const tagIds = Array.isArray(initialData.tag_ids) ? initialData.tag_ids : []
+        const currencyAmount: Record<string, number> =
+            initialData.currency_amount && typeof initialData.currency_amount === 'object'
+                ? initialData.currency_amount
+                : {}
+        setFormData({
+            first_name: initialData.first_name ?? '',
+            last_name: initialData.last_name ?? '',
+            city: initialData.city ?? '',
+            phone: initialData.phone_number ?? '',
+            about: initialData.pitch ?? '',
+            website: initialData.site ?? '',
+            sex: initialData.sex ?? '',
+            age: String(initialData.age ?? ''),
+            email: initialData.email ?? '',
+            experience: String(initialData.experience ?? ''),
+            min_client_age: String(initialData.min_client_age ?? ''),
+            max_client_age: String(initialData.max_client_age ?? ''),
+            contacts_for_client: initialData.contacts_for_client ?? '',
+            online: Boolean(initialData.online),
+            isPsychiatrist: tagIds.includes(4),
+            isGerontologist: tagIds.includes(35),
+            isFamilyTherapist: tagIds.includes(25),
+            doesGroupTherapy: false,
+            isSupervisor: tagIds.includes(42),
+            consent: Boolean(initialData.consent),
+            availableToCall: Boolean(initialData.available_to_call),
+        })
+
+        setSelectedTags(tagIds.filter((tagId) => ![4, 25, 35, 42].includes(tagId)))
+        setCurrencies([
+            { code: 'rub', name: 'Рубли', selected: 'RUB' in currencyAmount, amount: String(currencyAmount.RUB ?? '') },
+            { code: 'usd', name: 'Доллары', selected: 'USD' in currencyAmount, amount: String(currencyAmount.USD ?? '') },
+            { code: 'eur', name: 'Евро', selected: 'EUR' in currencyAmount, amount: String(currencyAmount.EUR ?? '') },
+        ])
+        console.log('avatar_path:', initialData.avatar_path)
+        console.log('avatar_url:', initialData.avatar_url)
+        console.log('avatarPreview:', initialData.avatar_url ?? buildAvatarUrl(initialData.avatar_path))
+        setAvatarPreview(buildAvatarUrl(initialData.avatar_path ?? initialData.avatar_url))
+    }, [initialData])
 
 
-    const toggleCurrency = (code) => {
+    const toggleCurrency = (code: string) => {
         setCurrencies(currency_amount.map(currency => {
             if (currency.code === code) {
                 const updated = { ...currency, selected: !currency.selected };
@@ -59,7 +151,7 @@ function TherapistSecondFormComponent({ client_id }) {
         }
     };
 
-    const updateAmount = (code, value) => {
+    const updateAmount = (code: string, value: string) => {
         const numericValue = value.replace(/\D/g, '');
         setCurrencies(currency_amount.map(currency =>
             currency.code === code
@@ -112,6 +204,55 @@ function TherapistSecondFormComponent({ client_id }) {
         });
     };
 
+    const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file) {
+            return
+        }
+
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
+        if (!allowedTypes.includes(file.type)) {
+            setAvatarFile(null)
+            if (avatarPreview?.startsWith('blob:')) {
+                URL.revokeObjectURL(avatarPreview)
+            }
+            setAvatarPreview(null)
+            setAvatarError('Можно загрузить только JPG, PNG или WEBP')
+            e.target.value = ''
+            return
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            setAvatarFile(null)
+            if (avatarPreview?.startsWith('blob:')) {
+                URL.revokeObjectURL(avatarPreview)
+            }
+            setAvatarPreview(null)
+            setAvatarError('Размер файла не должен превышать 5 МБ')
+            e.target.value = ''
+            return
+        }
+
+        if (avatarPreview?.startsWith('blob:')) {
+            URL.revokeObjectURL(avatarPreview)
+        }
+        setAvatarFile(file)
+        setAvatarPreview(URL.createObjectURL(file))
+        setAvatarError('')
+    }
+
+    const handleRemoveAvatar = () => {
+        if (avatarPreview?.startsWith('blob:')) {
+            URL.revokeObjectURL(avatarPreview)
+        }
+        setAvatarFile(null)
+        setAvatarPreview(null)
+        setAvatarError('')
+        if (fileInputRef.current) {
+            fileInputRef.current.value = ''
+        }
+    }
+
     const validateForm = async () => {
         const newErrors: TherapistSecondFormErrors = {}
 
@@ -142,7 +283,7 @@ function TherapistSecondFormComponent({ client_id }) {
                 }
             }
 
-        if (phoneValue && !/^\+?[0-9\s\-\(\)]+$/.test(phoneValue)) {
+        if (phoneValue && !/^\+?[0-9\s\-()]+$/.test(phoneValue)) {
             newErrors.phone = "Введите корректный номер телефона"
         }
 
@@ -227,25 +368,9 @@ function TherapistSecondFormComponent({ client_id }) {
     return newErrors;
 };
 
-const handleSubmit = async (e) => {
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formErrors = await validateForm();
-
-    if (formData.isPsychiatrist){
-        setSelectedTags(prev => [...prev, 4])
-    }
-
-    if (formData.isSupervisor){
-        setSelectedTags(prev => [...prev, 42])
-    }
-
-    if (formData.isGerontologist){
-        setSelectedTags(prev => [...prev, 35])
-    }
-
-    if (formData.isFamilyTherapist){
-        setSelectedTags(prev => [...prev, 25])
-    }
 
     if (Object.keys(formErrors).length > 0) {
         setErrors(formErrors);
@@ -259,25 +384,48 @@ const handleSubmit = async (e) => {
         return;
     }
 
+    const tagIds = new Set(selectedTags)
+    if (formData.isPsychiatrist) tagIds.add(4)
+    if (formData.isSupervisor) tagIds.add(42)
+    if (formData.isGerontologist) tagIds.add(35)
+    if (formData.isFamilyTherapist) tagIds.add(25)
+
     const submissionData = {
-        ...formData,
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        city: formData.city,
+        phone_number: formData.phone,
+        pitch: formData.about,
+        site: formData.website,
         sex: formData.sex,
+        age: formData.age,
+        email: formData.email,
+        experience: formData.experience,
+        min_client_age: formData.min_client_age,
+        max_client_age: formData.max_client_age,
+        contacts_for_client: formData.contacts_for_client,
+        online: formData.online,
+        consent: formData.consent,
+        available_to_call: formData.availableToCall,
         currency_amount: currency_amount.reduce((acc, curr) => {
             if (curr.selected) {
                 acc[curr.code.toUpperCase()] = parseInt(curr.amount) || 0;
                     }
                     return acc;
                 }, {} as Record<string, number>),
-        tag_ids: selectedTags
+        tag_ids: Array.from(tagIds)
     };
     console.log('Данные для отправки:', submissionData);
     try {
-        await updateTherapist(submissionData, client_id);
+        await updateTherapist(submissionData, client_id, avatarFile);
+        await notifyTelegramWebAppFormSubmitted('therapist_second', client_id);
         navigate('/form-success', {
             state: {
-                title: 'Анкета терапевта отправлена',
+                title: mode === 'edit' ? 'Анкета терапевта обновлена' : 'Анкета терапевта отправлена',
                 message:
-                    'Спасибо! Мы получили вашу анкету. После проверки данные появятся в каталоге, если всё в порядке.',
+                    mode === 'edit'
+                        ? 'Изменения сохранены.'
+                        : 'Спасибо! Мы получили вашу анкету. После проверки данные появятся в каталоге, если всё в порядке.',
             },
         });
     } catch {
@@ -420,6 +568,39 @@ return (
                 </div>
             ))}
         </fieldset>
+
+        <div className="form-field">
+            <label className="avatar-upload">
+                Фотография профиля (необязательно)
+                <span className="avatar-helper">JPG, PNG или WEBP, до 5 МБ</span>
+            </label>
+
+            {!avatarPreview && (
+                <>
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        onChange={handleAvatarChange}
+                        className="avatar-file-input"
+                        id="therapist-avatar-input"
+                    />
+                    <label htmlFor="therapist-avatar-input" className="avatar-upload-btn">
+                        Выбрать фото
+                    </label>
+                </>
+            )}
+
+            {avatarError && <span className="error-message avatar-error">{avatarError}</span>}
+            {avatarPreview && (
+                <div className="avatar-preview">
+                    <img src={avatarPreview} alt="Превью фотографии профиля" />
+                    <button type="button" className="avatar-remove-btn" onClick={handleRemoveAvatar}>
+                        Удалить фото
+                    </button>
+                </div>
+            )}
+        </div>
 
         <div className="form-field">
             <input
@@ -633,7 +814,7 @@ return (
         </div>
 
         <div className="form-actions">
-            <button type="submit" className="submit-btn">Отправить заявку</button>
+            <button type="submit" className="submit-btn">{mode === 'edit' ? 'Сохранить изменения' : 'Отправить заявку'}</button>
         </div>
     </form>
 );

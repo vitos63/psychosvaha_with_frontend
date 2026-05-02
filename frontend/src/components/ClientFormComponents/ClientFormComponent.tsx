@@ -4,6 +4,7 @@ import '../Form.css'
 import { createClientRequest } from '../../api/clientRequestApi';
 import { ClientFormErrors } from 'interfaces/Errors';
 import { checkCity } from '../../api/checkCity';
+import { notifyTelegramWebAppFormSubmitted } from '../../utils/telegramWebApp';
 
 function ClientFormComponent({ client_id }) {
     const navigate = useNavigate();
@@ -196,6 +197,7 @@ function ClientFormComponent({ client_id }) {
         };
         try {
             await createClientRequest(submissionData);
+            await notifyTelegramWebAppFormSubmitted('client', client_id);
             navigate('/form-success', {
                 state: {
                     title: 'Заявка отправлена',
