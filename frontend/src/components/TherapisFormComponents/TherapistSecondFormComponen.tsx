@@ -417,7 +417,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     };
     console.log('Данные для отправки:', submissionData);
     try {
-        await updateTherapist(submissionData, client_id, avatarFile);
+        await updateTherapist(submissionData, client_id);
         await notifyTelegramWebAppFormSubmitted('therapist_second', client_id);
         navigate('/form-success', {
             state: {

@@ -19,7 +19,7 @@ from service.date_time import DateTimeService
 from service.admin import AdminService
 from cron.queue.tasks.send_notification_to_admin.processor import SendNotificationTOAdminProcessor
 from bot.bot_factory import build_bot
-from service.admin_service import AdminService
+from service.admin import AdminService
 from service.file_service import FileService
 
 
