@@ -20,7 +20,7 @@ async def get_main_info(service: Annotated[AdminService, Depends(admin_service)]
         raise HTTPException(status_code=403, detail="Access denied")
 
     result = await service.get_main_info_for_admin()
-    return MainInfoForAdminResponse.model_validate(result)
+    return MainInfoForAdminResponse.model_validate(result.__dict__)
 
 
 @admin_router.put("/approve-client-request")
