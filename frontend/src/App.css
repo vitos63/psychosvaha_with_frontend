@@ -1,10 +1,31 @@
-html, body, #root {
+html,
+body {
   height: var(--tg-viewport-stable-height, 100vh);
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
+html {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 body {
-overflow: hidden;
+  overflow: hidden;
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#root {
+  width: 90vw;
+  max-width: 100%;
+  height: calc(0.9 * (var(--tg-viewport-stable-height, 100vh)));
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }

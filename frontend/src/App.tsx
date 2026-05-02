@@ -23,9 +23,6 @@ function App() {
         if (typeof tg.setHeaderColor === 'function' && tg.themeParams?.bg_color) {
           tg.setHeaderColor(tg.themeParams.bg_color);
         }
-        if (typeof tg.requestFullscreen === 'function' && !tg.isFullscreen) {
-          tg.requestFullscreen();
-        }
         const userData = tg.initDataUnsafe?.user;
         if (userData) {
           setUser(userData);
@@ -37,7 +34,7 @@ function App() {
   }, []);
 
   return (
-    <div style={{ minHeight: '100vh' }}>
+    <div style={{ minHeight: '100%', width: '100%', boxSizing: 'border-box' }}>
       <Router>
         <Routes>
           <Route path="/form-client" element={<ClientFormComponent client_id={user?.id || 1} />} />
