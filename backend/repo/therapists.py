@@ -88,5 +88,5 @@ class TherapistRepo:
         )
         result = await self._session.execute(stmt)
         therapist = result.scalar_one()
-        therapist.is_approved = True
+        therapist.status = TherapistStatuses.APPROVED.value
         await self._session.flush()

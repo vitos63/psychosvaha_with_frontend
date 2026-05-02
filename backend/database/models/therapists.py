@@ -39,7 +39,6 @@ class Therapist(Base):
     )
     email: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     photo: Mapped[Optional[str]] = mapped_column(String, nullable=True)
-    approved: Mapped[bool] = mapped_column(server_default='false')
     consent: Mapped[bool] = mapped_column(server_default='false')
     pitch: Mapped[Optional[str]] = mapped_column(String(350), nullable=True)
     site: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
