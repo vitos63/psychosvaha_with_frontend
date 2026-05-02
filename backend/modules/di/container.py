@@ -18,7 +18,7 @@ from service.therapist import TherapistService
 from service.date_time import DateTimeService
 from service.admin import AdminService
 from cron.queue.tasks.send_notification_to_admin.processor import SendNotificationTOAdminProcessor
-from bot.dependencies import _build_bot
+from bot.bot_factory import build_bot
 
 
 class Container(containers.DeclarativeContainer):
@@ -117,11 +117,11 @@ class Container(containers.DeclarativeContainer):
         client_request_repo=client_request_repo
     )
 
-    send_notification_to_admin = providers.Factory(
+    send_notification_to_admin_processor = providers.Factory(
         SendNotificationTOAdminProcessor,
         session=session,
         admin_repo=admin_repo,
         admin_service=admin_service,
-        bot=_build_bot()
+        bot=build_bot(),
     )
 

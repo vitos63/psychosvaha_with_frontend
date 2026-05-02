@@ -6,16 +6,16 @@ from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.fsm.storage.memory import MemoryStorage
 
 from config import BOT_TOKEN, TG_PROXY_URL
+from .bot_factory import build_bot
 from .dependencies import get_container
 from .handlers.commands import command_router
 from .handlers import commands
-from .dependencies import _build_bot
 
 
 logging.basicConfig(level=logging.INFO)
 
 
-bot = _build_bot()
+bot = build_bot()
 dp = Dispatcher(storage=MemoryStorage())
 dp.include_router(command_router)
 

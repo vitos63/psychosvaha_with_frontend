@@ -8,7 +8,6 @@ from repo.admin import AdminRepo
 from domain.errors import AdminDoesNotExistError
 from .task import SendNotificationTOAdminTask
 from service.admin import AdminService
-from bot.keyboards.admin_keyboard import admin_keyboard
 from bot.messages import NOTIFICATION_FOR_ADMIN_MESSAGE
 
 
@@ -31,7 +30,15 @@ class SendNotificationTOAdminProcessor(BaseProcessor):
         if not admin_tg_id:
             raise AdminDoesNotExistError("Admin not found in database")
 
-        await self._bot.send_message(chat_id=admin_tg_id, 
-                               text=NOTIFICATION_FOR_ADMIN_MESSAGE.format(not_approved_client_requests=not_approved_requests.not_approved_client_requests,
-                                                                          not_approved_therapists=not_approved_requests.not_approved_therapists))
+        await self._bot.send_message(
+            chat_id=admin_tg_id,
+            text=NOTIFICATION_FOR_ADMIN_MESSAGE.format(
+                not_approved_client_requests=len(
+                    not_approved_requests.not_approved_client_requests
+                ),
+                not_approved_therapists=len(
+                    not_approved_requests.not_approved_therapists
+                ),
+            ),
+        )
         
