@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.models import ClientRequest, ClientRequestTag, Tag
@@ -63,12 +63,13 @@ class ClientRequestRepo:
 
     async def get_not_approved_client_requests(self) -> list[dict]:
         stmt = (
-            select(ClientRequest.id, ClientRequest.problem_description, Tag.title)
+            select(ClientRequest.id, ClientRequest.problem_description, func.array_agg(Tag.title).label('tags'))
             .join(ClientRequestTag, ClientRequest.id == ClientRequestTag.request_id, isouter=True)
             .join(Tag, ClientRequestTag.tag_id == Tag.id, isouter=True)
             .where(
                 ClientRequest.is_approved == False
                 )
+            .group_by(ClientRequest.id)
             )
         result = await self._session.execute(stmt)
         return result.mappings().all()
