@@ -122,7 +122,7 @@ export async function updateTherapist(
 }
 
 export async function getTherapistByTgId(tg_id: number): Promise<TherapistByTgIdResponse> {
-    const response = await fetch(`${API_BASE_URL}/therapist/by-tg-id/${tg_id}`)
+    const response = await fetch(`${API_BASE_URL}/therapist/${tg_id}`)
     const data: unknown = await response.json().catch(() => ({}))
 
     if (!response.ok) {

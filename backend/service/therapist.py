@@ -46,11 +46,11 @@ class TherapistService:
                 old_avatar_path = old_therapist.avatar_path
 
             new_avatar_path = await self._file_serv.upload_avatar(file)
+            therapist_dto.avatar_path = new_avatar_path
 
             therapist = await self._therapist_repo.update_therapist(
                 therapist_tg_id=therapist_tg_id,
                 therapist_dto=therapist_dto,
-                path_photo=new_avatar_path,
             )
 
             await self._therapist_tags_repo.update_therapist_tags(
@@ -83,3 +83,8 @@ class TherapistService:
     )
         tag_ids = [tag.id for tag in tags]
         return tag_ids
+
+    def get_avatar_path(self, therapist: Therapist, base_url: str):
+
+        if therapist.avatar_path:
+            return str(base_url) + f"media/{therapist.avatar_path}"

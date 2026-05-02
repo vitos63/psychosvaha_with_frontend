@@ -22,7 +22,7 @@ async def create(
     return CreateTherapistResponse.model_validate(therapist)
 
 
-@router.get('/therapist/by-tg-id/{tg_id}', response_model=UpdateTherapistResponse)
+@router.get('/therapist/{tg_id}', response_model=UpdateTherapistResponse)
 async def get_user(tg_id: int,
                    request: Request,
                    service: Annotated[TherapistService, Depends(therapist_service)],
@@ -32,10 +32,7 @@ async def get_user(tg_id: int,
         raise HTTPException(status_code=404, detail="Therapist not found")
     response = UpdateTherapistResponse.model_validate(therapist)
     response.tag_ids = await service.get_tag_ids_by_tg_id(tg_id)
-
-
-    if therapist.avatar_path:
-        response.avatar_url = str(request.base_url) + f"media/{therapist.avatar_path}"
+    response.avatar_url = service.get_avatar_path(therapist, request.base_url)
 
 
     return response
@@ -52,7 +49,6 @@ async def update(
     therapist = await service.update_therapist(therapist_tg_id=tg_id, therapist_dto=therapist, file=file)
     await remove_start_keyboard_for_user(bot=bot, user_id=tg_id)
     response = UpdateTherapistResponse.model_validate(therapist)
+    response.avatar_url = service.get_avatar_path(therapist, request.base_url)
 
-    if therapist.avatar_path:
-        response.avatar_url = str(request.base_url) + f"media/{therapist.avatar_path}"
     return response

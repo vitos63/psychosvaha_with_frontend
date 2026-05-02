@@ -22,9 +22,8 @@ class TherapistRepo:
         await self._session.flush()
         return therapist
 
-    async def update_therapist(self, therapist_tg_id: int, therapist_dto: UpdateTherapist, path_photo: str|None) -> Therapist:
+    async def update_therapist(self, therapist_tg_id: int, therapist_dto: UpdateTherapist) -> Therapist:
         update_dict = therapist_dto.model_dump(exclude={"tag_ids"})
-        update_dict["avatar_path"] = path_photo
 
         stmt = (update(Therapist)
                 .where(

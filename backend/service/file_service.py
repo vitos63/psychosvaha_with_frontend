@@ -3,7 +3,7 @@ from pathlib import Path
 import aiofiles
 import aiofiles.os
 from fastapi import UploadFile, HTTPException
-
+from constants import LIST_MIME_TYPE
 
 class FileService:
     def __init__(self):
@@ -22,7 +22,7 @@ class FileService:
         print(f"[FileService.upload_avatar] file.content_type: {file.content_type}")
 
         # Шаг 3: валидируем MIME-тип.
-        if file.content_type not in ["image/jpeg", "image/png", "image/webp"]:
+        if file.content_type not in LIST_MIME_TYPE:
             raise HTTPException(status_code=400, detail="Можно загружать только изображения")
 
         # Шаг 4: валидируем имя файла.
@@ -66,12 +66,6 @@ class FileService:
         return f"avatars/{filename}"
 
     async def delete_photo(self, photo_path: str | None) -> bool:
-        """
-        Удаляет файл по пути из media.
-
-        Пример:
-            avatars/test.jpg
-        """
         if not photo_path:
             return False
 
