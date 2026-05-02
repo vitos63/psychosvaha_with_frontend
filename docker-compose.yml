@@ -1,5 +1,7 @@
 services:
   backend:
+    volumes:
+      - ./backend/media:/app/media
     env_file:
       - ./backend/.env
     build: ./backend
@@ -11,6 +13,10 @@ services:
     restart: unless-stopped
     ports:
       - "8000:8000"
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
 
   ss-client:
     image: shadowsocks/shadowsocks-libev:latest
@@ -29,7 +35,7 @@ services:
     build:
       context: ./frontend
       args:
-        REACT_APP_API_URL: ${REACT_APP_API_URL:-https://psychosvaha.ru/api/v1}
+        REACT_APP_API_URL: ${REACT_APP_API_URL:-http://0.0.0.0:8000/api/v1}
     depends_on:
       - backend
     restart: unless-stopped
@@ -56,8 +62,8 @@ services:
       timeout: 3s
       retries: 5
       start_period: 5s
-    ports:
-      - "5432:5432"
+#    ports:
+#      - "5432:5432"
 
 volumes:
   postgres_data:
