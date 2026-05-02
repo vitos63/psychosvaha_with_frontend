@@ -1,11 +1,13 @@
 from typing import Annotated
-from fastapi.routing import APIRouter
-from fastapi import Depends, HTTPException, status
 
-from backend.service.admin import AdminService
+from fastapi import Depends, HTTPException, status
+from fastapi.routing import APIRouter
+
 from server.dependencies import admin_service
-from response import MainInfoForAdminResponse
-from request import ApproveClientRequestRequest, ApproveTherapistRequest
+from service.admin import AdminService
+
+from .request import ApproveClientRequestRequest, ApproveTherapistRequest
+from .response import MainInfoForAdminResponse
 
 
 admin_router = APIRouter(prefix="/v1/admin", tags=["admin"])

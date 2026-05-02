@@ -34,7 +34,7 @@ function App() {
   }, []);
 
   return (
-    <div style={{ minHeight: '100%', width: '100%', boxSizing: 'border-box' }}>
+    <div style={{ minHeight: 'var(--tg-viewport-stable-height, 100vh)', width: '100%', boxSizing: 'border-box' }}>
       <Router>
         <Routes>
           <Route path="/form-client" element={<ClientFormComponent client_id={user?.id || 1} />} />
