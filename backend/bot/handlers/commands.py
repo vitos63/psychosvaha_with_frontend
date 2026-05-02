@@ -43,7 +43,7 @@ async def start_handler(message: Message,
                                           tg_id=user_id).get_start_keyboard()
 
     sent_message = await message.answer(answer, reply_markup=keyboard)
-    set_start_message_id(chat_id=message.chat.id, user_id=user_id, message_id=sent_message.message_id)
+    await set_start_message_id(chat_id=message.chat.id, user_id=user_id, message_id=sent_message.message_id)
     logger.info(
         "Saved start message chat_id=%s user_id=%s message_id=%s",
         message.chat.id,

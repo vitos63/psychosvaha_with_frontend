@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 async def remove_start_keyboard_for_user(bot: Bot, user_id: int) -> bool:
-    chat_id, message_id = pop_start_message_id_by_user(user_id)
+    chat_id, message_id = await pop_start_message_id_by_user(user_id)
 
     if chat_id is None or message_id is None:
         logger.info("No saved start keyboard message for user_id=%s", user_id)
