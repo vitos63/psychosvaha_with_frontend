@@ -64,8 +64,8 @@ class ClientRequestRepo:
     async def get_not_approved_client_requests(self) -> list[dict]:
         stmt = (
             select(ClientRequest.id, ClientRequest.problem_description, Tag.title)
-            .join(ClientRequestTag, ClientRequest.id == ClientRequestTag.request_id)
-            .join(Tag, ClientRequestTag.tag_id == Tag.id)
+            .join(ClientRequestTag, ClientRequest.id == ClientRequestTag.request_id, isouter=True)
+            .join(Tag, ClientRequestTag.tag_id == Tag.id, isouter=True)
             .where(
                 ClientRequest.is_approved == False
                 )
