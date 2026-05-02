@@ -55,4 +55,4 @@ class CreateTherapist(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 class UpdateTherapist(BaseTherapistDTO):
-    pass
+    avatar_path: str|None = None

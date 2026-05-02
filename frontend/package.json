@@ -40,7 +40,7 @@
       "last 1 safari version"
     ]
   },
-  "homepage": ".",
+  "homepage": "/",
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/react": "^19.2.13",

@@ -2,6 +2,8 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
+from bot.instance import bot
+from bot.services.start_keyboard import remove_start_keyboard_for_user
 from server.dependencies import client_request_service
 from service.client_request import ClientRequestService
 
@@ -15,5 +17,6 @@ async def create(
     request: CreateClientRequest,
     service: Annotated[ClientRequestService, Depends(client_request_service)],
 ):
-    request = await service.create_client_request(request)
-    return CreateClientResponse(request_id=request.id)
+    created_request = await service.create_client_request(request)
+    await remove_start_keyboard_for_user(bot=bot, user_id=created_request.client_id)
+    return CreateClientResponse(request_id=created_request.id)

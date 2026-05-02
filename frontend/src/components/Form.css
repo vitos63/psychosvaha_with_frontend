@@ -329,28 +329,81 @@ input[type="radio"] {
     }
 }
 
-/* Убираем все анимации, которые могут скрывать поля */
-.form-field {
-    animation: none !important; /* Убираем все анимации скрытия */
+.avatar-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    cursor: default;
+    padding: 0;
 }
 
-/* Убеждаемся, что все поля видны */
-.form-field,
-.currency-option,
-.tag-label,
-fieldset {
-    opacity: 1 !important;
-    visibility: visible !important;
-    display: block !important;
-    transform: none !important;
+.avatar-helper {
+    color: #666;
+    font-size: 13px;
 }
 
-/* Для скрытых полей, которые должны показываться при условии (как геронтолог) */
-.form-field[style*="display: none"] {
-    display: none !important;
+.avatar-preview {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-/* Но для всех остальных - всегда показывать */
-.form-field:not([style*="display: none"]) {
-    display: block !important;
+.avatar-preview img {
+    width: 96px;
+    height: 96px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 1px solid #e9ecef;
+}
+
+.avatar-remove-btn {
+    border: 1px solid #ff4757;
+    background: #fff;
+    color: #ff4757;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.avatar-error {
+    margin-top: 6px;
+}
+
+
+.therapist-profile-edit-page .client-form {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.therapist-profile-edit-page {
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+
+.avatar-file-input {
+    display: none;
+}
+
+.avatar-upload-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #6c5ce7;
+    color: #6c5ce7;
+    background: #fff;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.avatar-upload-btn:hover {
+    background: #f5f2ff;
 }

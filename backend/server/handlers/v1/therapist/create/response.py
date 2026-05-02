@@ -2,4 +2,4 @@ from dto.therapist import CreateTherapist
 
 
 class CreateTherapistResponse(CreateTherapist):
-    pass
+    avatar_path: str | None = None

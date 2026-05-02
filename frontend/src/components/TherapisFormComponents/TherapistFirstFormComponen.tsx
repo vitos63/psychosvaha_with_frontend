@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../Form.css'
 import { TherapistFirstFormErrors } from 'interfaces/Errors';
 import { createTherapist } from 'api/api';
+import { notifyTelegramWebAppFormSubmitted } from '../../utils/telegramWebApp';
 
 function TherapistFirstFormComponent({client_id}) {
     const navigate = useNavigate();
@@ -62,6 +63,7 @@ function TherapistFirstFormComponent({client_id}) {
         formData.consent = true;
         try {
                 await createTherapist(formData);
+                await notifyTelegramWebAppFormSubmitted('therapist_first', client_id);
                 navigate('/form-success', {
                     state: {
                         title: 'Анкета терапевта отправлена',
