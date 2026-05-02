@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { approveClientRequest, approveTherapist, fetchAdminMainInfo } from '../../api/adminApi';
-import { TAG_OPTIONS } from '../../constants/tags';
+import {
+  TAG_CATEGORIES,
+  TAG_CATEGORY_LABELS,
+  TAG_OPTIONS,
+  type TagCategoryKey,
+} from '../../constants/tags';
 import { AdminMainInfoResponse } from '../../interfaces/AdminMainInfoInterface';
 import '../Form.css';
 import './AdminDashboardPage.css';
@@ -19,16 +24,23 @@ function AdminDashboardPage({ tgId }: AdminDashboardPageProps) {
   const [saving, setSaving] = useState(false);
   const [selectedClientTags, setSelectedClientTags] = useState<string[]>([]);
 
-  const availableTags = useMemo(() => {
-    const tagSet = new Set<string>();
-    TAG_OPTIONS.forEach((tag) => tagSet.add(tag));
-    data?.not_approved_client_requests.forEach((request) => {
+  const knownTagTitles = useMemo(() => new Set(TAG_OPTIONS), []);
+
+  /** Теги из заявок, которых нет в справочнике категорий (показываем отдельным блоком). */
+  const extraTagsFromRequests = useMemo(() => {
+    if (!data?.not_approved_client_requests) {
+      return [];
+    }
+    const out = new Set<string>();
+    data.not_approved_client_requests.forEach((request) => {
       request.tags.forEach((tag) => {
-        tagSet.add(tag);
+        if (!knownTagTitles.has(tag)) {
+          out.add(tag);
+        }
       });
     });
-    return Array.from(tagSet).sort((a, b) => a.localeCompare(b, 'ru'));
-  }, [data]);
+    return Array.from(out).sort((a, b) => a.localeCompare(b, 'ru'));
+  }, [data, knownTagTitles]);
 
   const load = useCallback(async () => {
     if (tgId === undefined) {
@@ -249,22 +261,48 @@ function AdminDashboardPage({ tgId }: AdminDashboardPageProps) {
               </p>
               <p className="admin-dashboard__problem">{currentClient.problem_description}</p>
 
-              <fieldset className="form-field tags-fieldset">
-                <legend>Теги заявки (можно выбрать несколько)</legend>
-                <div className="tags-container">
-                  {availableTags.map((tag) => (
-                    <label key={tag} className="tag-label">
-                      <input
-                        type="checkbox"
-                        checked={selectedClientTags.includes(tag)}
-                        onChange={() => handleClientTagToggle(tag)}
-                        disabled={saving}
-                      />
-                      <span className="tag-text">{tag}</span>
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
+              {(Object.keys(TAG_CATEGORIES) as TagCategoryKey[]).map((category) => {
+                const tags = TAG_CATEGORIES[category];
+                return (
+                  <fieldset key={category} className="form-field tags-fieldset">
+                    <legend>
+                      {TAG_CATEGORY_LABELS[category]} (можно выбрать несколько)
+                    </legend>
+                    <div className="tags-container">
+                      {tags.map((tagObj) => (
+                        <label key={tagObj.id} className="tag-label">
+                          <input
+                            type="checkbox"
+                            checked={selectedClientTags.includes(tagObj.title)}
+                            onChange={() => handleClientTagToggle(tagObj.title)}
+                            disabled={saving}
+                          />
+                          <span className="tag-text">{tagObj.title}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
+                );
+              })}
+
+              {extraTagsFromRequests.length > 0 && (
+                <fieldset className="form-field tags-fieldset">
+                  <legend>Другие теги из заявок (можно выбрать несколько)</legend>
+                  <div className="tags-container">
+                    {extraTagsFromRequests.map((tag) => (
+                      <label key={tag} className="tag-label">
+                        <input
+                          type="checkbox"
+                          checked={selectedClientTags.includes(tag)}
+                          onChange={() => handleClientTagToggle(tag)}
+                          disabled={saving}
+                        />
+                        <span className="tag-text">{tag}</span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+              )}
 
               <div className="admin-dashboard__actions">
                 <button
