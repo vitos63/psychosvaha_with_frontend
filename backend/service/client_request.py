@@ -33,7 +33,8 @@ class ClientRequestService:
                 start_at=self._date_time_service.get_current_time(),
             )
             await self._queue_repo.create_task(
-                task=SendNotificationTOAdminTask()
+                task=SendNotificationTOAdminTask(),
+                start_at=self._date_time_service.get_current_time(),
             )
             await self._session.commit()
             return request
