@@ -1,4 +1,4 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
 from constants import BASE_URL
 
@@ -8,7 +8,7 @@ admin_keyboard = InlineKeyboardMarkup(
         [
             InlineKeyboardButton(
                 text="Посмотреть",
-                callback_data=f"{BASE_URL}/admin"
+                web_app=WebAppInfo(url=f"{BASE_URL}/admin")
             )
         ]
     ]

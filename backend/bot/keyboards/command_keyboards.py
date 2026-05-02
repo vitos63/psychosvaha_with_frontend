@@ -23,7 +23,7 @@ class CommandKeyboardBuilder:
 
     def __add_admin_button(self, buttons: list) -> list:
         if self.is_admin:
-            buttons.append([InlineKeyboardButton(text="Я администратор", callback_data=f"{BASE_URL}/admin")])
+            buttons.append([InlineKeyboardButton(text="Я администратор", web_app=WebAppInfo(url=f"{BASE_URL}/admin"))])
 
         return buttons
 
