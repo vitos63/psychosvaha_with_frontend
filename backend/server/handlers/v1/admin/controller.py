@@ -8,7 +8,7 @@ from response import MainInfoForAdminResponse
 from request import ApproveClientRequestRequest, ApproveTherapistRequest
 
 
-admin_router = APIRouter(prefix="/admin", tags=["admin"])
+admin_router = APIRouter(prefix="/v1/admin", tags=["admin"])
 
 
 @admin_router.get("/main-info", response_model=MainInfoForAdminResponse)
