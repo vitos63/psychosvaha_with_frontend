@@ -6,6 +6,7 @@ from dto.therapist import CreateTherapist, UpdateTherapist
 from repo.therapists import TherapistRepo
 from repo.therapist_tags import TherapistTagRepo
 from service.file_service import FileService
+from enums.therapist_statuses import TherapistStatuses
 
 
 class TherapistService:
@@ -47,6 +48,7 @@ class TherapistService:
 
             new_avatar_path = await self._file_serv.upload_avatar(file)
             therapist_dto.avatar_path = new_avatar_path
+            therapist_dto.status = TherapistStatuses.HAVE_QUESTIONARY.value
 
             therapist = await self._therapist_repo.update_therapist(
                 therapist_tg_id=therapist_tg_id,
