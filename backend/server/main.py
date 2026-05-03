@@ -16,18 +16,8 @@ origins = [
 ]
 
 
-
-
 app = FastAPI()
 
-app.mount("/media", StaticFiles(directory="media"), name="media")
-app = FastAPI()
-
-app.include_router(client_requests_router)
-app.include_router(therapist_router)
-app.include_router(tg_webapp_router)
-
-app.include_router(admin_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -35,6 +25,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(client_requests_router)
+app.include_router(therapist_router)
+app.include_router(tg_webapp_router)
+
+app.include_router(admin_router)
+
+app.mount("/media", StaticFiles(directory="media"), name="media")
 
 
 @app.exception_handler(Exception)
