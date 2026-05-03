@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../Form.css'
 import { TherapistSecondFormErrors } from 'interfaces/Errors';
 import { updateTherapist } from '../../api/therapistApi';
-import { API_BASE_URL } from '../../api/api';
+import { avatarPathToMediaUrl } from '../../api/api';
 import { checkCity } from '../../api/checkCity';
 import { TAG_CATEGORIES, TAG_CATEGORY_LABELS, type TagCategoryKey } from '../../constants/tags';
 import { TherapistByTgIdResponse } from '../../interfaces/TherapistInterface';
@@ -65,27 +65,14 @@ function TherapistSecondFormComponent({
         }
     }, [avatarPreview])
 
-    const buildAvatarUrl = (photoPath: string | null | undefined): string | null => {
-        if (!photoPath) {
+    const buildAvatarUrl = (pathOrBlob: string | null | undefined): string | null => {
+        if (!pathOrBlob) {
             return null
         }
-
-        if (photoPath.startsWith('blob:')) {
-            return photoPath
+        if (pathOrBlob.startsWith('blob:')) {
+            return pathOrBlob
         }
-
-        if (/^https?:\/\//i.test(photoPath)) {
-            try {
-                const url = new URL(photoPath)
-                return `${window.location.origin}${url.pathname}`
-            } catch {
-                return photoPath
-            }
-        }
-
-        const cleanPath = photoPath.replace(/^\/+/, '').replace(/^media\//, '')
-
-        return `${window.location.origin}/media/${cleanPath}`
+        return avatarPathToMediaUrl(pathOrBlob)
     }
 
     useEffect(() => {
@@ -128,10 +115,7 @@ function TherapistSecondFormComponent({
             { code: 'usd', name: 'Доллары', selected: 'USD' in currencyAmount, amount: String(currencyAmount.USD ?? '') },
             { code: 'eur', name: 'Евро', selected: 'EUR' in currencyAmount, amount: String(currencyAmount.EUR ?? '') },
         ])
-        console.log('avatar_path:', initialData.avatar_path)
-        console.log('avatar_url:', initialData.avatar_url)
-        console.log('avatarPreview:', initialData.avatar_url ?? buildAvatarUrl(initialData.avatar_path))
-        setAvatarPreview(buildAvatarUrl(initialData.avatar_path ?? initialData.avatar_url))
+        setAvatarPreview(buildAvatarUrl(initialData.avatar_path))
     }, [initialData])
 
 

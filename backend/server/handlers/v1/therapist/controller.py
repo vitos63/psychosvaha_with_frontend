@@ -8,6 +8,7 @@ from service.therapist import TherapistService
 
 from .create import CreateTherapistRequest, CreateTherapistResponse
 from .update import UpdateTherapistResponse, UpdateTherapistRequest
+from .get import GetTherapistResponse
 
 router = APIRouter(prefix="/v1", tags=["therapist"])
 
@@ -22,7 +23,7 @@ async def create(
     return CreateTherapistResponse.model_validate(therapist)
 
 
-@router.get('/therapist/{tg_id}', response_model=UpdateTherapistResponse)
+@router.get('/therapist/{tg_id}', response_model=GetTherapistResponse)
 async def get_user(tg_id: int,
                    request: Request,
                    service: Annotated[TherapistService, Depends(therapist_service)],

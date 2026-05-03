@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { ApiError, getTherapistByTgId } from '../../api/api'
+import { ApiError, avatarPathToMediaUrl, getTherapistByTgId } from '../../api/api'
 import { TAG_CATEGORIES } from '../../constants/tags'
 import { TherapistByTgIdResponse } from '../../interfaces/TherapistInterface'
 import '../Form.css'
@@ -21,25 +21,6 @@ function resolveTgIdFromEnvironment(): number | null {
         return null
     }
     return parsedId
-}
-
-function buildAvatarDisplayUrl(photoPath: string | null | undefined): string | null {
-    if (!photoPath) {
-        return null
-    }
-    if (photoPath.startsWith('blob:')) {
-        return photoPath
-    }
-    if (/^https?:\/\//i.test(photoPath)) {
-        try {
-            const url = new URL(photoPath)
-            return `${window.location.origin}${url.pathname}`
-        } catch {
-            return photoPath
-        }
-    }
-    const cleanPath = photoPath.replace(/^\/+/, '').replace(/^media\//, '')
-    return `${window.location.origin}/media/${cleanPath}`
 }
 
 type TagEntry = { id: number; title: string }
@@ -65,10 +46,7 @@ function TherapistProfileViewPage() {
         if (!profile) {
             return null
         }
-        return (
-            profile.avatar_url ??
-            buildAvatarDisplayUrl(profile.avatar_path ?? profile.photo ?? null)
-        )
+        return avatarPathToMediaUrl(profile.avatar_path)
     }, [profile])
 
     const tagLabels = useMemo(() => {
