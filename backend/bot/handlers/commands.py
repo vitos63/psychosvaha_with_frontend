@@ -1,6 +1,6 @@
 import logging
 
-from aiogram import Router
+from aiogram import Bot, Router
 from aiogram.filters.command import Command
 from aiogram.types import Message
 from dependency_injector.wiring import Provide, inject
@@ -14,6 +14,7 @@ from enums.therapist_statuses import TherapistStatuses
 from modules.di.container import Container
 from bot.keyboards.command_keyboards import CommandKeyboardBuilder
 from bot.storage.start_messages import set_start_message_id
+from bot.services.start_keyboard import remove_start_keyboard_for_user
 
 command_router = Router()
 logger = logging.getLogger(__name__)
@@ -22,6 +23,7 @@ logger = logging.getLogger(__name__)
 @command_router.message(Command("start"))
 @inject
 async def start_handler(message: Message,
+                        bot: Bot,
                         admin_service: Annotated[AdminService, Provide[Container.admin_service]],
                         therapist_service: Annotated[TherapistService, Provide[Container.therapist_service]],
                         client_request_service: Annotated[ClientRequestService, Provide[Container.client_request_service]]):
@@ -42,6 +44,7 @@ async def start_handler(message: Message,
                                           therapist_status=TherapistStatuses.NO_QUESTIONARY.value,
                                           tg_id=user_id).get_start_keyboard()
 
+    await remove_start_keyboard_for_user(bot, user_id)
     sent_message = await message.answer(answer, reply_markup=keyboard)
     await set_start_message_id(chat_id=message.chat.id, user_id=user_id, message_id=sent_message.message_id)
     logger.info(

@@ -10,26 +10,59 @@ import SuccessPage from './components/SuccessPage/SuccessPage';
 import AdminDashboardPage from './components/AdminDashboard/AdminDashboardPage';
 
 
+type TgUser = NonNullable<NonNullable<TelegramWebApp['initDataUnsafe']>['user']>;
+
+const MOBILE_PLATFORMS = new Set(['android', 'android_x', 'ios']);
+
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<TgUser | null>(null);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (window.Telegram?.WebApp) {
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
-        if (typeof tg.setHeaderColor === 'function' && tg.themeParams?.bg_color) {
-          tg.setHeaderColor(tg.themeParams.bg_color);
-        }
-        const userData = tg.initDataUnsafe?.user;
-        if (userData) {
-          setUser(userData);
-        }
-        clearInterval(interval);
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
+
+    const platform = (tg.platform || 'unknown').toLowerCase();
+    const isMobile = MOBILE_PLATFORMS.has(platform);
+    const versionAtLeast = (v: string) => {
+      try { return typeof tg.isVersionAtLeast === 'function' && tg.isVersionAtLeast(v); }
+      catch { return false; }
+    };
+
+    try { tg.ready(); } catch { /* noop */ }
+    try { tg.expand(); } catch { /* noop */ }
+
+    if (versionAtLeast('7.7')) {
+      try { tg.disableVerticalSwipes?.(); } catch { /* noop */ }
+    }
+
+
+    if (!isMobile && versionAtLeast('8.0') && typeof tg.requestFullscreen === 'function') {
+      try { tg.requestFullscreen(); } catch { /* noop */ }
+    }
+
+    if (typeof tg.setHeaderColor === 'function' && tg.themeParams?.bg_color) {
+      try { tg.setHeaderColor(tg.themeParams.bg_color); } catch { /* noop */ }
+    }
+
+    const userData = tg.initDataUnsafe?.user;
+    if (userData) {
+      setUser(userData);
+    }
+
+    const onViewportChanged = (payload: unknown) => {
+      const isStable =
+        typeof payload === 'object' &&
+        payload !== null &&
+        (payload as { isStateStable?: boolean }).isStateStable === true;
+      if (isStable && tg.isExpanded === false) {
+        try { tg.expand(); } catch { /* noop */ }
       }
-    }, 50);
-    return () => clearInterval(interval);
+    };
+
+    tg.onEvent?.('viewportChanged', onViewportChanged);
+    return () => {
+      tg.offEvent?.('viewportChanged', onViewportChanged);
+    };
   }, []);
 
   return (
@@ -45,9 +78,6 @@ function App() {
         </Routes>
       </Router>
     </div>
-
-
-
   );
 }
 

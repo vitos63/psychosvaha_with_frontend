@@ -4,16 +4,34 @@ interface TelegramWebApp {
   initData?: string;
   sendData?: (data: string) => void;
   close?: () => void;
+
+  version?: string;
+  platform?: string;
+  isVersionAtLeast?: (version: string) => boolean;
+
+  isExpanded?: boolean;
+  viewportHeight?: number;
+  viewportStableHeight?: number;
+
   isFullscreen?: boolean;
   requestFullscreen?: () => void;
   exitFullscreen?: () => void;
+
+  isVerticalSwipesEnabled?: boolean;
+  enableVerticalSwipes?: () => void;
+  disableVerticalSwipes?: () => void;
+
   setHeaderColor?: (color: string) => void;
+  setBackgroundColor?: (color: string) => void;
+
   themeParams?: {
     bg_color?: string;
     secondary_bg_color?: string;
   };
-  onEvent?: (eventType: string, callback: () => void) => void;
-  offEvent?: (eventType: string, callback: () => void) => void;
+
+  onEvent?: (eventType: string, callback: (...args: unknown[]) => void) => void;
+  offEvent?: (eventType: string, callback: (...args: unknown[]) => void) => void;
+
   initDataUnsafe?: {
     user?: {
       id: number;
