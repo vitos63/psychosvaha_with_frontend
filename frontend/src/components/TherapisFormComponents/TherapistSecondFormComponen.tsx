@@ -393,7 +393,8 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                     }
                     return acc;
                 }, {} as Record<string, number>),
-        tag_ids: Array.from(tagIds)
+        tag_ids: Array.from(tagIds),
+        file: avatarFile
     };
     console.log('Данные для отправки:', submissionData);
     try {
