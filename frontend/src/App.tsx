@@ -6,6 +6,7 @@ import ClientFormComponent from './components/ClientFormComponents/ClientFormCom
 import TherapistFirstFormComponent from './components/TherapisFormComponents/TherapistFirstFormComponen';
 import TherapistSecondFormComponent from './components/TherapisFormComponents/TherapistSecondFormComponen';
 import TherapistProfileEditPage from './components/TherapisFormComponents/TherapistProfileEditPage';
+import TherapistProfileViewPage from './components/TherapisFormComponents/TherapistProfileViewPage';
 import SuccessPage from './components/SuccessPage/SuccessPage';
 import AdminDashboardPage from './components/AdminDashboard/AdminDashboardPage';
 
@@ -72,7 +73,8 @@ function App() {
           <Route path="/form-client" element={<ClientFormComponent client_id={user?.id || 1} />} />
           <Route path="/form-therapist-first" element={<TherapistFirstFormComponent client_id={user?.id || 1}/>} />
           <Route path="/form-therapist-second" element={<TherapistSecondFormComponent client_id={user?.id || 1}/>} />
-          <Route path="/therapist/profile" element={<TherapistProfileEditPage />} />
+          <Route path="/therapist/profile" element={<TherapistProfileViewPage />} />
+          <Route path="/therapist/profile/edit" element={<TherapistProfileEditPage />} />
           <Route path="/form-success" element={<SuccessPage />} />
           <Route path="/admin" element={<AdminDashboardPage tgId={user?.id} />} />
         </Routes>

@@ -77,7 +77,9 @@ function TherapistProfileEditPage() {
 
                 const userId = resolveTgId()
                 if (!userId) {
-                    setError('Не удалось определить пользователя Telegram (initDataUnsafe.user.id или tg_id в query string).')
+                    setError(
+                        'Не удалось определить пользователя Telegram (initDataUnsafe.user.id или tg_id в query string).',
+                    )
                     setLoading(false)
                     return
                 }

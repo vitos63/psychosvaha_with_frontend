@@ -343,10 +343,6 @@ function TherapistSecondFormComponent({
             newErrors.max_client_age = "Максимальный возраст не может быть меньше минимального";
         }
 
-        if (!formData.consent) {
-            newErrors.consent = "Дайте согласие на обработку персональных данных"
-        }
-
         if (!formData.contacts_for_client) {
             newErrors.contacts_for_client = "Напишите контакты для клиента, где и как с вами можно связаться?"
         }
@@ -774,19 +770,6 @@ return (
             </fieldset>
           );
         })}
-
-        <div className="form-field">
-            <label>
-                <input
-                    type="checkbox"
-                    name="consent"
-                    checked={formData.consent}
-                    onChange={handleInputChange}
-                />
-                Даю согласие на обработку персональных данных *
-            </label>
-            {errors.consent && <span className="error-message" style={{ display: 'block' }}>{errors.consent}</span>}
-        </div>
 
         <div className="form-field">
             <input
