@@ -80,7 +80,8 @@ class Container(containers.DeclarativeContainer):
         therapist_repo=therapist_repo,
         client_request_repo=client_request_repo,
         queue_repo=queue_repo,
-        date_time_service=date_time_service
+        date_time_service=date_time_service,
+        bot=build_bot()
     )
 
     file_serv = providers.Factory(
@@ -122,7 +123,8 @@ class Container(containers.DeclarativeContainer):
         therapist_tag_repo=therapist_tag_repo,
         client_request_therapist_repo=client_request_therapist_repo,
         tag_repo=tag_repo,
-        client_request_repo=client_request_repo
+        client_request_repo=client_request_repo,
+        bot=build_bot(),
     )
 
     send_notification_to_admin_processor = providers.Factory(
