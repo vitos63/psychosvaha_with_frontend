@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Form.css'
 import { TherapistSecondFormErrors } from 'interfaces/Errors';
-import { updateTherapist } from '../../api/therapistApi';
+import { updateTherapist, getTherapistByTgId } from '../../api/therapistApi';
 import { avatarPathToMediaUrl } from '../../api/api';
 import { checkCity } from '../../api/checkCity';
 import { TAG_CATEGORIES, TAG_CATEGORY_LABELS, type TagCategoryKey } from '../../constants/tags';
@@ -64,6 +64,14 @@ function TherapistSecondFormComponent({
             }
         }
     }, [avatarPreview])
+
+    useEffect(async () => {
+        const therapist = await getTherapistByTgId(client_id)
+        setFormData({
+            first_name: therapist.first_name,
+            last_name: therapist.last_name
+        })
+    })
 
     const buildAvatarUrl = (pathOrBlob: string | null | undefined): string | null => {
         if (!pathOrBlob) {

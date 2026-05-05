@@ -1,6 +1,7 @@
 import { API_BASE_URL } from "./config";
 import { getErrorDetail } from "./http";
-import { TherapistCreateInterface, TherapistUpdateInterface } from "interfaces/TherapistInterface";
+import { TherapistByTgIdResponse, TherapistCreateInterface, TherapistUpdateInterface } from "interfaces/TherapistInterface";
+import { ApiError } from "./api";
 
 export async function createTherapist(therapist: TherapistCreateInterface) {
     try {
@@ -48,4 +49,19 @@ export async function updateTherapist(therapist, tg_id) {
 
     const data = await response.json();
     return data;
+}
+
+export async function getTherapistByTgId(tg_id: number): Promise<TherapistByTgIdResponse> {
+    const response = await fetch(`${API_BASE_URL}/therapist/${tg_id}`);
+    const data: unknown = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+        const detail =
+            typeof data === 'object' && data !== null && 'detail' in data
+                ? String((data as { detail: unknown }).detail)
+                : `HTTP ${response.status}`;
+        throw new ApiError(detail, response.status);
+    }
+
+    return data as TherapistByTgIdResponse;
 }

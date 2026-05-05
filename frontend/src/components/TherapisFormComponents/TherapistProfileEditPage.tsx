@@ -1,6 +1,7 @@
 import { Component, ErrorInfo, ReactNode, useEffect, useState } from 'react'
 
-import { ApiError, getTherapistByTgId } from '../../api/api'
+import { ApiError } from '../../api/api'
+import { getTherapistByTgId } from '../../api/therapistApi'
 import { TherapistByTgIdResponse } from '../../interfaces/TherapistInterface'
 import TherapistSecondFormComponent from './TherapistSecondFormComponen'
 

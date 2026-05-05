@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { ApiError, avatarPathToMediaUrl, getTherapistByTgId } from '../../api/api'
+import { ApiError, avatarPathToMediaUrl } from '../../api/api'
+import { getTherapistByTgId } from '../../api/therapistApi'
 import { TAG_CATEGORIES } from '../../constants/tags'
 import { TherapistByTgIdResponse } from '../../interfaces/TherapistInterface'
 import '../Form.css'
