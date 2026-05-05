@@ -60,9 +60,33 @@ class UpdateTherapist(BaseTherapistDTO):
     avatar_url: str|None = None
 
 
-class GetTherapist(BaseTherapistDTO):
+class GetTherapist(BaseModel):
+    first_name: str
+    last_name: str
+    city: str | None = None
+    phone_number: str | None = None
+    email: str | None = None
+    photo: str | None = None
+    pitch: str | None = None
+    site: str | None = None
+    sex: Sex | None = None
+    age: int | None = Field(default=None, ge=20, le=90)
+    experience: int | None = None
+
+    min_client_age: int | None = Field(default=None, ge=1, le=120)
+    max_client_age: int | None = Field(default=None, ge=2, le=120)
+    online: bool = False
+    currency_amount: dict | None = None
+    contacts_for_client: str | None = None
+    available_to_call: bool = False
+    status: TherapistStatuses = TherapistStatuses.HAVE_QUESTIONARY
+
+    tag_ids: list[int] = []
+
     avatar_path: str|None = None
     avatar_url: str|None = None
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class TherapistForAdmin(BaseModel):

@@ -65,13 +65,19 @@ function TherapistSecondFormComponent({
         }
     }, [avatarPreview])
 
-    useEffect(async () => {
+    useEffect(() => {
+    const fetchData = async () => {
         const therapist = await getTherapistByTgId(client_id)
-        setFormData({
+
+        setFormData(prev => ({
+            ...prev,
             first_name: therapist.first_name,
             last_name: therapist.last_name
-        })
-    })
+        }))
+    }
+
+    fetchData()
+}, [client_id])
 
     const buildAvatarUrl = (pathOrBlob: string | null | undefined): string | null => {
         if (!pathOrBlob) {
