@@ -3,15 +3,9 @@ from __future__ import annotations
 import json
 import logging
 
-from redis.asyncio import Redis
+from database.engine import redis
 
 logger = logging.getLogger(__name__)
-
-redis = Redis(
-    host="redis",
-    port=6379,
-    decode_responses=True,
-)
 
 
 async def set_start_message_id(chat_id: int, user_id: int, message_id: int) -> None:
