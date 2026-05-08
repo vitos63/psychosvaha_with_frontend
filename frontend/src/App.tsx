@@ -8,6 +8,7 @@ import TherapistSecondFormComponent from './components/TherapisFormComponents/Th
 import TherapistProfileEditPage from './components/TherapisFormComponents/TherapistProfileEditPage';
 import SuccessPage from './components/SuccessPage/SuccessPage';
 import AdminDashboardPage from './components/AdminDashboard/AdminDashboardPage';
+import SelectedTherapistsPage from './components/SelectedTherapists/SelectedTherapistsPage';
 
 
 type TgUser = NonNullable<NonNullable<TelegramWebApp['initDataUnsafe']>['user']>;
@@ -75,6 +76,7 @@ function App() {
           <Route path="/therapist/profile" element={<TherapistProfileEditPage />} />
           <Route path="/form-success" element={<SuccessPage />} />
           <Route path="/admin" element={<AdminDashboardPage tgId={user?.id} />} />
+          <Route path="/selected_therapists" element={<SelectedTherapistsPage />} />
         </Routes>
       </Router>
     </div>
