@@ -95,11 +95,19 @@ class ClientRequestRepo:
         client_request.is_approved = True
         await self._session.flush()
 
+    async def get_therapists_by_id_request(self, request_id: int) -> list[Therapist]:
+        stmt = (
+            select(Therapist)
+            .join(
+                ClientRequestTherapist,
+                Therapist.tg_id == ClientRequestTherapist.therapist_id,
+            )
+            .where(ClientRequestTherapist.request_id == request_id)
+        )
 
-    async def get_therapists_by_id_request(self, request_id: int):
-        stmt = (select(Therapist)
-                .join(ClientRequestTherapist, Therapist.id == ClientRequestTherapist.therapist_id)
-                .where(ClientRequest.id==request_id))
+        result = await self._session.scalars(stmt)
+        return list(result.all())
+
 
         therapists = await self._session.scalars(stmt)
         return list(therapists.all())

@@ -4,7 +4,6 @@ from fastapi import APIRouter, Depends
 
 from bot.instance import bot
 from bot.services.start_keyboard import remove_start_keyboard_for_user
-from database.models import Therapist
 from server.dependencies import client_request_service
 from service.client_request import ClientRequestService
 
