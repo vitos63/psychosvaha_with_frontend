@@ -20,6 +20,7 @@ dependencies = [
     "httpx>=0.28.1",
     "psycopg[binary]>=3.3.3",
     "redis>=7.4.0",
+    "aiogram>=3.27.0",
 ]
 
 [tool.ruff]

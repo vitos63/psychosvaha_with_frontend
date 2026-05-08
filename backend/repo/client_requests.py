@@ -1,7 +1,9 @@
 from sqlalchemy import literal_column, select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database.models import ClientRequest, ClientRequestTag, Tag
+
+from database.models import ClientRequest, ClientRequestTag, Tag, Therapist
+from database.models.client_requests_therapists import ClientRequestTherapist
 from dto.client_request import CreateClientRequest
 
 
@@ -92,3 +94,12 @@ class ClientRequestRepo:
         client_request = result.scalar_one()
         client_request.is_approved = True
         await self._session.flush()
+
+
+    async def get_therapists_by_id_request(self, request_id: int):
+        stmt = (select(Therapist)
+                .join(ClientRequestTherapist, Therapist.id == ClientRequestTherapist.therapist_id)
+                .where(ClientRequest.id==request_id))
+
+        therapists = await self._session.scalars(stmt)
+        return list(therapists.all())

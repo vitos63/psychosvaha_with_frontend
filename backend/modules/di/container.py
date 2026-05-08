@@ -122,7 +122,8 @@ class Container(containers.DeclarativeContainer):
         therapist_tag_repo=therapist_tag_repo,
         client_request_therapist_repo=client_request_therapist_repo,
         tag_repo=tag_repo,
-        client_request_repo=client_request_repo
+        client_request_repo=client_request_repo,
+        bot=build_bot(),
     )
 
     send_notification_to_admin_processor = providers.Factory(

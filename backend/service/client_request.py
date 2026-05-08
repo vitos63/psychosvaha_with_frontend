@@ -7,6 +7,7 @@ from dto.client_request import CreateClientRequest
 from repo.client_requests import ClientRequestRepo
 from repo.queue import QueueRepo
 from service.date_time import DateTimeService
+from dto.therapist import UpdateTherapist
 
 
 class ClientRequestService:
@@ -45,3 +46,7 @@ class ClientRequestService:
     async def get_client_request_by_tg_id(self, tg_id: int) -> ClientRequest | None:
         client_request = await self._client_request_repo.select_by_tg_id(tg_id=tg_id)
         return client_request
+
+    async def get_therapists_by_tg_id(self, tg_id: int) -> list[UpdateTherapist]:
+        request_client = await self._client_request_repo.select_by_tg_id(tg_id=tg_id)
+        return await self._client_request_repo.get_therapists_by_id_request(request_id=request_client.id)
