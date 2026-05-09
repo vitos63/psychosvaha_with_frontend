@@ -58,6 +58,7 @@ function SelectedTherapistsPage() {
   }
 
   const avatarSrc = currentTherapist.avatar_path || currentTherapist.photo;
+  const isFirstTherapist = currentIndex === 0;
   const isLastTherapist = currentIndex === therapists.length - 1;
 
   return (
@@ -83,14 +84,25 @@ function SelectedTherapistsPage() {
         {currentTherapist.site && <p><strong>Сайт:</strong> <a href={currentTherapist.site} target="_blank" rel="noreferrer">{currentTherapist.site}</a></p>}
       </article>
 
-      <button
-        type="button"
-        className="next-button"
-        onClick={() => setCurrentIndex((prev) => prev + 1)}
-        disabled={isLastTherapist}
-      >
-        Следующий
-      </button>
+      <div className="therapist-navigation">
+        <button
+          type="button"
+          className="nav-button"
+          onClick={() => setCurrentIndex((prev) => Math.max(prev - 1, 0))}
+          disabled={isFirstTherapist}
+        >
+          Предыдущий
+        </button>
+
+        <button
+          type="button"
+          className="nav-button"
+          onClick={() => setCurrentIndex((prev) => Math.min(prev + 1, therapists.length - 1))}
+          disabled={isLastTherapist}
+        >
+          Следующий
+        </button>
+      </div>
     </div>
   );
 }

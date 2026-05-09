@@ -38,18 +38,25 @@
   font-size: 20px;
 }
 
-.next-button {
-  width: 100%;
+.therapist-navigation {
+  display: flex;
+  gap: 12px;
+}
+
+.nav-button {
+  flex: 1;
   min-height: 48px;
   border: none;
   border-radius: 12px;
   background: #3679f5;
-  color: white;
+  color: #ffffff;
   font-size: 17px;
   font-weight: 600;
+  cursor: pointer;
 }
 
-.next-button:disabled {
+.nav-button:disabled {
   background: #b8c2d9;
   color: #eef2fa;
+  cursor: not-allowed;
 }
