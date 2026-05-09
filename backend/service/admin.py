@@ -70,6 +70,7 @@ class AdminService:
                 task=task,
                 start_at=self._date_time_service.get_current_time(),
             )
+            await self._session.commit()
 
         except Exception:
             await self._session.rollback()

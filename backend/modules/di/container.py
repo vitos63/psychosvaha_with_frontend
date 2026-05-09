@@ -25,6 +25,7 @@ from service.file_service import FileService
 
 class Container(containers.DeclarativeContainer):
     session = providers.Dependency(instance_of=AsyncSession)
+    bot = providers.Singleton(build_bot)
 
     # Repository
     client_request_repo = providers.Factory(
@@ -123,14 +124,14 @@ class Container(containers.DeclarativeContainer):
         client_request_therapist_repo=client_request_therapist_repo,
         tag_repo=tag_repo,
         client_request_repo=client_request_repo,
-        bot=build_bot(),
-    )
+        bot=bot,
+  )
 
     send_notification_to_admin_processor = providers.Factory(
         SendNotificationTOAdminProcessor,
         session=session,
         admin_repo=admin_repo,
         admin_service=admin_service,
-        bot=build_bot(),
+        bot=bot,
     )
 
