@@ -48,5 +48,7 @@ class ClientRequestService:
         return client_request
 
     async def get_therapists_by_tg_id(self, tg_id: int) -> list[UpdateTherapist]:
-        request_client = await self._client_request_repo.select_by_tg_id(tg_id=tg_id)
+        request_client = await self._client_request_repo.select_latest_with_recommendations_by_tg_id(
+            tg_id=tg_id,
+        )
         return await self._client_request_repo.get_therapists_by_id_request(request_id=request_client.id)
