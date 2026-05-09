@@ -94,7 +94,9 @@ class Container(containers.DeclarativeContainer):
         session=session,
         therapist_repo=therapist_repo,
         therapist_tags_repo=therapist_tag_repo,
-        file_serv=file_serv
+        file_serv=file_serv,
+        queue_repo=queue_repo,
+        date_time_service=date_time_service,
     )
 
     client_request_service = providers.Factory(
