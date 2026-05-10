@@ -26,6 +26,13 @@ class AdminRepo:
         admin = await self._session.execute(stmt)
         return admin.scalar_one_or_none()
 
+    async def select_by_username(self, username: str) -> Admin | None:
+        stmt = (select(Admin).
+                where(Admin.username == username)
+                )
+        admin = await self._session.execute(stmt)
+        return admin.scalar_one_or_none()
+
     async def get_admin_tg_id(self) -> int | None:
         stmt = select(Admin.tg_id)
         admin = await self._session.execute(stmt)

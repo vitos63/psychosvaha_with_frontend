@@ -17,6 +17,7 @@ from server.admin_panel.models import (
     ClientRequestsAdmin,
 )
 from database.engine import engine
+from server.admin_panel.auth import AdminAuth
 
 
 origins = [
@@ -26,7 +27,7 @@ origins = [
 
 app = FastAPI()
 
-admin = Admin(app, engine=engine)
+admin = Admin(app, engine=engine, base_url="api/v1/admin", authentication_backend=AdminAuth())
 
 app.add_middleware(
     CORSMiddleware,
