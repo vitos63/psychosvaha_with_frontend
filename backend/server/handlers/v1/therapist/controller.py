@@ -8,6 +8,7 @@ from service.therapist import TherapistService
 
 from .create import CreateTherapistRequest, CreateTherapistResponse
 from .update import UpdateTherapistResponse, UpdateTherapistRequest
+from .get import GetTherapistResponse
 
 router = APIRouter(prefix="/v1", tags=["therapist"])
 
@@ -22,7 +23,7 @@ async def create(
     return CreateTherapistResponse.model_validate(therapist)
 
 
-@router.get('/therapist/{tg_id}', response_model=UpdateTherapistResponse)
+@router.get('/therapist/{tg_id}', response_model=GetTherapistResponse)
 async def get_user(tg_id: int,
                    request: Request,
                    service: Annotated[TherapistService, Depends(therapist_service)],
@@ -30,7 +31,7 @@ async def get_user(tg_id: int,
     therapist = await service.get_therapist_by_tg_id(tg_id)
     if therapist is None:
         raise HTTPException(status_code=404, detail="Therapist not found")
-    response = UpdateTherapistResponse.model_validate(therapist)
+    response = GetTherapistResponse.model_validate(therapist)
     response.tag_ids = await service.get_tag_ids_by_tg_id(tg_id)
     response.avatar_url = service.get_avatar_path(therapist, request.base_url)
 

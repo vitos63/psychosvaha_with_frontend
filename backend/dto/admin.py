@@ -5,7 +5,7 @@ from dto.therapist import TherapistForAdmin
 
 class Admin(BaseModel):
     tg_id: int
-    login: str
+    username: str
     password: str
 
 

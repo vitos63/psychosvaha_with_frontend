@@ -2,7 +2,7 @@
 from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
 from aiogram import Bot
-from bot.messages import NOTIFICATION_FOR_CLIENT_MESSAGE
+
 from cron.queue.tasks.base_processor import BaseProcessor
 from domain.errors import ClientRequestDoesNotExistError
 from repo.client_requests_therapists import ClientRequestTherapistRepo
@@ -12,6 +12,7 @@ from repo.therapist_tags import TherapistTagRepo
 from repo.tags import TagRepo
 from domain.client_therapist import ClientTherapistDomain
 from .task import AddTherapistsToRequestTask
+from bot.messages import NOTIFICATION_FOR_THERAPIST_WERE_RECOMENDED, NOTIFICATION_FOR_CLIENT_MESSAGE
 from bot.keyboards.client_keyboard import client_keyboard
 
 
@@ -33,6 +34,10 @@ class AddTherapistsToRequestProcessor(BaseProcessor):
         self._tag_repo = tag_repo
         self._therapist_repo = therapist_repo
         self._client_request_repo = client_request_repo
+        self._bot = bot
+    
+    async def __notify_therpist(self, therapist_tg_id: int):
+        await self._bot.send_message(chat_id=therapist_tg_id, text=NOTIFICATION_FOR_THERAPIST_WERE_RECOMENDED)
 
 
     async def process_task(self, task: AddTherapistsToRequestTask):
@@ -53,6 +58,7 @@ class AddTherapistsToRequestProcessor(BaseProcessor):
                                                                                    therapist_tg_id=therapist.tg_id,
                                                                                    percentage_of_compliance=percentage_of_compliance)
                 await self._therapist_repo.increase_count_of_recomendations(therapist_tg_id=therapist.tg_id)
+                await self.__notify_therpist(therapist_tg_id=therapist.tg_id)
             await self._session.commit()
             if best_therapists:
                 await self.send_message_client(tg_id=client_request.client_id)

@@ -33,7 +33,6 @@ export interface TherapistByTgIdResponse {
     city?: string | null
     phone_number?: string | null
     email?: string | null
-    photo?: string | null
     pitch?: string | null
     site?: string | null
     sex: string

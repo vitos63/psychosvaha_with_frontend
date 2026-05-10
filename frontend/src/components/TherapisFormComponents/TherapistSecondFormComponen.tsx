@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Form.css'
 import { TherapistSecondFormErrors } from 'interfaces/Errors';
-import { updateTherapist } from '../../api/therapistApi';
-import { API_BASE_URL } from '../../api/api';
+import { updateTherapist, getTherapistByTgId } from '../../api/therapistApi';
+import { avatarPathToMediaUrl } from '../../api/api';
 import { checkCity } from '../../api/checkCity';
 import { TAG_CATEGORIES, TAG_CATEGORY_LABELS, type TagCategoryKey } from '../../constants/tags';
 import { TherapistByTgIdResponse } from '../../interfaces/TherapistInterface';
@@ -65,27 +65,28 @@ function TherapistSecondFormComponent({
         }
     }, [avatarPreview])
 
-    const buildAvatarUrl = (photoPath: string | null | undefined): string | null => {
-        if (!photoPath) {
+    useEffect(() => {
+    const fetchData = async () => {
+        const therapist = await getTherapistByTgId(client_id)
+
+        setFormData(prev => ({
+            ...prev,
+            first_name: therapist.first_name,
+            last_name: therapist.last_name
+        }))
+    }
+
+    fetchData()
+}, [client_id])
+
+    const buildAvatarUrl = (pathOrBlob: string | null | undefined): string | null => {
+        if (!pathOrBlob) {
             return null
         }
-
-        if (photoPath.startsWith('blob:')) {
-            return photoPath
+        if (pathOrBlob.startsWith('blob:')) {
+            return pathOrBlob
         }
-
-        if (/^https?:\/\//i.test(photoPath)) {
-            try {
-                const url = new URL(photoPath)
-                return `${window.location.origin}${url.pathname}`
-            } catch {
-                return photoPath
-            }
-        }
-
-        const cleanPath = photoPath.replace(/^\/+/, '').replace(/^media\//, '')
-
-        return `${window.location.origin}/media/${cleanPath}`
+        return avatarPathToMediaUrl(pathOrBlob)
     }
 
     useEffect(() => {
@@ -128,10 +129,7 @@ function TherapistSecondFormComponent({
             { code: 'usd', name: 'Доллары', selected: 'USD' in currencyAmount, amount: String(currencyAmount.USD ?? '') },
             { code: 'eur', name: 'Евро', selected: 'EUR' in currencyAmount, amount: String(currencyAmount.EUR ?? '') },
         ])
-        console.log('avatar_path:', initialData.avatar_path)
-        console.log('avatar_url:', initialData.avatar_url)
-        console.log('avatarPreview:', initialData.avatar_url ?? buildAvatarUrl(initialData.avatar_path))
-        setAvatarPreview(buildAvatarUrl(initialData.avatar_path ?? initialData.avatar_url))
+        setAvatarPreview(buildAvatarUrl(initialData.avatar_path))
     }, [initialData])
 
 
@@ -343,10 +341,6 @@ function TherapistSecondFormComponent({
             newErrors.max_client_age = "Максимальный возраст не может быть меньше минимального";
         }
 
-        if (!formData.consent) {
-            newErrors.consent = "Дайте согласие на обработку персональных данных"
-        }
-
         if (!formData.contacts_for_client) {
             newErrors.contacts_for_client = "Напишите контакты для клиента, где и как с вами можно связаться?"
         }
@@ -413,7 +407,8 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                     }
                     return acc;
                 }, {} as Record<string, number>),
-        tag_ids: Array.from(tagIds)
+        tag_ids: Array.from(tagIds),
+        file: avatarFile
     };
     console.log('Данные для отправки:', submissionData);
     try {
@@ -774,19 +769,6 @@ return (
             </fieldset>
           );
         })}
-
-        <div className="form-field">
-            <label>
-                <input
-                    type="checkbox"
-                    name="consent"
-                    checked={formData.consent}
-                    onChange={handleInputChange}
-                />
-                Даю согласие на обработку персональных данных *
-            </label>
-            {errors.consent && <span className="error-message" style={{ display: 'block' }}>{errors.consent}</span>}
-        </div>
 
         <div className="form-field">
             <input
