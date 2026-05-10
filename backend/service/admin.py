@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from aiogram import Bot
 
+from bot.storage.start_messages import set_start_message_id
 from service.date_time import DateTimeService
 from database.models import Admin
 from dto.admin import Admin as AdminDTO, MainInfoForAdmin
@@ -91,11 +92,16 @@ class AdminService:
         try:
             await self._therapist_repo.approve_therapist(therapist.tg_id)
             await self._session.commit()
-            await self._bot.send_message(
+            
+            message = await self._bot.send_message(
                 chat_id=therapist.tg_id,
                 text=NOTIFICATION_FOR_THERAPIST_WERE_APPROVED,
                 reply_markup=therapist_second_form_keyboard
             )
+
+            await set_start_message_id(chat_id=therapist.tg_id,
+                                       user_id=therapist.tg_id,
+                                       message_id=message.message_id)
         except Exception:
             await self._session.rollback()
             raise
