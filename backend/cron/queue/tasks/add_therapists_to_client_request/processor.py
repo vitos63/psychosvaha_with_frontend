@@ -13,7 +13,7 @@ from repo.tags import TagRepo
 from domain.client_therapist import ClientTherapistDomain
 from .task import AddTherapistsToRequestTask
 from bot.messages import NOTIFICATION_FOR_THERAPIST_WERE_RECOMENDED, NOTIFICATION_FOR_CLIENT_MESSAGE, NOTIFICATION_FOR_CLIENT_MESSAGE_NO_THERAPISTS
-from bot.keyboards import client_keyboard
+from bot.keyboards.client_keyboard import client_keyboard
 
 class AddTherapistsToRequestProcessor(BaseProcessor):
     def __init__(
