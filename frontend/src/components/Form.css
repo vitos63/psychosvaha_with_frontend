@@ -407,3 +407,166 @@ input[type="radio"] {
 .avatar-upload-btn:hover {
     background: #f5f2ff;
 }
+
+/* Currency chips on the profile view */
+.currency-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.currency-chip {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #f8f7ff 0%, #ffffff 100%);
+    border: 1px solid #e9ecef;
+    border-radius: 14px;
+    box-shadow: 0 2px 6px rgba(108, 92, 231, 0.06);
+    min-width: 130px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.currency-chip:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(108, 92, 231, 0.15);
+    border-color: #d6cffa;
+}
+
+.currency-chip-symbol {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+    flex-shrink: 0;
+}
+
+.currency-chip-body {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.currency-chip-amount {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2d3436;
+}
+
+.currency-chip-name {
+    font-size: 12px;
+    color: #8a8f99;
+    margin-top: 2px;
+}
+
+/* Tag categories on the profile view */
+.tag-categories {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.tag-category {
+    background: #ffffff;
+    border: 1px solid #eef0f3;
+    border-radius: 12px;
+    padding: 12px 14px;
+}
+
+.tag-category-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #6c5ce7;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.tag-category-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    background: #f3f1ff;
+    border: 1px solid #e1dcff;
+    border-radius: 999px;
+    font-size: 13px;
+    color: #4b3fb3;
+    font-weight: 500;
+}
+
+/* Phone input (react-international-phone) */
+.phone-label {
+    display: block;
+    font-size: 13px;
+    color: #636e72;
+    margin-bottom: 8px;
+    padding: 0;
+    cursor: default;
+}
+
+.react-international-phone-input-container {
+    width: 100%;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    background-color: #fff;
+    overflow: hidden;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.react-international-phone-input-container:focus-within {
+    border-color: #6c5ce7;
+    box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+}
+
+.react-international-phone-country-selector-button.phone-country-button {
+    border: none;
+    background: transparent;
+    padding: 0 10px;
+}
+
+.react-international-phone-input.phone-input {
+    flex: 1;
+    width: 100%;
+    border: none !important;
+    padding: 14px 16px;
+    font-size: 15px;
+    font-family: inherit;
+    color: #2d3436;
+    background: transparent;
+    box-shadow: none !important;
+    outline: none;
+}
+
+.react-international-phone-input.phone-input.error {
+    background-color: rgba(255, 71, 87, 0.05);
+}
+
+.react-international-phone-input-container:has(.phone-input.error) {
+    border-color: #ff4757;
+}
+
+@media (max-width: 480px) {
+    .currency-chip {
+        min-width: 110px;
+        padding: 10px 12px;
+    }
+
+    .currency-chip-symbol {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+    }
+}
