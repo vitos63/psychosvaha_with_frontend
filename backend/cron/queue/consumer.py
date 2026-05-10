@@ -59,8 +59,7 @@ class QueueConsumer:
 
     async def _handle_poll(self):
         async with self._session_factory() as session:
-            container = self._container_factory()
-            container.session.override(session)
+            container = self._container_factory(session=session)
             queue_repo = container.queue_repo()
             date_time_service = container.date_time_service()
 
@@ -89,8 +88,7 @@ class QueueConsumer:
         logger.debug(f"Processing task: {task_id=} {task_type=}")
 
         async with self._session_factory() as session:
-            container = self._container_factory()
-            container.session.override(session)
+            container = self._container_factory(session=session)
             
             task_cls = self._type_to_task_cls.get(task_type)
             if not task_cls:

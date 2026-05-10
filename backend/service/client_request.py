@@ -2,12 +2,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from cron.queue.tasks.add_tags_to_client_request.task import AddTagsToRequestTask
 from cron.queue.tasks.send_notification_to_admin.task import SendNotificationTOAdminTask
-from database.models import ClientRequest
+from database.models import ClientRequest, Therapist
 from dto.client_request import CreateClientRequest
 from repo.client_requests import ClientRequestRepo
 from repo.queue import QueueRepo
 from service.date_time import DateTimeService
-from dto.therapist import UpdateTherapist
 
 
 class ClientRequestService:
@@ -47,7 +46,7 @@ class ClientRequestService:
         client_request = await self._client_request_repo.select_by_tg_id(tg_id=tg_id)
         return client_request
 
-    async def get_therapists_by_tg_id(self, tg_id: int) -> list[UpdateTherapist]:
+    async def get_therapists_by_tg_id(self, tg_id: int) -> list[Therapist]:
         request_client = await self._client_request_repo.select_latest_with_recommendations_by_tg_id(
             tg_id=tg_id,
         )

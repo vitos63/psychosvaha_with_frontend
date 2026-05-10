@@ -88,6 +88,26 @@ class GetTherapist(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+class GetTherapistForClient(BaseModel):
+    first_name: str
+    last_name: str
+    city: str | None = None
+    email: str | None = None
+    photo: str | None = None
+    pitch: str | None = None
+    site: str | None = None
+    sex: Sex | None = None
+    age: int | None = Field(default=None, ge=20, le=90)
+    experience: int | None = None
+
+    online: bool = False
+    currency_amount: dict | None = None
+    contacts_for_client: str | None = None
+
+    avatar_path: str|None = None
+    avatar_url: str|None = None
+    
+    model_config = ConfigDict(from_attributes=True)
 
 class TherapistForAdmin(BaseModel):
     tg_id: int
