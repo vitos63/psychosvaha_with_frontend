@@ -11,6 +11,8 @@ import { TAG_CATEGORIES, TAG_CATEGORY_LABELS, type TagCategoryKey } from '../../
 import { TherapistByTgIdResponse } from '../../interfaces/TherapistInterface';
 import { notifyTelegramWebAppFormSubmitted } from '../../utils/telegramWebApp';
 
+const MAX_AMOUNT_LENGTH = 7;
+
 function TherapistSecondFormComponent({
     client_id,
     initialData = null,
@@ -152,7 +154,7 @@ function TherapistSecondFormComponent({
     };
 
     const updateAmount = (code: string, value: string) => {
-        const numericValue = value.replace(/\D/g, '');
+        const numericValue = value.replace(/\D/g, '').slice(0, MAX_AMOUNT_LENGTH);
         setCurrencies(currency_amount.map(currency =>
             currency.code === code
                 ? { ...currency, amount: numericValue }
@@ -555,10 +557,12 @@ return (
                         <div className="currency-amount">
                             <input
                                 type="text"
+                                inputMode="numeric"
+                                pattern="[0-9]*"
+                                maxLength={MAX_AMOUNT_LENGTH}
                                 placeholder={`Сумма в ${currency.name.toLowerCase()} *`}
                                 value={currency.amount}
                                 onChange={(e) => updateAmount(currency.code, e.target.value)}
-                                onInput={(e) => (e.target as HTMLInputElement).value = (e.target as HTMLInputElement).value.replace(/\D/g, '')}
                                 className={errors[`currency_${currency.code}`] ? 'error' : ''}
                             />
                             {errors[`currency_${currency.code}`] && (

@@ -6,6 +6,8 @@ import { ClientFormErrors } from 'interfaces/Errors';
 import { checkCity } from '../../api/checkCity';
 import { notifyTelegramWebAppFormSubmitted } from '../../utils/telegramWebApp';
 
+const MAX_AMOUNT_LENGTH = 7;
+
 function ClientFormComponent({ client_id }) {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
@@ -93,7 +95,7 @@ function ClientFormComponent({ client_id }) {
     };
 
     const updateAmount = (code, value) => {
-        const numericValue = value.replace(/\D/g, '');
+        const numericValue = value.replace(/\D/g, '').slice(0, MAX_AMOUNT_LENGTH);
         setCurrencies(currencies.map(currency =>
             currency.code === code
                 ? { ...currency, amount: numericValue }
@@ -356,10 +358,12 @@ function ClientFormComponent({ client_id }) {
                             <div className="currency-amount">
                                 <input
                                     type="text"
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
+                                    maxLength={MAX_AMOUNT_LENGTH}
                                     placeholder={`Сумма в ${currency.name.toLowerCase()} *`}
                                     value={currency.amount}
                                     onChange={(e) => updateAmount(currency.code, e.target.value)}
-                                    onInput={(e) => (e.target as HTMLInputElement).value = (e.target as HTMLInputElement).value.replace(/\D/g, '')}
                                     className={errors[`currency_${currency.code}`] ? 'error' : ''}
                                 />
                                 {errors[`currency_${currency.code}`] && (
