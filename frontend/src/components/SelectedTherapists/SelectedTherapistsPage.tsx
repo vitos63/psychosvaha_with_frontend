@@ -1,7 +1,31 @@
 import { useEffect, useMemo, useState } from 'react';
+
+import { avatarPathToMediaUrl } from '../../api/api';
 import { getRecommendedTherapists } from '../../api/clientRequestApi';
 import { Therapist } from '../../interfaces/TherapistInterface';
+import '../Form.css';
 import './SelectedTherapistsPage.css';
+
+const CURRENCY_META: Record<string, { name: string; symbol: string; locale: string }> = {
+  RUB: { name: 'Рубли', symbol: '₽', locale: 'ru-RU' },
+  USD: { name: 'Доллары', symbol: '$', locale: 'en-US' },
+  EUR: { name: 'Евро', symbol: '€', locale: 'de-DE' },
+};
+
+function formatAmount(amount: number, locale: string): string {
+  return new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(amount);
+}
+
+function buildAvatarSrc(therapist: Therapist | undefined): string | null {
+  if (!therapist) {
+    return null;
+  }
+  const fromPath = avatarPathToMediaUrl(therapist.avatar_path);
+  if (fromPath) {
+    return fromPath;
+  }
+  return therapist.photo?.trim() ? therapist.photo : null;
+}
 
 function SelectedTherapistsPage() {
   const [therapists, setTherapists] = useState<Therapist[]>([]);
@@ -37,71 +61,181 @@ function SelectedTherapistsPage() {
   }, []);
 
   const currentTherapist = therapists[currentIndex];
-  const format = useMemo(() => {
+
+  const avatarSrc = useMemo(() => buildAvatarSrc(currentTherapist), [currentTherapist]);
+
+  const formatLabel = useMemo(() => {
     if (currentTherapist?.online === undefined || currentTherapist?.online === null) {
       return null;
     }
-
     return currentTherapist.online ? 'Онлайн' : 'Очно';
   }, [currentTherapist]);
 
+  const currencyChips = useMemo(() => {
+    if (!currentTherapist?.currency_amount || typeof currentTherapist.currency_amount !== 'object') {
+      return [] as Array<{ code: string; name: string; symbol: string; formatted: string }>;
+    }
+    const m = currentTherapist.currency_amount as Record<string, number>;
+    const order: Array<keyof typeof CURRENCY_META> = ['RUB', 'USD', 'EUR'];
+    return order
+      .filter((code) => code in m && (m[code] ?? 0) > 0)
+      .map((code) => {
+        const meta = CURRENCY_META[code];
+        return {
+          code,
+          name: meta.name,
+          symbol: meta.symbol,
+          formatted: formatAmount(m[code], meta.locale),
+        };
+      });
+  }, [currentTherapist]);
+
   if (loading) {
-    return <div className="selected-therapists-page">Загружаем терапевтов...</div>;
+    return (
+      <div className="selected-therapists-page">
+        <div className="client-form selected-therapist-card">
+          <h3 style={{ marginTop: 0 }}>Загружаем терапевтов...</h3>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="selected-therapists-page">{error}</div>;
+    return (
+      <div className="selected-therapists-page">
+        <div className="client-form selected-therapist-card">
+          <h3 style={{ marginTop: 0 }}>{error}</h3>
+        </div>
+      </div>
+    );
   }
 
   if (!therapists.length || !currentTherapist) {
-    return <div className="selected-therapists-page">Пока нет рекомендованных терапевтов</div>;
+    return (
+      <div className="selected-therapists-page">
+        <div className="client-form selected-therapist-card">
+          <h3 style={{ marginTop: 0 }}>Пока нет рекомендованных терапевтов</h3>
+        </div>
+      </div>
+    );
   }
 
-  const avatarSrc = currentTherapist.avatar_path || currentTherapist.photo;
   const isFirstTherapist = currentIndex === 0;
   const isLastTherapist = currentIndex === therapists.length - 1;
+  const fullName = `${currentTherapist.first_name ?? ''} ${currentTherapist.last_name ?? ''}`.trim();
+
+  const row = (label: string, value: string | null | undefined) => (
+    <div className="profile-view-row" style={{ marginBottom: 14 }}>
+      <div style={{ fontSize: 13, color: '#636e72', marginBottom: 4 }}>{label}</div>
+      <div style={{ fontSize: 15, color: '#2d3436', whiteSpace: 'pre-wrap' }}>
+        {value && String(value).trim() ? value : '—'}
+      </div>
+    </div>
+  );
 
   return (
     <div className="selected-therapists-page">
-      <div className="therapist-counter">{`${currentIndex + 1}/${therapists.length}`}</div>
+      <div className="client-form selected-therapist-card">
+        <div className="selected-therapist-counter">
+          {currentIndex + 1} / {therapists.length}
+        </div>
 
-      <article className="therapist-card">
         {avatarSrc ? (
-          <img className="therapist-photo" src={avatarSrc} alt="Фото терапевта" />
+          <div style={{ marginBottom: 16, textAlign: 'center' }}>
+            <img
+              src={avatarSrc}
+              alt=""
+              style={{
+                width: 120,
+                height: 120,
+                borderRadius: '50%',
+                objectFit: 'cover',
+                border: '3px solid #e9ecef',
+              }}
+            />
+          </div>
         ) : (
-          <div className="therapist-photo-placeholder">Фото отсутствует</div>
+          <div className="selected-therapist-photo-placeholder">Фото отсутствует</div>
         )}
 
-        <h2 className="therapist-name">{`${currentTherapist.first_name ?? ''} ${currentTherapist.last_name ?? ''}`.trim()}</h2>
+        <h2 className="selected-therapist-name">{fullName || 'Без имени'}</h2>
 
-        {currentTherapist.city && <p><strong>Город:</strong> {currentTherapist.city}</p>}
-        {currentTherapist.age !== undefined && currentTherapist.age !== null && <p><strong>Возраст:</strong> {currentTherapist.age}</p>}
-        {currentTherapist.experience !== undefined && currentTherapist.experience !== null && <p><strong>Опыт:</strong> {currentTherapist.experience}</p>}
-        {format && <p><strong>Формат:</strong> {format}</p>}
-        {currentTherapist.pitch && <p><strong>О себе:</strong> {currentTherapist.pitch}</p>}
-        {currentTherapist.currency_amount && <p><strong>Стоимость:</strong> {JSON.stringify(currentTherapist.currency_amount)}</p>}
-        {currentTherapist.contacts_for_client && <p><strong>Контакты:</strong> {currentTherapist.contacts_for_client}</p>}
-        {currentTherapist.site && <p><strong>Сайт:</strong> <a href={currentTherapist.site} target="_blank" rel="noreferrer">{currentTherapist.site}</a></p>}
-      </article>
+        {formatLabel ? (
+          <div className="selected-therapist-format-row">
+            <span className="selected-therapist-format-chip">{formatLabel}</span>
+          </div>
+        ) : null}
 
-      <div className="therapist-navigation">
-        <button
-          type="button"
-          className="nav-button"
-          onClick={() => setCurrentIndex((prev) => Math.max(prev - 1, 0))}
-          disabled={isFirstTherapist}
-        >
-          Предыдущий
-        </button>
+        {row('Город', currentTherapist.city ?? undefined)}
+        {row(
+          'Возраст',
+          currentTherapist.age !== undefined && currentTherapist.age !== null
+            ? String(currentTherapist.age)
+            : undefined,
+        )}
+        {row(
+          'Стаж (лет)',
+          currentTherapist.experience !== undefined && currentTherapist.experience !== null
+            ? String(currentTherapist.experience)
+            : undefined,
+        )}
+        {row('О себе', currentTherapist.pitch ?? undefined)}
+        {row('Контакты для связи', currentTherapist.contacts_for_client ?? undefined)}
 
-        <button
-          type="button"
-          className="nav-button"
-          onClick={() => setCurrentIndex((prev) => Math.min(prev + 1, therapists.length - 1))}
-          disabled={isLastTherapist}
-        >
-          Следующий
-        </button>
+        <div className="profile-view-row" style={{ marginBottom: 14 }}>
+          <div style={{ fontSize: 13, color: '#636e72', marginBottom: 4 }}>Сайт</div>
+          {currentTherapist.site ? (
+            <a
+              href={currentTherapist.site}
+              target="_blank"
+              rel="noreferrer"
+              className="selected-therapist-site-link"
+            >
+              {currentTherapist.site}
+            </a>
+          ) : (
+            <div style={{ fontSize: 15, color: '#2d3436' }}>—</div>
+          )}
+        </div>
+
+        <div className="profile-view-row" style={{ marginBottom: 14 }}>
+          <div style={{ fontSize: 13, color: '#636e72', marginBottom: 8 }}>Стоимость сессии</div>
+          {currencyChips.length > 0 ? (
+            <div className="currency-chips">
+              {currencyChips.map((c) => (
+                <div key={c.code} className="currency-chip">
+                  <span className="currency-chip-symbol">{c.symbol}</span>
+                  <div className="currency-chip-body">
+                    <div className="currency-chip-amount">{c.formatted}</div>
+                    <div className="currency-chip-name">{c.name}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div style={{ fontSize: 15, color: '#2d3436' }}>—</div>
+          )}
+        </div>
+
+        <div className="selected-therapist-navigation">
+          <button
+            type="button"
+            className="selected-therapist-nav-button secondary"
+            onClick={() => setCurrentIndex((prev) => Math.max(prev - 1, 0))}
+            disabled={isFirstTherapist}
+          >
+            Предыдущий
+          </button>
+
+          <button
+            type="button"
+            className="selected-therapist-nav-button primary"
+            onClick={() => setCurrentIndex((prev) => Math.min(prev + 1, therapists.length - 1))}
+            disabled={isLastTherapist}
+          >
+            Следующий
+          </button>
+        </div>
       </div>
     </div>
   );
