@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { PhoneInput } from 'react-international-phone';
+import 'react-international-phone/style.css';
 import '../Form.css'
 import { TherapistSecondFormErrors } from 'interfaces/Errors';
 import { updateTherapist, getTherapistByTgId } from '../../api/therapistApi';
@@ -281,7 +283,8 @@ function TherapistSecondFormComponent({
                 }
             }
 
-        if (phoneValue && !/^\+?[0-9\s\-()]+$/.test(phoneValue)) {
+        const phoneDigits = phoneValue.replace(/\D/g, '');
+        if (phoneDigits.length > 0 && phoneDigits.length < 7) {
             newErrors.phone = "Введите корректный номер телефона"
         }
 
@@ -384,11 +387,14 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     if (formData.isGerontologist) tagIds.add(35)
     if (formData.isFamilyTherapist) tagIds.add(25)
 
+    const phoneDigitsOnly = (formData.phone ?? '').replace(/\D/g, '');
+    const phoneToSubmit = phoneDigitsOnly.length > 3 ? formData.phone : '';
+
     const submissionData = {
         first_name: formData.first_name,
         last_name: formData.last_name,
         city: formData.city,
-        phone_number: formData.phone,
+        phone_number: phoneToSubmit,
         pitch: formData.about,
         site: formData.website,
         sex: formData.sex,
@@ -598,13 +604,20 @@ return (
         </div>
 
         <div className="form-field">
-            <input
-                name="phone"
-                placeholder="Введите ваш телефон (необязательно)"
-                type="text"
+            <label className="phone-label">Телефон (необязательно)</label>
+            <PhoneInput
+                defaultCountry="ru"
                 value={formData.phone}
-                onChange={handleInputChange}
-                className={errors.phone ? 'error' : ''}
+                onChange={(value) => {
+                    setFormData((prev) => ({ ...prev, phone: value }));
+                    if (errors.phone) {
+                        setErrors((prev) => ({ ...prev, phone: '' }));
+                    }
+                }}
+                inputClassName={`phone-input ${errors.phone ? 'error' : ''}`}
+                countrySelectorStyleProps={{ buttonClassName: 'phone-country-button' }}
+                preferredCountries={['ru', 'by', 'kz', 'ua', 'us', 'de']}
+                placeholder="Введите ваш телефон"
             />
             {errors.phone && <span className="error-message">{errors.phone}</span>}
         </div>

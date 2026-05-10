@@ -86,6 +86,21 @@ export const TAG_CATEGORY_LABELS: Record<TagCategoryKey, string> = {
   THERAPY_METHODS: 'Выберите методы терапии, с которыми вы работаете',
 };
 
+/** Короткие подписи категорий — для отображения в карточке профиля. */
+export const TAG_CATEGORY_SHORT_LABELS: Record<TagCategoryKey, string> = {
+  ANXIETY_AND_DEPRESSION: 'Тревога и депрессия',
+  CHILDREN_TOPICS: 'Работа с детьми',
+  ADDICTIONS: 'Зависимости',
+  TRAUMA_AND_GRIEF: 'Травмы и горе',
+  RPP: 'РПП',
+  SOMATIC_PROBLEMS: 'Психосоматика',
+  EMOTIONAL_DYSREGULATION: 'Поведение и эмоции',
+  NEURODEVELOPMENTAL_DISORDERS: 'Нейроразвитие',
+  RELATIONSHIP: 'Отношения',
+  COACHING_AND_ADAPTATION: 'Коучинг и адаптация',
+  THERAPY_METHODS: 'Методы терапии',
+};
+
 /** Все известные названия тегов в порядке категорий (для админки и проверок). */
 export const TAG_OPTIONS: string[] = Object.values(TAG_CATEGORIES).flatMap((tags) =>
   tags.map((t) => t.title),

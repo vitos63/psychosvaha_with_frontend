@@ -3,9 +3,23 @@ import { useNavigate } from 'react-router-dom'
 
 import { ApiError, avatarPathToMediaUrl } from '../../api/api'
 import { getTherapistByTgId } from '../../api/therapistApi'
-import { TAG_CATEGORIES } from '../../constants/tags'
+import {
+    TAG_CATEGORIES,
+    TAG_CATEGORY_SHORT_LABELS,
+    type TagCategoryKey,
+} from '../../constants/tags'
 import { TherapistByTgIdResponse } from '../../interfaces/TherapistInterface'
 import '../Form.css'
+
+const CURRENCY_META: Record<string, { name: string; symbol: string; locale: string }> = {
+    RUB: { name: 'Рубли', symbol: '₽', locale: 'ru-RU' },
+    USD: { name: 'Доллары', symbol: '$', locale: 'en-US' },
+    EUR: { name: 'Евро', symbol: '€', locale: 'de-DE' },
+}
+
+function formatAmount(amount: number, locale: string): string {
+    return new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }).format(amount)
+}
 
 function resolveTgIdFromEnvironment(): number | null {
     const webAppUserId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id
@@ -26,15 +40,20 @@ function resolveTgIdFromEnvironment(): number | null {
 
 type TagEntry = { id: number; title: string }
 
-function tagTitleById(tagId: number): string | null {
-    const categories = Object.values(TAG_CATEGORIES) as ReadonlyArray<readonly TagEntry[]>
-    for (const tags of categories) {
-        const found = tags.find((t) => t.id === tagId)
-        if (found) {
-            return found.title
+function buildTagsByCategory(
+    selectedTagIds: number[],
+): Array<{ category: TagCategoryKey; titles: string[] }> {
+    const idSet = new Set(selectedTagIds)
+    const result: Array<{ category: TagCategoryKey; titles: string[] }> = []
+
+    for (const category of Object.keys(TAG_CATEGORIES) as TagCategoryKey[]) {
+        const tags = TAG_CATEGORIES[category] as ReadonlyArray<TagEntry>
+        const titles = tags.filter((t) => idSet.has(t.id)).map((t) => t.title)
+        if (titles.length > 0) {
+            result.push({ category, titles })
         }
     }
-    return null
+    return result
 }
 
 function TherapistProfileViewPage() {
@@ -50,13 +69,11 @@ function TherapistProfileViewPage() {
         return avatarPathToMediaUrl(profile.avatar_path)
     }, [profile])
 
-    const tagLabels = useMemo(() => {
+    const tagsByCategory = useMemo(() => {
         if (!profile?.tag_ids?.length) {
-            return [] as string[]
+            return []
         }
-        return profile.tag_ids
-            .map((id) => tagTitleById(id))
-            .filter((t): t is string => Boolean(t))
+        return buildTagsByCategory(profile.tag_ids)
     }, [profile])
 
     useEffect(() => {
@@ -95,22 +112,23 @@ function TherapistProfileViewPage() {
         })
     }, [])
 
-    const currencyLines = useMemo(() => {
+    const currencyChips = useMemo(() => {
         if (!profile?.currency_amount || typeof profile.currency_amount !== 'object') {
-            return [] as string[]
+            return [] as Array<{ code: string; name: string; symbol: string; formatted: string }>
         }
         const m = profile.currency_amount as Record<string, number>
-        const parts: string[] = []
-        if ('RUB' in m && m.RUB > 0) {
-            parts.push(`Рубли: ${m.RUB}`)
-        }
-        if ('USD' in m && m.USD > 0) {
-            parts.push(`Доллары: ${m.USD}`)
-        }
-        if ('EUR' in m && m.EUR > 0) {
-            parts.push(`Евро: ${m.EUR}`)
-        }
-        return parts
+        const order: Array<keyof typeof CURRENCY_META> = ['RUB', 'USD', 'EUR']
+        return order
+            .filter((code) => code in m && (m[code] ?? 0) > 0)
+            .map((code) => {
+                const meta = CURRENCY_META[code]
+                return {
+                    code,
+                    name: meta.name,
+                    symbol: meta.symbol,
+                    formatted: formatAmount(m[code], meta.locale),
+                }
+            })
     }, [profile])
 
     if (loading) {
@@ -174,24 +192,52 @@ function TherapistProfileViewPage() {
             {row('Принимаете ли онлайн?', profile.online ? 'Да' : 'Нет')}
             {row('Готов принимать клиентов', profile.available_to_call ? 'Да' : 'Нет')}
             {row('Контакты для клиента', profile.contacts_for_client ?? undefined)}
-            {row('Стоимость сессии', currencyLines.length ? currencyLines.join(' · ') : undefined)}
 
-            {tagLabels.length > 0 ? (
-                <div style={{ marginBottom: 14 }}>
-                    <div style={{ fontSize: 13, color: '#636e72', marginBottom: 8 }}>Работает с </div>
-                    <ul
-                        style={{
-                            margin: 0,
-                            paddingLeft: 20,
-                            fontSize: 15,
-                            color: '#2d3436',
-                            lineHeight: 1.6,
-                        }}
-                    >
-                        {tagLabels.map((title, index) => (
-                            <li key={`${title}-${index}`}>{title}</li>
+            <div className="profile-view-row" style={{ marginBottom: 14 }}>
+                <div style={{ fontSize: 13, color: '#636e72', marginBottom: 8 }}>
+                    Стоимость сессии
+                </div>
+                {currencyChips.length > 0 ? (
+                    <div className="currency-chips">
+                        {currencyChips.map((c) => (
+                            <div key={c.code} className="currency-chip">
+                                <span className="currency-chip-symbol">{c.symbol}</span>
+                                <div className="currency-chip-body">
+                                    <div className="currency-chip-amount">{c.formatted}</div>
+                                    <div className="currency-chip-name">{c.name}</div>
+                                </div>
+                            </div>
                         ))}
-                    </ul>
+                    </div>
+                ) : (
+                    <div style={{ fontSize: 15, color: '#2d3436' }}>—</div>
+                )}
+            </div>
+
+            {tagsByCategory.length > 0 ? (
+                <div className="profile-view-row" style={{ marginBottom: 14 }}>
+                    <div style={{ fontSize: 13, color: '#636e72', marginBottom: 8 }}>
+                        Работает с
+                    </div>
+                    <div className="tag-categories">
+                        {tagsByCategory.map(({ category, titles }) => (
+                            <div key={category} className="tag-category">
+                                <div className="tag-category-title">
+                                    {TAG_CATEGORY_SHORT_LABELS[category]}
+                                </div>
+                                <div className="tag-category-chips">
+                                    {titles.map((title, index) => (
+                                        <span
+                                            key={`${category}-${title}-${index}`}
+                                            className="tag-chip"
+                                        >
+                                            {title}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             ) : null}
 
