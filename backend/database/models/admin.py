@@ -10,7 +10,7 @@ class Admin(Base):
     tg_id: Mapped[int] = mapped_column(
         BigInteger, primary_key=True
     )
-    login: Mapped[str] = mapped_column(
+    username: Mapped[str] = mapped_column(
         unique=True
     )
     password: Mapped[str] = mapped_column(

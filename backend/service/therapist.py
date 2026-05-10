@@ -1,6 +1,9 @@
 from fastapi import UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from service.date_time import DateTimeService
+from repo.queue import QueueRepo
+from cron.queue.tasks.send_notification_to_admin.task import SendNotificationTOAdminTask
 from database.models import Therapist
 from dto.therapist import CreateTherapist, UpdateTherapist
 from repo.therapists import TherapistRepo
@@ -15,17 +18,26 @@ class TherapistService:
             session: AsyncSession,
             therapist_repo: TherapistRepo,
             therapist_tags_repo: TherapistTagRepo,
+            queue_repo: QueueRepo,
+            date_time_service: DateTimeService,
             file_serv: FileService
     ):
         self._session = session
         self._therapist_repo = therapist_repo
         self._therapist_tags_repo = therapist_tags_repo
+        self._queue_repo = queue_repo
+        self._date_time_service = date_time_service
         self._file_serv = file_serv
 
     async def create_therapist(self, therapist_dto: CreateTherapist) -> Therapist:
         try:
             therapist = await self._therapist_repo.create_therapist(therapist_dto)
             await self._session.commit()
+            
+            await self._queue_repo.create_task(
+                task=SendNotificationTOAdminTask(),
+                start_at=self._date_time_service.get_current_time(),
+            )
             return therapist
         except Exception:
             await self._session.rollback()

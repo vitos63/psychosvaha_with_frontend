@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from sqladmin import Admin
 
 from server.handlers.v1.admin.controller import admin_router
 from server.handlers.v1.client_requests.controller import (
@@ -9,6 +10,13 @@ from server.handlers.v1.client_requests.controller import (
 )
 from server.handlers.v1.therapist.controller import router as therapist_router
 from server.handlers.v1.tg_webapp.controller import router as tg_webapp_router
+from server.admin_panel.models import (
+    TagAdmin,
+    AdminAdmin,
+    TherapistsAdmin,
+    ClientRequestsAdmin,
+)
+from database.engine import engine
 
 
 origins = [
@@ -16,18 +24,10 @@ origins = [
 ]
 
 
-
-
 app = FastAPI()
 
-app.mount("/media", StaticFiles(directory="media"), name="media")
-app = FastAPI()
+admin = Admin(app, engine=engine)
 
-app.include_router(client_requests_router)
-app.include_router(therapist_router)
-app.include_router(tg_webapp_router)
-
-app.include_router(admin_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -35,6 +35,19 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(client_requests_router)
+app.include_router(therapist_router)
+app.include_router(tg_webapp_router)
+
+app.include_router(admin_router)
+
+
+app.mount("/media", StaticFiles(directory="media"), name="media")
+admin.add_view(TagAdmin)
+admin.add_view(TherapistsAdmin)
+admin.add_view(ClientRequestsAdmin)
+admin.add_view(AdminAdmin)
 
 
 @app.exception_handler(Exception)

@@ -1,4 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+from aiogram import Bot
 
 from service.date_time import DateTimeService
 from database.models import Admin
@@ -10,6 +11,8 @@ from repo.queue import QueueRepo
 from repo.therapists import TherapistRepo
 from repo.client_requests import ClientRequestRepo
 from cron.queue.tasks.add_therapists_to_client_request.task import AddTherapistsToRequestTask
+from bot.messages import NOTIFICATION_FOR_THERAPIST_WERE_APPROVED
+from bot.keyboards.therapist_keyboards import therapist_second_form_keyboard
 
 
 class AdminService:
@@ -20,7 +23,8 @@ class AdminService:
             therapist_repo: TherapistRepo,
             client_request_repo: ClientRequestRepo,
             queue_repo: QueueRepo,
-            date_time_service: DateTimeService
+            date_time_service: DateTimeService,
+            bot: Bot
     ):
         self._session = session
         self._admin_repo = admin_repo
@@ -28,6 +32,7 @@ class AdminService:
         self._client_request_repo = client_request_repo
         self._queue_repo = queue_repo
         self._date_time_service = date_time_service
+        self._bot = bot
 
     async def create_admin(self, admin: AdminDTO) -> Admin:
         try:
@@ -79,6 +84,11 @@ class AdminService:
         try:
             await self._therapist_repo.approve_therapist(therapist.tg_id)
             await self._session.commit()
+            await self._bot.send_message(
+                chat_id=therapist.tg_id,
+                text=NOTIFICATION_FOR_THERAPIST_WERE_APPROVED,
+                reply_markup=therapist_second_form_keyboard
+            )
         except Exception:
             await self._session.rollback()
             raise

@@ -12,7 +12,7 @@ class AdminRepo:
     async def create_admin(self, dto: AdminDTO) -> Admin:
         admin = Admin(
             tg_id=dto.tg_id,
-            login=dto.login,
+            username=dto.username,
             password=dto.password
         )
         self._session.add(admin)

@@ -1,6 +1,7 @@
 import { Component, ErrorInfo, ReactNode, useEffect, useState } from 'react'
 
-import { ApiError, getTherapistByTgId } from '../../api/api'
+import { ApiError } from '../../api/api'
+import { getTherapistByTgId } from '../../api/therapistApi'
 import { TherapistByTgIdResponse } from '../../interfaces/TherapistInterface'
 import TherapistSecondFormComponent from './TherapistSecondFormComponen'
 
@@ -77,7 +78,9 @@ function TherapistProfileEditPage() {
 
                 const userId = resolveTgId()
                 if (!userId) {
-                    setError('Не удалось определить пользователя Telegram (initDataUnsafe.user.id или tg_id в query string).')
+                    setError(
+                        'Не удалось определить пользователя Telegram (initDataUnsafe.user.id или tg_id в query string).',
+                    )
                     setLoading(false)
                     return
                 }
