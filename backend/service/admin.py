@@ -54,6 +54,12 @@ class AdminService:
             return True
         return False
 
+    async def check_admin_creditionals(self, username: str, password: str) -> bool:
+        admin = await self._admin_repo.select_by_username(username=username)
+        if not admin:
+            return False
+        return admin.verify_password(password)
+
     async def get_main_info_for_admin(self) -> MainInfoForAdmin:
         not_approved_client_requests = await self._client_request_repo.get_not_approved_client_requests()
         not_approved_therapists = await self._therapist_repo.get_not_approved_therapists()

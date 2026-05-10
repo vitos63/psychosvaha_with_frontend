@@ -1,7 +1,14 @@
 from sqlalchemy import BigInteger
 from sqlalchemy.orm import Mapped, mapped_column
+from passlib.context import CryptContext
 
 from .base import Base
+
+
+pwd_context = CryptContext(
+    schemes=["bcrypt"], 
+    deprecated="auto"
+)
 
 
 class Admin(Base):
@@ -13,6 +20,19 @@ class Admin(Base):
     username: Mapped[str] = mapped_column(
         unique=True
     )
-    password: Mapped[str] = mapped_column(
+    _password: Mapped[str] = mapped_column(
+        "password",
         nullable=False
     )
+
+    @property
+    def password(self):
+        raise AttributeError("Password is not readable")
+    
+    @password.setter
+    def password(self, password: str):
+        self._password = pwd_context.hash(password)
+
+    def verify_password(self, password: str) -> bool:
+        return pwd_context.verify(password, self._password)
+
