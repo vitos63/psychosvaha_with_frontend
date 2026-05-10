@@ -28,7 +28,7 @@ origins = [
 
 app = FastAPI()
 
-admin = Admin(app, engine=engine, base_url="api/v1/admin", authentication_backend=AdminAuth(secret_key=SECRET_KEY))
+admin = Admin(app, engine=engine, base_url="/v1/admin-panel", authentication_backend=AdminAuth(secret_key=SECRET_KEY))
 
 app.add_middleware(
     CORSMiddleware,

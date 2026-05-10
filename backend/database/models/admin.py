@@ -6,7 +6,7 @@ from .base import Base
 
 
 pwd_context = CryptContext(
-    schemes=["bcrypt"], 
+    schemes=["argon2"], 
     deprecated="auto"
 )
 
@@ -35,4 +35,3 @@ class Admin(Base):
 
     def verify_password(self, password: str) -> bool:
         return pwd_context.verify(password, self._password)
-

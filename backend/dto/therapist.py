@@ -57,7 +57,6 @@ class CreateTherapist(BaseModel):
 
 class UpdateTherapist(BaseTherapistDTO):
     avatar_path: str|None = None
-    avatar_url: str|None = None
 
 
 class GetTherapist(BaseModel):

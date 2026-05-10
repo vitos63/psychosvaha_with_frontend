@@ -57,7 +57,7 @@ export const TAG_CATEGORIES = {
     { id: 38, title: 'КПТ' },
     { id: 37, title: 'ДБТ' },
     { id: 36, title: 'АСТ' },
-    { id: 3, title: 'МВТ' },
+    // { id: 3, title: 'МВТ' },
     { id: 21, title: 'РЭПТ' },
     { id: 39, title: 'психоанализ' },
     { id: 27, title: 'психодинамическая терапия' },
