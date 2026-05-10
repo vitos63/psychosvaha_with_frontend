@@ -12,7 +12,8 @@ from repo.therapist_tags import TherapistTagRepo
 from repo.tags import TagRepo
 from domain.client_therapist import ClientTherapistDomain
 from .task import AddTherapistsToRequestTask
-from bot.messages import NOTIFICATION_FOR_THERAPIST_WERE_RECOMENDED
+from bot.messages import NOTIFICATION_FOR_THERAPIST_WERE_RECOMENDED, NOTIFICATION_FOR_CLIENT_MESSAGE
+from bot.keyboards.client_keyboard import client_keyboard
 
 
 class AddTherapistsToRequestProcessor(BaseProcessor):
@@ -27,6 +28,7 @@ class AddTherapistsToRequestProcessor(BaseProcessor):
             bot: Bot
     ):
         self._session = session
+        self._bot = bot
         self._therpist_tag_repo = therapist_tag_repo
         self._client_request_therapist_repo = client_request_therapist_repo
         self._tag_repo = tag_repo
@@ -36,6 +38,7 @@ class AddTherapistsToRequestProcessor(BaseProcessor):
     
     async def __notify_therpist(self, therapist_tg_id: int):
         await self._bot.send_message(chat_id=therapist_tg_id, text=NOTIFICATION_FOR_THERAPIST_WERE_RECOMENDED)
+
 
     async def process_task(self, task: AddTherapistsToRequestTask):
         client_request = await self._client_request_repo.select_by_request_id(task.request_id)
@@ -57,6 +60,19 @@ class AddTherapistsToRequestProcessor(BaseProcessor):
                 await self._therapist_repo.increase_count_of_recomendations(therapist_tg_id=therapist.tg_id)
                 await self.__notify_therpist(therapist_tg_id=therapist.tg_id)
             await self._session.commit()
+            if best_therapists:
+                await self.send_message_client(tg_id=client_request.client_id)
+                
         except Exception:
             await self._session.rollback()
             raise
+
+    async def send_message_client(
+            self,
+            tg_id: int,
+    ):
+        await self._bot.send_message(
+            chat_id=tg_id,
+            text=NOTIFICATION_FOR_CLIENT_MESSAGE,
+            reply_markup=client_keyboard
+        )

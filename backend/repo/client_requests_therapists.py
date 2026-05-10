@@ -32,7 +32,7 @@ class ClientRequestTherapistRepo:
     ) -> ClientRequestTherapist:
         request_therapist = ClientRequestTherapist(
             request_id=request_id,
-            therapist_tg_id=therapist_tg_id,
+            therapist_id=therapist_tg_id,
             percentage_of_compliance=percentage_of_compliance,
         )
         self._session.add(request_therapist)

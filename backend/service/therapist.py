@@ -10,7 +10,9 @@ from repo.therapists import TherapistRepo
 from repo.therapist_tags import TherapistTagRepo
 from service.file_service import FileService
 from enums.therapist_statuses import TherapistStatuses
-
+from cron.queue.tasks.send_notification_to_admin.task import SendNotificationTOAdminTask
+from service.date_time import DateTimeService
+from repo.queue import QueueRepo
 
 class TherapistService:
     def __init__(
@@ -28,10 +30,16 @@ class TherapistService:
         self._queue_repo = queue_repo
         self._date_time_service = date_time_service
         self._file_serv = file_serv
+        self._queue_repo = queue_repo
+        self._date_time_service = date_time_service
 
     async def create_therapist(self, therapist_dto: CreateTherapist) -> Therapist:
         try:
             therapist = await self._therapist_repo.create_therapist(therapist_dto)
+            await self._queue_repo.create_task(
+                task=SendNotificationTOAdminTask(),
+                start_at=self._date_time_service.get_current_time(),
+            )
             await self._session.commit()
             
             await self._queue_repo.create_task(
