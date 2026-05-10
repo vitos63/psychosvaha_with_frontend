@@ -24,29 +24,11 @@
 }
 
 .selected-therapist-name {
-  margin: 0 0 8px;
+  margin: 0 0 20px;
   font-size: 22px;
   font-weight: 700;
   color: #2d3436;
   text-align: center;
-}
-
-.selected-therapist-format-row {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.selected-therapist-format-chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 14px;
-  background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
-  color: #fff;
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
 }
 
 .selected-therapist-photo-placeholder {

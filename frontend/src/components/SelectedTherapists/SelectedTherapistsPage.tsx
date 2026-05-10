@@ -64,11 +64,11 @@ function SelectedTherapistsPage() {
 
   const avatarSrc = useMemo(() => buildAvatarSrc(currentTherapist), [currentTherapist]);
 
-  const formatLabel = useMemo(() => {
+  const onlineLabel = useMemo(() => {
     if (currentTherapist?.online === undefined || currentTherapist?.online === null) {
-      return null;
+      return undefined;
     }
-    return currentTherapist.online ? 'Онлайн' : 'Очно';
+    return currentTherapist.online ? 'Да' : 'Нет';
   }, [currentTherapist]);
 
   const currencyChips = useMemo(() => {
@@ -160,12 +160,6 @@ function SelectedTherapistsPage() {
 
         <h2 className="selected-therapist-name">{fullName || 'Без имени'}</h2>
 
-        {formatLabel ? (
-          <div className="selected-therapist-format-row">
-            <span className="selected-therapist-format-chip">{formatLabel}</span>
-          </div>
-        ) : null}
-
         {row('Город', currentTherapist.city ?? undefined)}
         {row(
           'Возраст',
@@ -179,6 +173,7 @@ function SelectedTherapistsPage() {
             ? String(currentTherapist.experience)
             : undefined,
         )}
+        {row('Принимает ли онлайн', onlineLabel)}
         {row('О себе', currentTherapist.pitch ?? undefined)}
         {row('Контакты для связи', currentTherapist.contacts_for_client ?? undefined)}
 
