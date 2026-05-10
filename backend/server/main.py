@@ -18,6 +18,7 @@ from server.admin_panel.models import (
 )
 from database.engine import engine
 from server.admin_panel.auth import AdminAuth
+from config import SECRET_KEY
 
 
 origins = [
@@ -27,7 +28,7 @@ origins = [
 
 app = FastAPI()
 
-admin = Admin(app, engine=engine, base_url="api/v1/admin", authentication_backend=AdminAuth())
+admin = Admin(app, engine=engine, base_url="api/v1/admin", authentication_backend=AdminAuth(secret_key=SECRET_KEY))
 
 app.add_middleware(
     CORSMiddleware,

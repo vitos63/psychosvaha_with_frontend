@@ -22,3 +22,5 @@ CONSUMER_SHUTDOWN_SECONDS = float(os.environ["CONSUMER_SHUTDOWN_SECONDS"])
 
 BOT_TOKEN = os.environ['BOT_TOKEN']
 TG_PROXY_URL = os.environ["TG_PROXY_URL"]
+
+SECRET_KEY = os.environ["SECRET_KEY"]
