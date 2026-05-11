@@ -11,9 +11,10 @@ from repo.therapists import TherapistRepo
 from repo.therapist_tags import TherapistTagRepo
 from repo.tags import TagRepo
 from domain.client_therapist import ClientTherapistDomain
+from database.models import ClientRequest
 from .task import AddTherapistsToRequestTask
 from bot.messages import NOTIFICATION_FOR_THERAPIST_WERE_RECOMENDED, NOTIFICATION_FOR_CLIENT_MESSAGE, NOTIFICATION_FOR_CLIENT_MESSAGE_NO_THERAPISTS
-from bot.keyboards.client_keyboard import client_keyboard
+from bot.keyboards.client_keyboard import get_client_keyboard
 
 class AddTherapistsToRequestProcessor(BaseProcessor):
     def __init__(
@@ -59,10 +60,13 @@ class AddTherapistsToRequestProcessor(BaseProcessor):
                 await self._therapist_repo.increase_count_of_recomendations(therapist_tg_id=therapist.tg_id)
                 await self.__notify_therpist(therapist_tg_id=therapist.tg_id)
 
-            await self.send_message_client(tg_id=client_request.client_id, therapists_count=len(best_therapists)) # TODO remove tg_id from client_request
+            await self._session.commit()
+            await self.send_message_client(tg_id=client_request.client_id, 
+                                           therapists_count=len(best_therapists), 
+                                           client_request=client_request) # TODO remove tg_id from client_request
             await self._client_request_repo.delete_client_id_from_request(request_id=task.request_id)
             await self._session.commit()
-
+                
         except Exception:
             await self._session.rollback()
             raise
@@ -71,9 +75,10 @@ class AddTherapistsToRequestProcessor(BaseProcessor):
             self,
             tg_id: int,
             therapists_count: int,
+            client_request: ClientRequest
     ):
         await self._bot.send_message(
             chat_id=tg_id,
             text=NOTIFICATION_FOR_CLIENT_MESSAGE.format(therapists_count=therapists_count) if therapists_count else NOTIFICATION_FOR_CLIENT_MESSAGE_NO_THERAPISTS,
-            reply_markup=client_keyboard if therapists_count else None
+            reply_markup=get_client_keyboard(request_id=client_request.id) if therapists_count else None
         ) # TODO added logic of no therapists for request

@@ -23,8 +23,8 @@ export async function createClientRequest(clientRequest: ClientRequestInterface)
   }
 }
 
-export async function getRecommendedTherapists(tgId: number): Promise<Therapist[]> {
-  const response = await fetch(`${API_BASE_URL}/recommended_therapists/${tgId}`, {
+export async function getRecommendedTherapists(requestId: number): Promise<Therapist[]> {
+  const response = await fetch(`${API_BASE_URL}/recommended_therapists/${requestId}`, {
     method: 'GET',
   });
   const data: unknown = await response.json().catch(() => ([]));

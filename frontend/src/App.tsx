@@ -78,7 +78,7 @@ function App() {
           <Route path="/therapist/profile/edit" element={<TherapistProfileEditPage />} />
           <Route path="/form-success" element={<SuccessPage />} />
           <Route path="/admin" element={<AdminDashboardPage tgId={user?.id} />} />
-          <Route path="/selected_therapists" element={<SelectedTherapistsPage />} />
+          <Route path="/selected_therapists:request_id" element={<SelectedTherapistsPage />} />
         </Routes>
       </Router>
     </div>
