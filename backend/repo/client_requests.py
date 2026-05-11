@@ -1,7 +1,6 @@
 from sqlalchemy import literal_column, select, func, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-
 from database.models import ClientRequest, ClientRequestTag, Tag, Therapist
 from database.models.client_requests_therapists import ClientRequestTherapist
 from dto.client_request import CreateClientRequest

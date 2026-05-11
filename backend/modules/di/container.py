@@ -80,6 +80,7 @@ class Container(containers.DeclarativeContainer):
         admin_repo=admin_repo,
         therapist_repo=therapist_repo,
         client_request_repo=client_request_repo,
+        client_request_tag_repo=client_request_tag_repo,
         queue_repo=queue_repo,
         date_time_service=date_time_service,
         bot=build_bot()
