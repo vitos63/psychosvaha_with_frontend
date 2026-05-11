@@ -1,4 +1,4 @@
-from sqlalchemy import literal_column, select, func
+from sqlalchemy import literal_column, select, func, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.models import ClientRequest, ClientRequestTag, Tag, Therapist
@@ -106,4 +106,12 @@ class ClientRequestRepo:
 
         result = await self._session.scalars(stmt)
         return list(result.all())
-
+    
+    async def delete_client_id_from_request(self, request_id: int):
+        stmt = (
+            update(ClientRequest)
+            .where(ClientRequest.id == request_id)
+            .values(client_id=None)
+        )
+        await self._session.execute(stmt)
+        await self._session.flush()

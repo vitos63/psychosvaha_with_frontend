@@ -77,6 +77,8 @@ class ClientRequestTherapistRepo:
             .group_by(Therapist.tg_id)
         )
 
+        stmt = stmt.where(Therapist.available_to_call == True)
+
         stmt = self.__add_terrifory_filters(stmt=stmt, request=request)
 
         stmt = stmt.where(
@@ -96,6 +98,8 @@ class ClientRequestTherapistRepo:
         stmt = stmt.having(and_(*having_conditions))
 
         result = await self._session.execute(stmt)
+        print(stmt)
+        print(result.all())
 
         return result.all()
 
