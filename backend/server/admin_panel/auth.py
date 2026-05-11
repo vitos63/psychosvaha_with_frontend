@@ -1,17 +1,17 @@
 from sqladmin.authentication import AuthenticationBackend
 from starlette.requests import Request
-from typing import Annotated
-from fastapi import Depends
 
-from server.dependencies import admin_service
-from service.admin import AdminService
+from server.dependencies import admin_service, container, db_session
 
 
 class AdminAuth(AuthenticationBackend):
-    async def login(self, request: Request, service: Annotated[AdminService, Depends(admin_service)]) -> bool:
+    async def login(self, request: Request) -> bool:
         form = await request.form()
         username = form.get("username")
         password = form.get("password")
+        
+        container_ = await container(session=await db_session())
+        service = await admin_service(container_)
 
         is_authenticated = await service.check_admin_creditionals(username=username, password=password)
         if is_authenticated:
