@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import (
     BigInteger,
     DateTime,
@@ -70,3 +70,15 @@ class Therapist(Base):
     )
 
     avatar_path: Mapped[str | None] = mapped_column(String, nullable=True)
+
+    tags: Mapped[list["Tag"]] = relationship(
+        "Tag",
+        secondary="therapists_tags",
+        back_populates="therapists"
+    )
+
+    client_requests: Mapped[list["ClientRequest"]] = relationship(
+        "ClientRequest",
+        secondary="client_requests_therapists",
+        back_populates="therapists"
+    )

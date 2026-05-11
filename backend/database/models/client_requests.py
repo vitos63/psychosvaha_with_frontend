@@ -8,7 +8,7 @@ from sqlalchemy import (
     func,
     BigInteger
 )
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from dto.enums import Sex
 
@@ -31,3 +31,15 @@ class ClientRequest(Base):
     need_psychiatrist: Mapped[bool | None] = mapped_column(nullable=True)
 
     is_approved: Mapped[bool] = mapped_column(nullable=False, default=False)
+
+    therapists: Mapped[list["Therapist"]] = relationship(
+        "Therapist",
+        secondary="client_requests_therapists",
+        back_populates="client_requests"
+    )
+
+    tags: Mapped[list["Tag"]] = relationship(
+        "Tag",
+        secondary="client_requests_tags",
+        back_populates="client_requests"
+    )

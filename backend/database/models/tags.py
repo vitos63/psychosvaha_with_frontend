@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
 
@@ -10,3 +10,13 @@ class Tag(Base):
     title: Mapped[str] = mapped_column(nullable=False, unique=True)
     regular_expression: Mapped[str] = mapped_column(nullable=False)
     value: Mapped[int] = mapped_column(nullable=False)
+
+    therapists: Mapped[list["Therapist"]] = relationship("Therapist",
+                              secondary="therapists_tags",
+                              back_populates="tags")
+    
+    client_requests: Mapped[list["ClientRequest"]] = relationship(
+        "ClientRequest",
+        secondary="client_requests_tags",
+        back_populates="tags"
+    )
