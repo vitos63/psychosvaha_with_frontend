@@ -27,6 +27,7 @@ class UpdateTherapistRequest(UpdateTherapist):
         contacts_for_client: str | None = Form(None),
         available_to_call: bool = Form(False),
         tag_ids: str = Form("[]"),
+        avatar_path: str | None = Form(None),
     ) -> "UpdateTherapistRequest":
         try:
             parsed_currency_amount = json.loads(currency_amount)
@@ -61,4 +62,5 @@ class UpdateTherapistRequest(UpdateTherapist):
             contacts_for_client=contacts_for_client or None,
             available_to_call=available_to_call,
             tag_ids=parsed_tag_ids,
+            avatar_path=avatar_path or None,
         )

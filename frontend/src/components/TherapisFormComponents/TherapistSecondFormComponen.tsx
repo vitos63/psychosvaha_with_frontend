@@ -58,6 +58,7 @@ function TherapistSecondFormComponent({
     const [errors, setErrors] = useState<TherapistSecondFormErrors>({})
     const [avatarFile, setAvatarFile] = useState<File | null>(null)
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
+    const [avatarPath, setAvatarPath] = useState<string | null>(null)
     const [avatarError, setAvatarError] = useState<string>('')
     const fileInputRef = useRef<HTMLInputElement | null>(null)
 
@@ -121,18 +122,19 @@ function TherapistSecondFormComponent({
             isPsychiatrist: tagIds.includes(4),
             isGerontologist: tagIds.includes(35),
             isFamilyTherapist: tagIds.includes(25),
-            doesGroupTherapy: false,
+            doesGroupTherapy: tagIds.includes(43),
             isSupervisor: tagIds.includes(42),
             consent: Boolean(initialData.consent),
             availableToCall: Boolean(initialData.available_to_call),
         })
 
-        setSelectedTags(tagIds.filter((tagId) => ![4, 25, 35, 42].includes(tagId)))
+        setSelectedTags(tagIds.filter((tagId) => ![4, 25, 35, 42, 43].includes(tagId)))
         setCurrencies([
             { code: 'rub', name: 'Рубли', selected: 'RUB' in currencyAmount, amount: String(currencyAmount.RUB ?? '') },
             { code: 'usd', name: 'Доллары', selected: 'USD' in currencyAmount, amount: String(currencyAmount.USD ?? '') },
             { code: 'eur', name: 'Евро', selected: 'EUR' in currencyAmount, amount: String(currencyAmount.EUR ?? '') },
         ])
+        setAvatarPath(initialData.avatar_path ?? null)
         setAvatarPreview(buildAvatarUrl(initialData.avatar_path))
     }, [initialData])
 
@@ -248,6 +250,7 @@ function TherapistSecondFormComponent({
             URL.revokeObjectURL(avatarPreview)
         }
         setAvatarFile(null)
+        setAvatarPath('')
         setAvatarPreview(null)
         setAvatarError('')
         if (fileInputRef.current) {
@@ -388,6 +391,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     if (formData.isSupervisor) tagIds.add(42)
     if (formData.isGerontologist) tagIds.add(35)
     if (formData.isFamilyTherapist) tagIds.add(25)
+    if (formData.doesGroupTherapy) tagIds.add(43)
 
     const phoneDigitsOnly = (formData.phone ?? '').replace(/\D/g, '');
     const phoneToSubmit = phoneDigitsOnly.length > 3 ? formData.phone : '';
@@ -416,6 +420,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                     return acc;
                 }, {} as Record<string, number>),
         tag_ids: Array.from(tagIds),
+        avatar_path: avatarFile ? undefined : (avatarPath ?? ''),
         file: avatarFile
     };
     console.log('Данные для отправки:', submissionData);

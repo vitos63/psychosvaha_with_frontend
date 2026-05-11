@@ -66,8 +66,9 @@ class TherapistService:
             if old_therapist is not None:
                 old_avatar_path = old_therapist.avatar_path
 
-            new_avatar_path = await self._file_serv.upload_avatar(file)
-            therapist_dto.avatar_path = new_avatar_path
+            if file:
+                new_avatar_path = await self._file_serv.upload_avatar(file)
+                therapist_dto.avatar_path = new_avatar_path
             therapist_dto.status = TherapistStatuses.HAVE_QUESTIONARY.value
 
             therapist = await self._therapist_repo.update_therapist(
@@ -82,7 +83,7 @@ class TherapistService:
 
             await self._session.commit()
 
-            if old_avatar_path:
+            if old_avatar_path and therapist.avatar_path != old_avatar_path:
                 await self._file_serv.delete_photo(old_avatar_path)
 
             return therapist

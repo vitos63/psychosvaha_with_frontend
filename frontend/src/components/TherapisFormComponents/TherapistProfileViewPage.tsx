@@ -39,6 +39,15 @@ function resolveTgIdFromEnvironment(): number | null {
 }
 
 type TagEntry = { id: number; title: string }
+type TherapistSpecialization = { id: number; title: string }
+
+const THERAPIST_SPECIALIZATIONS: ReadonlyArray<TherapistSpecialization> = [
+    { id: 4, title: 'психиатр' },
+    { id: 35, title: 'геронтолог' },
+    { id: 25, title: 'семейный терапевт' },
+    { id: 43, title: 'групповая терапия' },
+    { id: 42, title: 'супервизор' },
+]
 
 function buildTagsByCategory(
     selectedTagIds: number[],
@@ -74,6 +83,16 @@ function TherapistProfileViewPage() {
             return []
         }
         return buildTagsByCategory(profile.tag_ids)
+    }, [profile])
+
+    const specializations = useMemo(() => {
+        if (!profile?.tag_ids?.length) {
+            return [] as string[]
+        }
+        const selectedTagIds = new Set(profile.tag_ids)
+        return THERAPIST_SPECIALIZATIONS.filter(({ id }) => selectedTagIds.has(id)).map(
+            ({ title }) => title,
+        )
     }, [profile])
 
     useEffect(() => {
@@ -189,6 +208,7 @@ function TherapistProfileViewPage() {
             {row('Возраст', String(profile.age))}
             {row('Стаж (лет)', String(profile.experience))}
             {row('Возраст клиентов', `${profile.min_client_age}–${profile.max_client_age} лет`)}
+            {row('Специализация', specializations.length > 0 ? specializations.join(', ') : undefined)}
             {row('Принимаете ли онлайн?', profile.online ? 'Да' : 'Нет')}
             {row('Готов принимать клиентов', profile.available_to_call ? 'Да' : 'Нет')}
             {row('Контакты для клиента', profile.contacts_for_client ?? undefined)}
