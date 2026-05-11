@@ -98,8 +98,6 @@ class ClientRequestTherapistRepo:
         stmt = stmt.having(and_(*having_conditions))
 
         result = await self._session.execute(stmt)
-        print(stmt)
-        print(result.all())
 
         return result.all()
 
