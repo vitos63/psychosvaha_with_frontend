@@ -24,7 +24,7 @@ class AdminService:
             admin_repo: AdminRepo,
             therapist_repo: TherapistRepo,
             client_request_repo: ClientRequestRepo,
-            client_request_tags_repo: ClientRequestTagRepo,
+            client_request_tag_repo: ClientRequestTagRepo,
             queue_repo: QueueRepo,
             date_time_service: DateTimeService,
             bot: Bot
@@ -33,7 +33,7 @@ class AdminService:
         self._admin_repo = admin_repo
         self._therapist_repo = therapist_repo
         self._client_request_repo = client_request_repo
-        self._client_request_tags_repo = client_request_tags_repo
+        self._client_request_tag_repo = client_request_tag_repo
         self._queue_repo = queue_repo
         self._date_time_service = date_time_service
         self._bot = bot
@@ -77,7 +77,7 @@ class AdminService:
     async def approve_client_request(self, client_request: ClientRequestForAdmin):
         try:
             await self._client_request_repo.approve_client_request(client_request.id)
-            await self._client_request_tags_repo.update_request_tags(request_id=client_request.id, tags=client_request.tags)
+            await self._client_request_tag_repo.update_request_tags(request_id=client_request.id, tags=client_request.tags)
             await self._session.commit()
             task = AddTherapistsToRequestTask(
                 request_id=client_request.id,

@@ -18,20 +18,20 @@ class ClientRequestTagRepo:
         await self._session.flush()
         return client_request
 
-    async def update_request_tags(self, request_id: int, tags: list[str]) -> ClientRequestTag:
+    async def update_request_tags(self, request_id: int, tags: list[str]):
         stmt = (
             select(Tag)
-            .where(Tag.title in tags)
+            .where(Tag.title.in_(tags))
             )
         result = await self._session.execute(stmt)
-        tags_ids = list(result.scalars().all())
+        tags = list(result.scalars().all())
         stmt = (
             delete(ClientRequestTag)
             .where(ClientRequestTag.request_id == request_id)
         )
         await self._session.execute(stmt)
-        for tag_id in tags_ids:
-            await self.create_request_tag(request_id=request_id, tag_id=tag_id)
+        for tag in tags:
+            await self.create_request_tag(request_id=request_id, tag_id=tag.id)
 
     async def select_by_request_id(self, request_id: int) -> list[ClientRequestTag]:
         stmt = (
