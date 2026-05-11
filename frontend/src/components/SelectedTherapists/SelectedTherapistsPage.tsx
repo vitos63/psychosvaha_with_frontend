@@ -61,7 +61,7 @@ function SelectedTherapistsPage() {
     };
 
     void loadTherapists();
-  }, []);
+  }, [request_id]);
 
   const currentTherapist = therapists[currentIndex];
 
