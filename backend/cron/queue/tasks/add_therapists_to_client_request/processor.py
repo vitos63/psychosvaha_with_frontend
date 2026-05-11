@@ -58,9 +58,11 @@ class AddTherapistsToRequestProcessor(BaseProcessor):
                                                                                    percentage_of_compliance=percentage_of_compliance)
                 await self._therapist_repo.increase_count_of_recomendations(therapist_tg_id=therapist.tg_id)
                 await self.__notify_therpist(therapist_tg_id=therapist.tg_id)
-            await self._session.commit()
+
             await self.send_message_client(tg_id=client_request.client_id, therapists_count=len(best_therapists)) # TODO remove tg_id from client_request
-                
+            await self._client_request_repo.delete_client_id_from_request(request_id=task.request_id)
+            await self._session.commit()
+
         except Exception:
             await self._session.rollback()
             raise
