@@ -427,15 +427,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
         await updateTherapist(submissionData, client_id);
         await notifyTelegramWebAppFormSubmitted('therapist_second', client_id);
-        navigate('/form-success', {
-            state: {
-                title: mode === 'edit' ? 'Анкета терапевта обновлена' : 'Анкета терапевта отправлена',
-                message:
-                    mode === 'edit'
-                        ? 'Изменения сохранены.'
-                        : 'Спасибо! Мы получили вашу анкету. После проверки данные появятся в каталоге, если всё в порядке.',
-            },
-        });
+        navigate('/therapist/profile');
     } catch {
         window.alert('Не удалось отправить анкету. Проверьте подключение к интернету и попробуйте снова.');
     }
