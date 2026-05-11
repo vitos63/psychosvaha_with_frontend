@@ -62,20 +62,6 @@ class ClientRequestRepo:
         result = await self._session.execute(stmt)
         return result.scalars().first()
 
-    async def select_latest_with_recommendations_by_tg_id(self, tg_id: int) -> ClientRequest | None:
-        stmt = (
-            select(ClientRequest)
-            .join(
-                ClientRequestTherapist,
-                ClientRequest.id == ClientRequestTherapist.request_id,
-            )
-            .where(ClientRequest.client_id == tg_id)
-            .order_by(ClientRequest.id.desc())
-            .limit(1)
-        )
-        result = await self._session.execute(stmt)
-        return result.scalars().first()
-
     async def get_not_approved_client_requests(self) -> list[dict]:
         stmt = (
             select(

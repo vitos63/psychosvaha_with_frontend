@@ -5,6 +5,7 @@ import { getRecommendedTherapists } from '../../api/clientRequestApi';
 import { Therapist } from '../../interfaces/TherapistInterface';
 import '../Form.css';
 import './SelectedTherapistsPage.css';
+import { useParams } from 'react-router-dom';
 
 const CURRENCY_META: Record<string, { name: string; symbol: string; locale: string }> = {
   RUB: { name: 'Рубли', symbol: '₽', locale: 'ru-RU' },
@@ -33,6 +34,8 @@ function SelectedTherapistsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const { request_id } = useParams();
+
   useEffect(() => {
     const loadTherapists = async () => {
       const tgId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
@@ -47,7 +50,7 @@ function SelectedTherapistsPage() {
         window.Telegram?.WebApp?.ready?.();
         window.Telegram?.WebApp?.expand?.();
 
-        const recommendedTherapists = await getRecommendedTherapists(tgId);
+        const recommendedTherapists = await getRecommendedTherapists(Number(request_id));
         setTherapists(recommendedTherapists);
       } catch (requestError) {
         console.error('Ошибка загрузки рекомендаций терапевтов:', requestError);
