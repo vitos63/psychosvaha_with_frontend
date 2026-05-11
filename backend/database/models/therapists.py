@@ -79,6 +79,6 @@ class Therapist(Base):
 
     client_requests: Mapped[list["ClientRequest"]] = relationship(
         "ClientRequest",
-        secondary="client_requests_therapists",
+        secondary="client_request_therapists",
         back_populates="therapists"
     )
