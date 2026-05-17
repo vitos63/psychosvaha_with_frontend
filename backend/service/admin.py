@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from aiogram import Bot
 
+from bot.services.start_keyboard import remove_start_keyboard_for_user
 from bot.storage.start_messages import set_start_message_id
 from service.date_time import DateTimeService
 from database.models import Admin
@@ -87,6 +88,7 @@ class AdminService:
                 start_at=self._date_time_service.get_current_time(),
             )
             await self._session.commit()
+            await self.__remove_admin_keyboard()
 
         except Exception:
             await self._session.rollback()
@@ -106,6 +108,12 @@ class AdminService:
             await set_start_message_id(chat_id=therapist.tg_id,
                                        user_id=therapist.tg_id,
                                        message_id=message.message_id)
+            await self.__remove_admin_keyboard()
+
         except Exception:
             await self._session.rollback()
             raise
+    
+    async def __remove_admin_keyboard(self):
+        admin_tg_id = await self._admin_repo.get_admin_tg_id()
+        await remove_start_keyboard_for_user(self._bot, user_id=admin_tg_id)

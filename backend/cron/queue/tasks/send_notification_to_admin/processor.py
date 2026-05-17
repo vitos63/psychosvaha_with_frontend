@@ -9,6 +9,7 @@ from .task import SendNotificationTOAdminTask
 from service.admin import AdminService
 from bot.messages import NOTIFICATION_FOR_ADMIN_MESSAGE
 from bot.keyboards.admin_keyboard import admin_keyboard
+from bot.storage.start_messages import set_start_message_id
 
 
 class SendNotificationTOAdminProcessor(BaseProcessor):
@@ -30,7 +31,7 @@ class SendNotificationTOAdminProcessor(BaseProcessor):
         if not admin_tg_id:
             raise AdminDoesNotExistError("Admin not found in database")
 
-        await self._bot.send_message(
+        sent_message = await self._bot.send_message(
             chat_id=admin_tg_id,
             text=NOTIFICATION_FOR_ADMIN_MESSAGE.format(
                 not_approved_client_requests=len(
@@ -42,4 +43,6 @@ class SendNotificationTOAdminProcessor(BaseProcessor):
             ),
             reply_markup=admin_keyboard
         )
-        
+        await set_start_message_id(chat_id=sent_message.chat.id, 
+                                   user_id=admin_tg_id,
+                                   message_id=sent_message.message_id)
