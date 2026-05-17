@@ -20,6 +20,7 @@ from database.models import (
     TherapistTag,
 )
 from dto.enums import REQUIRED_TAGS, FORBIDDEN_TAGS
+from enums.therapist_statuses import TherapistStatuses
 from constants import RUB_MARKUP, EUR_MARKUP, USD_MARKUP
 
 
@@ -77,7 +78,10 @@ class ClientRequestTherapistRepo:
             .group_by(Therapist.tg_id)
         )
 
-        stmt = stmt.where(Therapist.available_to_call == True)
+        stmt = stmt.where(
+            and_(Therapist.available_to_call == True,
+                 Therapist.status == TherapistStatuses.HAVE_QUESTIONARY.value)
+            )
 
         stmt = self.__add_terrifory_filters(stmt=stmt, request=request)
 
