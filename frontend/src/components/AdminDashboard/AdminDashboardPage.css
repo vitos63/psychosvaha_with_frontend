@@ -1,3 +1,9 @@
+.client-form.admin-dashboard {
+  width: 100%;
+  max-width: min(800px, 100%);
+  box-sizing: border-box;
+}
+
 .admin-dashboard__title {
   margin: 0 0 20px;
   font-size: 1.35rem;
@@ -89,6 +95,10 @@
   background: #fff;
   border-radius: 12px;
   padding: 20px;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .admin-dashboard__back {
@@ -115,6 +125,10 @@
   margin: 0 0 18px;
   line-height: 1.5;
   color: #2d3436;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: pre-wrap;
 }
 
 .admin-dashboard__actions {
