@@ -105,10 +105,10 @@ class AdminService:
                 reply_markup=therapist_second_form_keyboard
             )
 
+            await self.__remove_admin_keyboard()
             await set_start_message_id(chat_id=therapist.tg_id,
                                        user_id=therapist.tg_id,
                                        message_id=message.message_id)
-            await self.__remove_admin_keyboard()
 
         except Exception:
             await self._session.rollback()
