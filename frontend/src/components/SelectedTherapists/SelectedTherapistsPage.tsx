@@ -28,6 +28,27 @@ function buildAvatarSrc(therapist: Therapist | undefined): string | null {
   return therapist.photo?.trim() ? therapist.photo : null;
 }
 
+function collectAvatarSrcs(therapistList: Therapist[]): string[] {
+  const seen = new Set<string>();
+  const urls: string[] = [];
+  for (const therapist of therapistList) {
+    const src = buildAvatarSrc(therapist);
+    if (src && !seen.has(src)) {
+      seen.add(src);
+      urls.push(src);
+    }
+  }
+  return urls;
+}
+
+function preloadAvatarImages(urls: string[]): void {
+  urls.forEach((url) => {
+    const img = new Image();
+    img.decoding = 'async';
+    img.src = url;
+  });
+}
+
 function SelectedTherapistsPage() {
   const [therapists, setTherapists] = useState<Therapist[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -62,6 +83,13 @@ function SelectedTherapistsPage() {
 
     void loadTherapists();
   }, [request_id]);
+
+  useEffect(() => {
+    if (!therapists.length) {
+      return;
+    }
+    preloadAvatarImages(collectAvatarSrcs(therapists));
+  }, [therapists]);
 
   const currentTherapist = therapists[currentIndex];
 
@@ -148,6 +176,8 @@ function SelectedTherapistsPage() {
             <img
               src={avatarSrc}
               alt=""
+              decoding="async"
+              loading="eager"
               style={{
                 width: 120,
                 height: 120,
