@@ -128,7 +128,7 @@ function TherapistSecondFormComponent({
             availableToCall: Boolean(initialData.available_to_call),
         })
 
-        setSelectedTags(tagIds.filter((tagId) => ![4, 25, 35, 42, 43].includes(tagId)))
+        setSelectedTags(tagIds.filter((tagId) => ![4, 35, 42, 43].includes(tagId)))
         setCurrencies([
             { code: 'rub', name: 'Рубли', selected: 'RUB' in currencyAmount, amount: String(currencyAmount.RUB ?? '') },
             { code: 'usd', name: 'Доллары', selected: 'USD' in currencyAmount, amount: String(currencyAmount.USD ?? '') },
