@@ -4,7 +4,7 @@ import logging
 from aiogram import Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 
-from .instance import bot
+from bot.dependencies import BOT
 from .dependencies import get_container
 from .handlers import commands
 from .handlers.commands import command_router
@@ -21,9 +21,9 @@ async def main():
     container = await get_container()
     container.wire(modules=[__name__, commands])
     try:
-        await dp.start_polling(bot)
+        await dp.start_polling(BOT)
     finally:
-        await bot.session.close()
+        await BOT.session.close()
 
 
 if __name__ == "__main__":
