@@ -2,7 +2,6 @@ from datetime import UTC
 
 from dependency_injector import containers, providers
 from sqlalchemy.ext.asyncio import AsyncSession
-from aiogram import Bot
 
 from cron.queue.tasks.add_tags_to_client_request.processor import AddTagsToRequestProcessor
 from cron.queue.tasks.add_therapists_to_client_request.processor import AddTherapistsToRequestProcessor
@@ -21,12 +20,11 @@ from service.admin import AdminService
 from cron.queue.tasks.send_notification_to_admin.processor import SendNotificationTOAdminProcessor
 from service.admin import AdminService
 from service.file_service import FileService
-from config import BOT_TOKEN
+from bot.dependencies import BOT
 
 
 class Container(containers.DeclarativeContainer):
     session = providers.Dependency(instance_of=AsyncSession)
-    bot=Bot(token=BOT_TOKEN)
 
     # Repository
     client_request_repo = providers.Factory(
@@ -84,7 +82,7 @@ class Container(containers.DeclarativeContainer):
         client_request_tag_repo=client_request_tag_repo,
         queue_repo=queue_repo,
         date_time_service=date_time_service,
-        bot=bot
+        bot=BOT
     )
 
     file_serv = providers.Factory(
@@ -129,7 +127,7 @@ class Container(containers.DeclarativeContainer):
         client_request_therapist_repo=client_request_therapist_repo,
         tag_repo=tag_repo,
         client_request_repo=client_request_repo,
-        bot=bot,
+        bot=BOT,
   )
 
     send_notification_to_admin_processor = providers.Factory(
@@ -137,6 +135,6 @@ class Container(containers.DeclarativeContainer):
         session=session,
         admin_repo=admin_repo,
         admin_service=admin_service,
-        bot=bot,
+        bot=BOT,
     )
 

@@ -8,8 +8,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      ss-client:
-        condition: service_started
     restart: unless-stopped
     ports:
       - "127.0.0.1:8000:8000"

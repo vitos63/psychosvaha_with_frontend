@@ -1,7 +1,7 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, Request
 
-from bot.instance import bot
+from bot.dependencies import BOT
 from bot.services.start_keyboard import remove_start_keyboard_for_user
 from server.dependencies import therapist_service
 from service.therapist import TherapistService
@@ -19,7 +19,7 @@ async def create(
     service: Annotated[TherapistService, Depends(therapist_service)],
 ):
     therapist = await service.create_therapist(therapist)
-    await remove_start_keyboard_for_user(bot=bot, user_id=therapist.tg_id)
+    await remove_start_keyboard_for_user(bot=BOT, user_id=therapist.tg_id)
     return CreateTherapistResponse.model_validate(therapist)
 
 
@@ -48,7 +48,7 @@ async def update(
 
 ):
     therapist = await service.update_therapist(therapist_tg_id=tg_id, therapist_dto=therapist, file=file)
-    await remove_start_keyboard_for_user(bot=bot, user_id=tg_id)
+    await remove_start_keyboard_for_user(bot=BOT, user_id=tg_id)
     response = UpdateTherapistResponse.model_validate(therapist)
     response.avatar_url = service.get_avatar_path(therapist, request.base_url)
 

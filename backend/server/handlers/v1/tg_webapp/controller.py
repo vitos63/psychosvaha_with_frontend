@@ -2,7 +2,7 @@ import logging
 
 from fastapi import APIRouter
 
-from bot.instance import bot
+from bot.dependencies import BOT
 from bot.services.start_keyboard import remove_start_keyboard_for_user
 
 from .request import TgWebAppFormSubmittedRequest
@@ -21,6 +21,6 @@ async def form_submitted(request: TgWebAppFormSubmittedRequest):
         request.form_type,
     )
 
-    keyboard_removed = await remove_start_keyboard_for_user(bot=bot, user_id=request.tg_id)
+    keyboard_removed = await remove_start_keyboard_for_user(bot=BOT, user_id=request.tg_id)
     reason = None if keyboard_removed else "message_not_found_or_uneditable"
     return TgWebAppFormSubmittedResponse(success=True, keyboard_removed=keyboard_removed, reason=reason)
