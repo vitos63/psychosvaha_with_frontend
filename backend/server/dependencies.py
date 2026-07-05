@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+from aiogram import Bot
 
 from database.engine import AsyncSessionFactory
 from modules.di.container import Container
@@ -29,3 +30,7 @@ async def therapist_service(container_: Annotated[Container, Depends(container)]
 
 async def admin_service(container_: Annotated[Container, Depends(container)]) -> AdminService:
     return container_.admin_service()
+
+
+async def get_bot(container_: Annotated[Container, Depends(container)]) -> Bot:
+    return container_.bot
