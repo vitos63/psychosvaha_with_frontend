@@ -1,8 +1,10 @@
 import logging
 
 from fastapi import APIRouter, Depends
+from typing import Annotated
+from aiogram import Bot
 
-from dependencies import get_bot
+from server.dependencies import get_bot
 from bot.services.start_keyboard import remove_start_keyboard_for_user
 
 from .request import TgWebAppFormSubmittedRequest

@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, Request
 from aiogram import Bot
 
-from dependencies import get_bot
+from server.dependencies import get_bot
 from bot.services.start_keyboard import remove_start_keyboard_for_user
 from server.dependencies import therapist_service
 from service.therapist import TherapistService

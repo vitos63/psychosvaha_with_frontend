@@ -33,4 +33,4 @@ async def admin_service(container_: Annotated[Container, Depends(container)]) ->
 
 
 async def get_bot(container_: Annotated[Container, Depends(container)]) -> Bot:
-    return container_.bot
+    return container_.bot()

@@ -18,7 +18,7 @@ dp.include_router(web_app_router)
 
 async def main():
     container = await get_container()
-    bot = container.bot
+    bot = container.bot()
     container.wire(modules=[__name__, commands])
     try:
         await dp.start_polling(bot)
