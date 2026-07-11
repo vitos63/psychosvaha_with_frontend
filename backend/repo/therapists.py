@@ -91,17 +91,3 @@ class TherapistRepo:
         therapist = result.scalar_one()
         therapist.status = TherapistStatuses.APPROVED.value
         await self._session.flush()
-
-    async def update_username(self, tg_id: int, username: str):
-        stmt = (
-            update(Therapist)
-            .where(
-                Therapist.tg_id == tg_id
-            )
-            .values(
-                username=username
-            )
-        )
-
-        result = await self._session.execute(stmt)
-        await self._session.flush()
