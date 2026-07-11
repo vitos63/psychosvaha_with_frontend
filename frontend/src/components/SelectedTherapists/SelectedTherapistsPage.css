@@ -62,6 +62,54 @@
   border-bottom-color: #4b3fb3;
 }
 
+.selected-therapist-contact-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 52px;
+  box-sizing: border-box;
+  margin-top: 20px;
+  padding: 14px 20px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+  box-shadow: 0 6px 16px rgba(108, 92, 231, 0.22);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.selected-therapist-contact-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(108, 92, 231, 0.32);
+  filter: saturate(1.05);
+}
+
+.selected-therapist-contact-button:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(108, 92, 231, 0.24);
+}
+
+.selected-therapist-contact-button:focus-visible {
+  outline: 3px solid rgba(108, 92, 231, 0.28);
+  outline-offset: 3px;
+}
+
+.selected-therapist-contact-icon {
+  width: 19px;
+  height: 19px;
+  flex: 0 0 auto;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .selected-therapist-navigation {
   display: flex;
   gap: 12px;

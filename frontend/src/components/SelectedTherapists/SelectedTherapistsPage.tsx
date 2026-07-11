@@ -243,13 +243,27 @@ function SelectedTherapistsPage() {
           ) : (
             <div style={{ fontSize: 15, color: '#2d3436' }}>—</div>
           )}
-          {currentTherapist.username !== null &&
-          (
-          <div>
-              <a href={`https://t.me/${ currentTherapist.username }`}>Написать терапевту</a>
-            </div>)
-            }
         </div>
+
+        {currentTherapist.username?.trim() && (
+          <a
+            href={`https://t.me/${currentTherapist.username.trim()}`}
+            className="selected-therapist-contact-button"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <svg
+              className="selected-therapist-contact-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path d="m22 2-7 20-4-9-9-4 20-7Z" />
+              <path d="M22 2 11 13" />
+            </svg>
+            <span>Написать терапевту</span>
+          </a>
+        )}
 
         <div className="selected-therapist-navigation">
           <button
