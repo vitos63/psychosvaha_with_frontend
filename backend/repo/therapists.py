@@ -15,6 +15,7 @@ class TherapistRepo:
             tg_id=dto.tg_id,
             first_name=dto.first_name,
             last_name=dto.last_name,
+            username=dto.username,
             consent=dto.consent,
             status=TherapistStatuses.NOT_APPROVED.value,
         )

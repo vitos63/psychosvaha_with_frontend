@@ -72,8 +72,8 @@ function App() {
       <Router>
         <Routes>
           <Route path="/form-client" element={<ClientFormComponent client_id={user?.id || 1} />} />
-          <Route path="/form-therapist-first" element={<TherapistFirstFormComponent client_id={user?.id || 1}/>} />
-          <Route path="/form-therapist-second" element={<TherapistSecondFormComponent client_id={user?.id || 1}/>} />
+          <Route path="/form-therapist-first" element={<TherapistFirstFormComponent therapist_id={user?.id || 1} therapist_username={user?.username || ""}/>} />
+          <Route path="/form-therapist-second" element={<TherapistSecondFormComponent therapist_id={user?.id || 1}/>} />
           <Route path="/therapist/profile" element={<TherapistProfileViewPage />} />
           <Route path="/therapist/profile/edit" element={<TherapistProfileEditPage />} />
           <Route path="/form-success" element={<SuccessPage />} />

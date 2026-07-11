@@ -5,12 +5,13 @@ import { TherapistFirstFormErrors } from 'interfaces/Errors';
 import { createTherapist } from '../../api/therapistApi';
 import { notifyTelegramWebAppFormSubmitted } from '../../utils/telegramWebApp';
 
-function TherapistFirstFormComponent({client_id}) {
+function TherapistFirstFormComponent({therapist_id, therapist_username}) {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         tg_id: 0,
         first_name: '',
         last_name: '',
+        username: '',
         consent: false,
     })
 
@@ -59,11 +60,12 @@ function TherapistFirstFormComponent({client_id}) {
             }
             return;
         }
-        formData.tg_id = client_id;
+        formData.tg_id = therapist_id;
+        formData.username = therapist_username;
         formData.consent = true;
         try {
                 await createTherapist(formData);
-                await notifyTelegramWebAppFormSubmitted('therapist_first', client_id);
+                await notifyTelegramWebAppFormSubmitted('therapist_first', therapist_id);
                 navigate('/form-success', {
                     state: {
                         title: 'Анкета терапевта отправлена',

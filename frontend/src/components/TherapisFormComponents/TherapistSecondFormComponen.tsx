@@ -14,11 +14,11 @@ import { notifyTelegramWebAppFormSubmitted } from '../../utils/telegramWebApp';
 const MAX_AMOUNT_LENGTH = 7;
 
 function TherapistSecondFormComponent({
-    client_id,
+    therapist_id,
     initialData = null,
     mode = 'create',
 }: {
-    client_id: number
+    therapist_id: number
     initialData?: TherapistByTgIdResponse | null
     mode?: 'create' | 'edit'
 }) {
@@ -72,7 +72,7 @@ function TherapistSecondFormComponent({
 
     useEffect(() => {
     const fetchData = async () => {
-        const therapist = await getTherapistByTgId(client_id)
+        const therapist = await getTherapistByTgId(therapist_id)
 
         setFormData(prev => ({
             ...prev,
@@ -82,7 +82,7 @@ function TherapistSecondFormComponent({
     }
 
     fetchData()
-}, [client_id])
+}, [therapist_id])
 
     const buildAvatarUrl = (pathOrBlob: string | null | undefined): string | null => {
         if (!pathOrBlob) {
@@ -425,8 +425,8 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     };
     console.log('Данные для отправки:', submissionData);
     try {
-        await updateTherapist(submissionData, client_id);
-        await notifyTelegramWebAppFormSubmitted('therapist_second', client_id);
+        await updateTherapist(submissionData, therapist_id);
+        await notifyTelegramWebAppFormSubmitted('therapist_second', therapist_id);
         navigate('/therapist/profile');
     } catch {
         window.alert('Не удалось отправить анкету. Проверьте подключение к интернету и попробуйте снова.');

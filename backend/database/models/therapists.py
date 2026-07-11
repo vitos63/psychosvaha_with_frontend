@@ -32,6 +32,7 @@ class Therapist(Base):
     )
     first_name: Mapped[str] = mapped_column(String(50), nullable=False)
     last_name: Mapped[str] = mapped_column(String(50), nullable=False)
+    username: Mapped[str] = mapped_column(String(50), nullable=True)
     city: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     phone_number: Mapped[Optional[str]] = mapped_column(
         String(30),

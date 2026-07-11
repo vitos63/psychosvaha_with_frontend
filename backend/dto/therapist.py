@@ -50,6 +50,7 @@ class CreateTherapist(BaseModel):
     tg_id: int
     first_name: str
     last_name: str
+    username: str
     consent: bool = False
 
     model_config = ConfigDict(from_attributes=True)
