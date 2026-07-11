@@ -91,6 +91,7 @@ class GetTherapist(BaseModel):
 class GetTherapistForClient(BaseModel):
     first_name: str
     last_name: str
+    username: str | None = None
     city: str | None = None
     email: str | None = None
     photo: str | None = None

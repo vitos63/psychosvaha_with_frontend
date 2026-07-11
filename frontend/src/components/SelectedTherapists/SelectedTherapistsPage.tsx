@@ -243,6 +243,12 @@ function SelectedTherapistsPage() {
           ) : (
             <div style={{ fontSize: 15, color: '#2d3436' }}>—</div>
           )}
+          {currentTherapist.username !== null &&
+          (
+          <div>
+              <a href={`https://t.me/${ currentTherapist.username }`}>Написать терапевту</a>
+            </div>)
+            }
         </div>
 
         <div className="selected-therapist-navigation">

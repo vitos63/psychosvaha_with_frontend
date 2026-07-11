@@ -54,6 +54,7 @@ export interface TherapistByTgIdResponse {
 export interface Therapist {
     first_name: string
     last_name: string
+    username: string | null
     city?: string | null
     phone_number?: string | null
     email?: string | null
