@@ -58,7 +58,7 @@ class AddTherapistsToRequestProcessor(BaseProcessor):
                                                                                    therapist_tg_id=therapist.tg_id,
                                                                                    percentage_of_compliance=percentage_of_compliance)
                 await self._therapist_repo.increase_count_of_recomendations(therapist_tg_id=therapist.tg_id)
-                await self.__notify_therpist(therapist_tg_id=therapist.tg_id)
+                # await self.__notify_therpist(therapist_tg_id=therapist.tg_id)
 
             await self._session.commit()
             await self.send_message_client(tg_id=client_request.client_id, 
