@@ -316,7 +316,7 @@ function ClientFormComponent({ client_id }) {
             <div className="form-field">
                 <input 
                     name="city"
-                    placeholder="Введите город, в котором ищете терапевта" 
+                    placeholder="Введите город, в котором ищете терапевта (не обязательно)" 
                     type="text" 
                     value={formData.city}
                     onChange={handleInputChange}
@@ -324,7 +324,6 @@ function ClientFormComponent({ client_id }) {
                 />
                 {errors.city && <span className="error-message">{errors.city}</span>}
                 <small style={{ display: 'block', marginTop: '5px', color: '#666' }}>
-                Если не укажете город, отметьте, что готовы к онлайн терапии
             </small>
             </div>
 
