@@ -195,12 +195,6 @@ function SelectedTherapistsPage() {
 
         {row('Город', currentTherapist.city ?? undefined)}
         {row(
-          'Возраст',
-          currentTherapist.age !== undefined && currentTherapist.age !== null
-            ? String(currentTherapist.age)
-            : undefined,
-        )}
-        {row(
           'Стаж (лет)',
           currentTherapist.experience !== undefined && currentTherapist.experience !== null
             ? String(currentTherapist.experience)

@@ -1,5 +1,5 @@
-NOTIFICATION_FOR_ADMIN_MESSAGE = "У вас {not_approved_client_requests} не одобренных клиентских заявок и {not_approved_therapists} не одобренных заявок от терапевтов"
-NOTIFICATION_FOR_CLIENT_MESSAGE = "По вашей заяввке найдено {therapists_count} подходящих терапевтов, с которыми вы можете связаться в ближайшее время"
-NOTIFICATION_FOR_CLIENT_MESSAGE_NO_THERAPISTS = "К сожалению, по вашей заявке не было найдено подходящих терапевтов"
+NOTIFICATION_FOR_ADMIN_MESSAGE = "У вас {not_approved_client_requests} не одобренных клиентских заявок и {not_approved_therapists} не одобренных заявок от специалистов"
+NOTIFICATION_FOR_CLIENT_MESSAGE = "По вашей заявке найдено {therapists_count} подходящих специалистов, с которыми вы можете связаться в ближайшее время"
+NOTIFICATION_FOR_CLIENT_MESSAGE_NO_THERAPISTS = "К сожалению, по вашей заявке не было найдено подходящих специалистов"
 NOTIFICATION_FOR_THERAPIST_WERE_RECOMENDED = "Ваша кандидатура была предложена клиенту, возможно он свяжется с вами в ближайшее время"
 NOTIFICATION_FOR_THERAPIST_WERE_APPROVED = "Ваша анкета была одобрена администратором. Теперь вы можете продолжить ее заполнение!"
