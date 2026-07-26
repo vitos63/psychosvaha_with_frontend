@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../Form.css'
 import { createClientRequest } from '../../api/clientRequestApi';
 import { ClientFormErrors } from 'interfaces/Errors';
@@ -419,7 +419,9 @@ function ClientFormComponent({ client_id }) {
                         checked={formData.consent}
                         onChange={handleInputChange}
                     />
+                    <Link to="/consent_of_personal_data">
                     Дайте согласие на обработку персональных данных
+                    </Link>
                 </label>
                 {errors.consent && <span className="error-message">{errors.consent}</span>}
             </div>

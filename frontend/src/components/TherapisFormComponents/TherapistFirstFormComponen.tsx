@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../Form.css'
 import { TherapistFirstFormErrors } from 'interfaces/Errors';
 import { createTherapist } from '../../api/therapistApi';
@@ -112,7 +112,9 @@ function TherapistFirstFormComponent({therapist_id, therapist_username}) {
                         checked={formData.consent}
                         onChange={handleInputChange}
                     />
+                    <Link to="/consent_of_personal_data">
                     Дайте согласие на обработку персональных данных
+                    </Link>
                 </label>
                 {errors.consent && <span className="error-message" style={{display: 'block'}}>{errors.consent}</span>}
             </div>
