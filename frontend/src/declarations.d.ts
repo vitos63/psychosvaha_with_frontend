@@ -47,6 +47,18 @@ interface TelegramWebApp {
   };
 }
 
+interface TelegramBackButton {
+  isVisible: boolean;
+  show: () => void;
+  hide: () => void;
+  onClick: (callback: () => void) => void;
+  offClick: (callback: () => void) => void;
+}
+
+interface TelegramWebApp {
+  BackButton: TelegramBackButton;
+}
+
 interface Window {
   Telegram?: {
     WebApp: TelegramWebApp;
