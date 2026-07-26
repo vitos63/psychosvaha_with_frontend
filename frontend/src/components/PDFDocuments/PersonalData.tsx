@@ -8,3 +8,5 @@ function ConcentOfPersonalData() {
     </iframe>
     )
 }
+
+export default ConcentOfPersonalData
