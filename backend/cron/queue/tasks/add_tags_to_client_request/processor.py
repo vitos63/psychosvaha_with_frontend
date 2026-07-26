@@ -10,7 +10,6 @@ from repo.client_requests_tags import ClientRequestTagRepo
 from repo.tags import TagRepo
 from repo.queue import QueueRepo
 from service.date_time import DateTimeService
-from ..add_therapists_to_client_request.task import AddTherapistsToRequestTask
 
 from .task import AddTagsToRequestTask
 

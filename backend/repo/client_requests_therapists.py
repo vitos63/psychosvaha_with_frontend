@@ -8,6 +8,7 @@ from sqlalchemy import (
     Integer,
     Select,
     Subquery,
+    literal_column
 )
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -61,7 +62,12 @@ class ClientRequestTherapistRepo:
         stmt = (
             select(
                 Therapist,
-                func.array_agg(Tag.value)
+                func.coalesce(
+                    func.array_agg(request_tags_sq.c.weight).filter(
+                        request_tags_sq.c.tag_id.is_not(None)
+                    ),
+                    literal_column("'{}'::integer[]"),
+                ).label("tag_weights"),
             )
             .outerjoin(
                 TherapistTag,
@@ -70,10 +76,6 @@ class ClientRequestTherapistRepo:
             .outerjoin(
                 request_tags_sq,
                 TherapistTag.tag_id == request_tags_sq.c.tag_id,
-            )
-            .outerjoin(
-                Tag,
-                TherapistTag.tag_id == Tag.id,
             )
             .group_by(Therapist.tg_id)
         )
