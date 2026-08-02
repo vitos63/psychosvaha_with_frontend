@@ -21,12 +21,12 @@ logger = logging.getLogger(__name__)
 
 
 @command_router.message(Command("start"))
-async def command_start_message(bot: Bot, message: Message):
+async def command_start_message(message: Message, bot: Bot):
     await start_handler(bot=bot, user_id=message.from_user.id, chat_id=message.chat.id)
 
 
 @command_router.callback_query(F.data == "start_bot")
-async def command_start_callback(bot: Bot, callback: CallbackQuery):
+async def command_start_callback(callback: CallbackQuery, bot: Bot):
     await callback.answer()
     await start_handler(bot=bot, user_id=callback.from_user.id, chat_id=callback.message.chat.id)
 

@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 @research_router.callback_query(F.data.startswith("research_therapists:"))
-async def research_therapists(bot: Bot, callback: CallbackQuery):
+async def research_therapists(callback: CallbackQuery, bot: Bot):
     await callback.answer()
     await research_therapists_handler(bot=bot, callback=callback)
 
