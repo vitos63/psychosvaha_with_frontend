@@ -1,3 +1,5 @@
+import Select from 'react-select';
+import { City } from 'country-state-city';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../Form.css'
@@ -26,6 +28,11 @@ function ClientFormComponent({ client_id }) {
         { code: 'usd', name: 'Доллары', selected: false, amount: '' },
         { code: 'eur', name: 'Евро', selected: false, amount: '' }
     ]);
+
+    const cities = City.getAllCities().map(city => ({
+        value: city.name,
+        label: `${city.name}, ${city.countryCode}`,
+        }));
 
     const [errors, setErrors] = useState<ClientFormErrors>({})
     
@@ -130,17 +137,6 @@ function ClientFormComponent({ client_id }) {
 
         if (!formData.city.trim() && !formData.is_online) {
             newErrors.city = "Введите город или дайте согласие на онлайн терапию"
-        }
-
-        else if (formData.city) {
-            const isValidCity = await checkCity(formData.city)
-            if (!isValidCity){
-                newErrors.city = "Мы не смогли найти такой город, пожалуйста, проверьте правильность его написания"
-            }
-            
-            else if (typeof isValidCity == 'string'){
-                newErrors.city = `Мы не смогли найти такой город, возможно вы имели в виду ${isValidCity}?`
-            }
         }
 
         if (!formData.psychotherapist_sex) {
@@ -314,14 +310,17 @@ function ClientFormComponent({ client_id }) {
             </div>
 
             <div className="form-field">
-                <input 
-                    name="city"
-                    placeholder="Введите город, в котором ищете терапевта (не обязательно)" 
-                    type="text" 
-                    value={formData.city}
-                    onChange={handleInputChange}
-                    className={errors.city ? 'error' : ''}
-                />
+                <Select
+                options={cities}
+                placeholder="Введите ваш город"
+                value={cities.find(city => city.value === formData.city) ?? null}
+                onChange={(selected) =>
+                    setFormData(prev => ({
+                        ...prev,
+                        city: selected?.value || "",
+                    }))
+                }
+            />
                 {errors.city && <span className="error-message">{errors.city}</span>}
                 <small style={{ display: 'block', marginTop: '5px', color: '#666' }}>
             </small>

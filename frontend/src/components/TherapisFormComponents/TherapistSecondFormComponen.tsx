@@ -1,3 +1,5 @@
+import Select from 'react-select';
+import { City } from 'country-state-city';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PhoneInput } from 'react-international-phone';
@@ -52,6 +54,11 @@ function TherapistSecondFormComponent({
         { code: 'usd', name: 'Доллары', selected: false, amount: '' },
         { code: 'eur', name: 'Евро', selected: false, amount: '' }
     ]);
+
+    const cities = City.getAllCities().map(city => ({
+        value: city.name,
+        label: `${city.name}, ${city.countryCode}`,
+        }));
 
     type FormElement = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     const [selectedTags, setSelectedTags] = useState<number[]>([]);
@@ -277,17 +284,6 @@ function TherapistSecondFormComponent({
             newErrors.city = "Укажите город или отметьте, что принимаете онлайн"
         }
 
-        else if (cityValue) {
-                const isValidCity = await checkCity(cityValue)
-                if (!isValidCity){
-                    newErrors.city = "Мы не смогли найти такой город, пожалуйста, проверьте правильность его написания"
-                }
-                
-                else if (typeof isValidCity == 'string'){
-                    newErrors.city = `Мы не смогли найти такой город, возможно вы имели в виду ${isValidCity}?`
-                }
-            }
-
         const phoneDigits = phoneValue.replace(/\D/g, '');
         if (phoneDigits.length > 0 && phoneDigits.length < 7) {
             newErrors.phone = "Введите корректный номер телефона"
@@ -510,13 +506,16 @@ return (
         </div>
 
         <div className="form-field">
-            <input
-                name="city"
-                placeholder="Введите ваш город"
-                type="text"
-                value={formData.city}
-                onChange={handleInputChange}
-                className={errors.city ? 'error' : ''}
+            <Select
+                options={cities}
+                placeholder="Введите ваш город (не обязательно)"
+                value={cities.find(city => city.value === formData.city) ?? null}
+                onChange={(selected) =>
+                    setFormData(prev => ({
+                        ...prev,
+                        city: selected?.value || "",
+                    }))
+                }
             />
             {errors.city && <span className="error-message">{errors.city}</span>}
             <small style={{ display: 'block', marginTop: '5px', color: '#666' }}>
