@@ -29,10 +29,7 @@ async def research_therapists_handler(callback: CallbackQuery,
             callback.data.split(":", maxsplit=1)[1]
         )
     except (ValueError, IndexError):
-        await callback.answer(
-            "Некорректная заявка",
-            show_alert=True,
-        )
         return
-    await client_request_service.research_therapists(request_id=request_id, client_id=client_request.client_id)
+
+    await client_request_service.research_therapists(request_id=request_id, client_id=user_id)
     await remove_start_keyboard_for_user(bot, user_id)
