@@ -3,6 +3,7 @@ export interface TherapistCreateInterface {
     first_name: string
     last_name: string
     consent: boolean
+    username: string | null
 }
 
 

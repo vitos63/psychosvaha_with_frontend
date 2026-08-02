@@ -7,11 +7,12 @@ import { notifyTelegramWebAppFormSubmitted } from '../../utils/telegramWebApp';
 
 function TherapistFirstFormComponent({therapist_id, therapist_username}) {
     const navigate = useNavigate();
+    const [tgConsent, setTgConsent] = useState(false)
     const [formData, setFormData] = useState({
         tg_id: 0,
         first_name: '',
         last_name: '',
-        username: '',
+        username: null,
         consent: false,
     })
 
@@ -61,7 +62,9 @@ function TherapistFirstFormComponent({therapist_id, therapist_username}) {
             return;
         }
         formData.tg_id = therapist_id;
-        formData.username = therapist_username;
+        if (tgConsent) {
+            formData.username = therapist_username;
+        }
         formData.consent = true;
         try {
                 await createTherapist(formData);
@@ -115,6 +118,17 @@ function TherapistFirstFormComponent({therapist_id, therapist_username}) {
                     <Link to="/consent_of_personal_data">
                     Дайте согласие на обработку персональных данных
                     </Link>
+                </label>
+                </div>
+                <div className="form-field">
+                <label>
+                    <input 
+                        type="checkbox" 
+                        name="tg"
+                        checked={tgConsent}
+                        onChange={() => {setTgConsent(!tgConsent)}}
+                    />
+                    Показывать мой Telegram клиентам
                 </label>
                 {errors.consent && <span className="error-message" style={{display: 'block'}}>{errors.consent}</span>}
             </div>
