@@ -17,7 +17,7 @@ from repo.client_requests import ClientRequestRepo
 from cron.queue.tasks.add_therapists_to_client_request.task import AddTherapistsToRequestTask
 from bot.messages import NOTIFICATION_FOR_THERAPIST_WERE_APPROVED, NOTIFICATION_FOR_THERAPIST_WERE_DISAPPROVED
 from bot.keyboards.therapist_keyboards import therapist_second_form_keyboard
-from bot.keyboards.start_keyboard import get_start_keyboard
+from bot.keyboards.start_keyboard import start_keyboard
 
 
 class AdminService:
@@ -124,7 +124,7 @@ class AdminService:
             message = await self._bot.send_message(
                 chat_id=therapist.tg_id,
                 text=NOTIFICATION_FOR_THERAPIST_WERE_DISAPPROVED,
-                reply_markup=get_start_keyboard
+                reply_markup=start_keyboard
             )
 
             await self.__remove_admin_keyboard()

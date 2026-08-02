@@ -4,6 +4,7 @@ from aiogram import Bot
 from aiogram.exceptions import TelegramBadRequest
 
 from bot.storage.start_messages import pop_start_message_id_by_user
+from bot.keyboards.start_keyboard import start_keyboard
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +27,7 @@ async def remove_start_keyboard_for_user(bot: Bot, user_id: int) -> bool:
         await bot.edit_message_reply_markup(
             chat_id=chat_id,
             message_id=message_id,
-            reply_markup=None,
+            reply_markup=start_keyboard,
         )
         logger.info(
             "Start keyboard removed for user_id=%s chat_id=%s message_id=%s",

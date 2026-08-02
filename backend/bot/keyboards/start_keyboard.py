@@ -1,10 +1,7 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
-
-from constants import BASE_URL
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
-def get_start_keyboard(request_id: int) -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(
+start_keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
             [
                 InlineKeyboardButton(
