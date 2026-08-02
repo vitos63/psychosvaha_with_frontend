@@ -1,7 +1,7 @@
 import { API_BASE_URL } from "./config";
 import { getErrorDetail } from "./http";
 import { AdminMainInfoResponse } from "../interfaces/AdminMainInfoInterface";
-import { ApproveClientRequestInterface, ApproveTherapistInterface } from "../interfaces/AdminApproveInterface";
+import { ApproveClientRequestInterface, ApproveTherapistInterface, DisApproveTherapistInterface } from "../interfaces/AdminApproveInterface";
 
 export async function fetchAdminMainInfo(tgId: number): Promise<AdminMainInfoResponse> {
     const params = new URLSearchParams({ tg_id: String(tgId) });
@@ -32,6 +32,22 @@ export async function approveClientRequest(payload: ApproveClientRequestInterfac
 
 export async function approveTherapist(payload: ApproveTherapistInterface): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/admin/approve-therapist`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+        const data: unknown = await response.json().catch(() => ({}));
+        throw new Error(getErrorDetail(response, data));
+    }
+}
+
+
+export async function disapproveTherapist(payload: DisApproveTherapistInterface): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/admin/disapprove-therapist`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',

@@ -1,8 +1,8 @@
 import logging
 
-from aiogram import Bot, Router
+from aiogram import Bot, Router, F
 from aiogram.filters.command import Command
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 from dependency_injector.wiring import Provide, inject
 from typing import Annotated
 
@@ -21,6 +21,16 @@ logger = logging.getLogger(__name__)
 
 
 @command_router.message(Command("start"))
+async def command_start_message(bot: Bot, message: Message):
+    await start_handler(bot=bot, message=message)
+
+
+@command_router.callback_query(F.data == "start_bot")
+async def command_start_callback(bot: Bot, callback: CallbackQuery):
+    await callback.answer()
+    await start_handler(bot=bot, message=callback.message)
+
+
 @inject
 async def start_handler(message: Message,
                         bot: Bot,

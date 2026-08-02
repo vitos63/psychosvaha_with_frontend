@@ -8,14 +8,16 @@ from database.models import Admin
 from dto.admin import Admin as AdminDTO, MainInfoForAdmin
 from dto.client_request import ClientRequestForAdmin
 from dto.therapist import TherapistForAdmin
+from server.handlers.v1.admin.request import DisapproveTherapistRequest
 from repo.admin import AdminRepo
 from repo.queue import QueueRepo
 from repo.client_requests_tags import ClientRequestTagRepo
 from repo.therapists import TherapistRepo
 from repo.client_requests import ClientRequestRepo
 from cron.queue.tasks.add_therapists_to_client_request.task import AddTherapistsToRequestTask
-from bot.messages import NOTIFICATION_FOR_THERAPIST_WERE_APPROVED
+from bot.messages import NOTIFICATION_FOR_THERAPIST_WERE_APPROVED, NOTIFICATION_FOR_THERAPIST_WERE_DISAPPROVED
 from bot.keyboards.therapist_keyboards import therapist_second_form_keyboard
+from bot.keyboards.start_keyboard import get_start_keyboard
 
 
 class AdminService:
@@ -109,6 +111,26 @@ class AdminService:
             await set_start_message_id(chat_id=therapist.tg_id,
                                        user_id=therapist.tg_id,
                                        message_id=message.message_id)
+
+        except Exception:
+            await self._session.rollback()
+            raise
+
+    async def disapprove_therapist(self, therapist: DisapproveTherapistRequest):
+        try:
+            await self._therapist_repo.disapprove_therapist(therapist.tg_id)
+            await self._session.commit()
+            
+            message = await self._bot.send_message(
+                chat_id=therapist.tg_id,
+                text=NOTIFICATION_FOR_THERAPIST_WERE_DISAPPROVED,
+                reply_markup=get_start_keyboard
+            )
+
+            await self.__remove_admin_keyboard()
+            await set_start_message_id(chat_id=therapist.tg_id,
+                                        user_id=therapist.tg_id,
+                                        message_id=message.message_id)
 
         except Exception:
             await self._session.rollback()

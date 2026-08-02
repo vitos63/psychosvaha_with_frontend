@@ -3,3 +3,7 @@ import { ClientRequestForAdmin, TherapistForAdmin } from "./AdminMainInfoInterfa
 export interface ApproveClientRequestInterface extends ClientRequestForAdmin {}
 
 export interface ApproveTherapistInterface extends TherapistForAdmin {}
+
+export interface DisApproveTherapistInterface {
+    tg_id: number
+}

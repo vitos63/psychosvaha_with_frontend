@@ -6,7 +6,7 @@ from fastapi.routing import APIRouter
 from server.dependencies import admin_service
 from service.admin import AdminService
 
-from .request import ApproveClientRequestRequest, ApproveTherapistRequest
+from .request import ApproveClientRequestRequest, ApproveTherapistRequest, DisapproveTherapistRequest
 from .response import MainInfoForAdminResponse
 
 
@@ -32,4 +32,10 @@ async def approve_client_request(service: Annotated[AdminService, Depends(admin_
 @admin_router.put("/approve-therapist")
 async def approve_therapist(service: Annotated[AdminService, Depends(admin_service)], therapist: ApproveTherapistRequest):
     await service.approve_therapist(therapist)
+    return status.HTTP_204_NO_CONTENT
+
+
+@admin_router.put("/disapprove-therapist")
+async def approve_therapist(service: Annotated[AdminService, Depends(admin_service)], therapist: DisapproveTherapistRequest):
+    await service.disapprove_therapist(therapist)
     return status.HTTP_204_NO_CONTENT

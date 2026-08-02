@@ -3,3 +3,4 @@ NOTIFICATION_FOR_CLIENT_MESSAGE = "По вашей заявке найдено {
 NOTIFICATION_FOR_CLIENT_MESSAGE_NO_THERAPISTS = "К сожалению, по вашей заявке не было найдено подходящих специалистов"
 NOTIFICATION_FOR_THERAPIST_WERE_RECOMENDED = "Ваша кандидатура была предложена клиенту, возможно он свяжется с вами в ближайшее время"
 NOTIFICATION_FOR_THERAPIST_WERE_APPROVED = "Ваша анкета была одобрена администратором. Теперь вы можете продолжить ее заполнение!"
+NOTIFICATION_FOR_THERAPIST_WERE_DISAPPROVED = "Ваша анкета была отклонена администратором. Вы можете попробовать подать повторную анкету позже"

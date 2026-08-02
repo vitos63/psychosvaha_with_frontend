@@ -1,4 +1,4 @@
-from sqlalchemy import select, update
+from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.models import Therapist
@@ -91,3 +91,13 @@ class TherapistRepo:
         therapist = result.scalar_one()
         therapist.status = TherapistStatuses.APPROVED.value
         await self._session.flush()
+
+    async def disapprove_therapist(self, tg_id: int):
+            stmt = (
+                delete(Therapist)
+                .where(
+                    Therapist.tg_id == tg_id
+                )
+            )
+            await self._session.execute(stmt)
+            await self._session.flush()

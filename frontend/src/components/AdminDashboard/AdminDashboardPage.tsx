@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { approveClientRequest, approveTherapist, fetchAdminMainInfo } from '../../api/adminApi';
+import { approveClientRequest, approveTherapist, fetchAdminMainInfo, disapproveTherapist } from '../../api/adminApi';
 import {
   TAG_CATEGORIES,
   TAG_CATEGORY_LABELS,
@@ -9,6 +9,7 @@ import {
 import { AdminMainInfoResponse } from '../../interfaces/AdminMainInfoInterface';
 import '../Form.css';
 import './AdminDashboardPage.css';
+import { useFormState } from 'react-dom';
 
 type AdminDashboardPageProps = {
   tgId: number | undefined;
@@ -23,6 +24,7 @@ function AdminDashboardPage({ tgId }: AdminDashboardPageProps) {
   const [therapistIndex, setTherapistIndex] = useState(0);
   const [saving, setSaving] = useState(false);
   const [selectedClientTags, setSelectedClientTags] = useState<string[]>([]);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const knownTagTitles = useMemo(() => new Set(TAG_OPTIONS), []);
 
@@ -90,6 +92,14 @@ function AdminDashboardPage({ tgId }: AdminDashboardPageProps) {
   const handleOpenClients = () => {
     setClientIndex(0);
     setView('clients');
+  };
+
+  const handleDelete = async () => {
+    await disapproveTherapist({
+      tg_id: currentTherapist.tg_id
+    })
+    setShowConfirm(false);
+    handlePostponeTherapist()
   };
 
   const handleOpenTherapists = () => {
@@ -360,6 +370,24 @@ function AdminDashboardPage({ tgId }: AdminDashboardPageProps) {
                 >
                   {saving ? 'Сохраняем...' : 'Одобрить'}
                 </button>
+                <button
+                  type="button"
+                  className="admin-dashboard__action admin-dashboard__action--secondary"
+                  onClick={() => setShowConfirm(true)}
+                >
+                  Отклонить
+                </button>
+              {showConfirm && (
+              <div className="confirm-panel">
+                <p>Вы уверены?</p>
+                <button onClick={handleDelete}>
+                  Да
+                </button>
+                <button onClick={() => setShowConfirm(false)}>
+                  Отмена
+                </button>
+              </div>
+            )}
               </div>
             </>
           )}
