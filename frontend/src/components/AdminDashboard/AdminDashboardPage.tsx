@@ -95,12 +95,46 @@ function AdminDashboardPage({ tgId }: AdminDashboardPageProps) {
   };
 
   const handleDelete = async () => {
+  if (!currentTherapist) {
+    return;
+  }
+
+  const deletedTherapistId = currentTherapist.tg_id;
+
+  setSaving(true);
+  setError(null);
+
+  try {
     await disapproveTherapist({
-      tg_id: currentTherapist.tg_id
-    })
+      tg_id: deletedTherapistId,
+    });
+
+    setData((previousData) => {
+      if (!previousData) {
+        return previousData;
+      }
+
+      return {
+        ...previousData,
+        not_approved_therapists:
+          previousData.not_approved_therapists.filter(
+            (therapist) => therapist.tg_id !== deletedTherapistId,
+          ),
+      };
+    });
+
+    setTherapistIndex(0);
     setShowConfirm(false);
-    handlePostponeTherapist()
-  };
+  } catch (error) {
+    setError(
+      error instanceof Error
+        ? error.message
+        : 'Не удалось отклонить терапевта',
+    );
+  } finally {
+    setSaving(false);
+  }
+};
 
   const handleOpenTherapists = () => {
     setTherapistIndex(0);

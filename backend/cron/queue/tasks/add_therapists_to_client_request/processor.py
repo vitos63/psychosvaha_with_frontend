@@ -15,6 +15,8 @@ from database.models import ClientRequest
 from .task import AddTherapistsToRequestTask
 from bot.messages import NOTIFICATION_FOR_THERAPIST_WERE_RECOMENDED, NOTIFICATION_FOR_CLIENT_MESSAGE, NOTIFICATION_FOR_CLIENT_MESSAGE_NO_THERAPISTS
 from bot.keyboards.client_keyboard import get_client_keyboard
+from bot.keyboards.start_keyboard import get_no_therapists_keyboard
+from bot.storage.start_messages import set_start_message_id
 
 class AddTherapistsToRequestProcessor(BaseProcessor):
     def __init__(
@@ -61,8 +63,8 @@ class AddTherapistsToRequestProcessor(BaseProcessor):
                 # await self.__notify_therpist(therapist_tg_id=therapist.tg_id)
 
             await self._session.commit()
-            await self.send_message_client(tg_id=client_request.client_id, 
-                                           therapists_count=len(best_therapists), 
+            await self.send_message_client(tg_id=client_request.client_id,
+                                           therapists_count=len(best_therapists),
                                            client_request=client_request)
             await self._client_request_repo.delete_client_id_from_request(request_id=task.request_id)
             await self._session.commit()
@@ -77,8 +79,18 @@ class AddTherapistsToRequestProcessor(BaseProcessor):
             therapists_count: int,
             client_request: ClientRequest
     ):
-        await self._bot.send_message(
-            chat_id=tg_id,
-            text=NOTIFICATION_FOR_CLIENT_MESSAGE.format(therapists_count=therapists_count) if therapists_count else NOTIFICATION_FOR_CLIENT_MESSAGE_NO_THERAPISTS,
-            reply_markup=get_client_keyboard(request_id=client_request.id) if therapists_count else None
-        ) # TODO added logic of no therapists for request
+        if therapists_count:
+            await self._bot.send_message(
+                chat_id=tg_id,
+                text=NOTIFICATION_FOR_CLIENT_MESSAGE.format(therapists_count=therapists_count),
+                reply_markup=get_client_keyboard(request_id=client_request.id)
+            )
+
+        else:
+            message = await self._bot.send_message(
+                chat_id=tg_id,
+                text=NOTIFICATION_FOR_CLIENT_MESSAGE_NO_THERAPISTS,
+                reply_markup=get_no_therapists_keyboard(request_id=client_request.id)
+                )
+
+            await set_start_message_id(chat_id=message.chat.id, user_id=tg_id, message_id=message.message_id)

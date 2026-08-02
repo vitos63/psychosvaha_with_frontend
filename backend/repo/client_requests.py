@@ -115,3 +115,12 @@ class ClientRequestRepo:
         )
         await self._session.execute(stmt)
         await self._session.flush()
+
+    async def update_request_for_research(self, request_id: int, client_id: int):
+        stmt = (
+            update(ClientRequest)
+            .where(ClientRequest.id == request_id)
+            .values(client_id=client_id, is_online=True, currency_amount={"RUB": 100000, "USD": 1000, "EUR": 1000})
+        )
+        await self._session.execute(stmt)
+        await self._session.flush()

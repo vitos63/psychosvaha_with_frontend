@@ -8,7 +8,6 @@ import '../Form.css'
 import { TherapistSecondFormErrors } from 'interfaces/Errors';
 import { updateTherapist, getTherapistByTgId } from '../../api/therapistApi';
 import { avatarPathToMediaUrl } from '../../api/api';
-import { checkCity } from '../../api/checkCity';
 import { TAG_CATEGORIES, TAG_CATEGORY_LABELS, type TagCategoryKey } from '../../constants/tags';
 import { TherapistByTgIdResponse } from '../../interfaces/TherapistInterface';
 import { notifyTelegramWebAppFormSubmitted } from '../../utils/telegramWebApp';

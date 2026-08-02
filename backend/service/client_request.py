@@ -7,6 +7,9 @@ from dto.client_request import CreateClientRequest
 from repo.client_requests import ClientRequestRepo
 from repo.queue import QueueRepo
 from service.date_time import DateTimeService
+from cron.queue.tasks.add_therapists_to_client_request.task import (
+    AddTherapistsToRequestTask,
+)
 
 
 class ClientRequestService:
@@ -51,3 +54,34 @@ class ClientRequestService:
             request_id=request_id,
         )
         return await self._client_request_repo.get_therapists_by_id_request(request_id=request_client.id)
+
+    async def research_therapists(self, request_id: int, client_id: int):
+        try:
+            client_request = (
+                await self._client_request_repo.select_by_request_id(
+                    request_id=request_id,
+                )
+            )
+
+            if client_request is None:
+                raise ValueError("Заявка не найдена")
+
+            await self._client_request_repo.update_request_for_research(
+                request_id=request_id,
+                client_id=client_id,
+            )
+
+            task = AddTherapistsToRequestTask(
+                request_id=request_id,
+            )
+
+            await self._queue_repo.create_task(
+                task=task,
+                start_at=self._date_time_service.get_current_time(),
+            )
+
+            await self._session.commit()
+
+        except Exception:
+            await self._session.rollback()
+            raise

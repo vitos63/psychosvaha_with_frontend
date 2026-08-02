@@ -11,3 +11,24 @@ start_keyboard = InlineKeyboardMarkup(
             ]
         ]
     )
+
+
+def get_no_therapists_keyboard(
+    request_id: int,
+) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="Давайте",
+                    callback_data=f"research_therapists:{request_id}",
+                ),
+            ],
+            [
+                InlineKeyboardButton(
+                    text="Спасибо, не надо",
+                    callback_data="start_bot",
+                ),
+            ],
+        ],
+    )

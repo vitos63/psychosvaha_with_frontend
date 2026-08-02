@@ -5,7 +5,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import '../Form.css'
 import { createClientRequest } from '../../api/clientRequestApi';
 import { ClientFormErrors } from 'interfaces/Errors';
-import { checkCity } from '../../api/checkCity';
 import { notifyTelegramWebAppFormSubmitted } from '../../utils/telegramWebApp';
 
 const MAX_AMOUNT_LENGTH = 7;
