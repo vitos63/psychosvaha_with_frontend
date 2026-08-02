@@ -13,7 +13,7 @@ research_router = Router()
 logger = logging.getLogger(__name__)
 
 
-@research_router.callback_query(F.data == "research_therapists")
+@research_router.callback_query(F.data.startswith("research_therapists:"))
 async def research_therapists(bot: Bot, callback: CallbackQuery):
     await callback.answer()
     await research_therapists_handler(bot=bot, callback=callback)
@@ -24,6 +24,15 @@ async def research_therapists_handler(callback: CallbackQuery,
                         bot: Bot,
                         client_request_service: Annotated[ClientRequestService, Provide[Container.client_request_service]]):
     user_id = callback.from_user.id
-    client_request = await client_request_service.get_client_request_by_tg_id(tg_id=user_id)
-    await client_request_service.research_therapists(request_id=client_request.id, client_id=client_request.client_id)
+    try:
+        request_id = int(
+            callback.data.split(":", maxsplit=1)[1]
+        )
+    except (ValueError, IndexError):
+        await callback.answer(
+            "Некорректная заявка",
+            show_alert=True,
+        )
+        return
+    await client_request_service.research_therapists(request_id=request_id, client_id=client_request.client_id)
     await remove_start_keyboard_for_user(bot, user_id)

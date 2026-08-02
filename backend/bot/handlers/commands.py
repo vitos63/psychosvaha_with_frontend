@@ -55,8 +55,8 @@ async def start_handler(user_id: int,
                                           tg_id=user_id).get_start_keyboard()
 
     await remove_start_keyboard_for_user(bot, user_id)
-    sent_message = await bot.send_message(answer, reply_markup=keyboard, parse_mode="HTML")
-    await set_start_message_id(chat_id=chat_id, text=answer, user_id=user_id, message_id=sent_message.message_id)
+    sent_message = await bot.send_message(chat_id=chat_id, text=answer, reply_markup=keyboard, parse_mode="HTML")
+    await set_start_message_id(chat_id=chat_id, user_id=user_id, message_id=sent_message.message_id)
     logger.info(
         "Saved start message chat_id=%s user_id=%s message_id=%s",
         chat_id,
