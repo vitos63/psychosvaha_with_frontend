@@ -43,7 +43,7 @@ class ClientRequestTherapistRepo:
 
     async def get_therapists_with_tags_by_request(
         self, client_request_id: int
-    ) -> list[tuple[Therapist, list[int]]]:
+    ) -> list[tuple[Therapist, list[int], int]]:
         request = await self._session.get(ClientRequest, client_request_id)
         if not request:
             return []
@@ -68,6 +68,7 @@ class ClientRequestTherapistRepo:
                     ),
                     literal_column("'{}'::integer[]"),
                 ).label("tag_weights"),
+                Therapist.count_of_recomendations
             )
             .outerjoin(
                 TherapistTag,

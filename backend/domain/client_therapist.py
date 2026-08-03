@@ -21,5 +21,5 @@ class ClientTherapistDomain:
         for therapist, tags_values in self.therapists_with_tags:
             therapist_rating[therapist] = int((sum(tags_values) / max_rank)*100)
 
-        therapist_rating = sorted(therapist_rating.items(), key=lambda x: x[1], reverse=True)[:3]
+        therapist_rating = sorted(therapist_rating.items(), key=lambda x: (x[1], x[2]), reverse=True)[:3]
         return therapist_rating
