@@ -23,3 +23,5 @@ CONSUMER_SHUTDOWN_SECONDS = float(os.environ["CONSUMER_SHUTDOWN_SECONDS"])
 BOT_TOKEN = os.environ['BOT_TOKEN']
 
 SECRET_KEY = os.environ["SECRET_KEY"]
+
+ADMIN_TG_CHAT_ID = os.environ["ADMIN_TG_CHAT_ID"]

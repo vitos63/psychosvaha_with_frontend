@@ -1,6 +1,6 @@
 import { API_BASE_URL } from "./config";
 import { getErrorDetail } from "./http";
-import { TherapistByTgIdResponse, TherapistCreateInterface, TherapistUpdateInterface } from "interfaces/TherapistInterface";
+import { TherapistByTgIdResponse, TherapistCreateInterface } from "interfaces/TherapistInterface";
 import { ApiError } from "./api";
 
 export async function createTherapist(therapist: TherapistCreateInterface) {

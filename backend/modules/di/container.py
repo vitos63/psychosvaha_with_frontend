@@ -18,6 +18,7 @@ from service.client_request import ClientRequestService
 from service.therapist import TherapistService
 from service.date_time import DateTimeService
 from service.admin import AdminService
+from service.problem_report import ProblemReportService
 from cron.queue.tasks.send_notification_to_admin.processor import SendNotificationTOAdminProcessor
 from service.admin import AdminService
 from service.file_service import FileService
@@ -92,7 +93,6 @@ class Container(containers.DeclarativeContainer):
         FileService,
     )
 
-
     therapist_service = providers.Factory(
         TherapistService,
         session=session,
@@ -102,6 +102,11 @@ class Container(containers.DeclarativeContainer):
         date_time_service=date_time_service,
         file_serv=file_serv
     )
+
+    problem_report_service = providers.Factory(
+            ProblemReportService,
+            bot=bot
+        )
 
     client_request_service = providers.Factory(
         ClientRequestService,
