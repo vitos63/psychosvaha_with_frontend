@@ -10,6 +10,7 @@ from server.handlers.v1.client_requests.controller import (
 )
 from server.handlers.v1.therapist.controller import router as therapist_router
 from server.handlers.v1.tg_webapp.controller import router as tg_webapp_router
+from server.handlers.v1.problem_report.controller import problem_report_router
 from server.admin_panel.models import (
     TagAdmin,
     AdminAdmin,
@@ -41,6 +42,7 @@ app.add_middleware(
 app.include_router(client_requests_router)
 app.include_router(therapist_router)
 app.include_router(tg_webapp_router)
+app.include_router(problem_report_router)
 
 app.include_router(admin_router)
 

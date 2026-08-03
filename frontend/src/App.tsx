@@ -11,6 +11,7 @@ import SuccessPage from './components/SuccessPage/SuccessPage';
 import AdminDashboardPage from './components/AdminDashboard/AdminDashboardPage';
 import SelectedTherapistsPage from './components/SelectedTherapists/SelectedTherapistsPage';
 import ConcentOfPersonalData from './components/PDFDocuments/PersonalData';
+import ReportProblem from './components/ReportProblem/ReportProblemButton';
 
 
 type TgUser = NonNullable<NonNullable<TelegramWebApp['initDataUnsafe']>['user']>;
@@ -82,6 +83,7 @@ function App() {
           <Route path="/selected_therapists/:request_id" element={<SelectedTherapistsPage />}/>
           <Route path="/consent_of_personal_data" element={<ConcentOfPersonalData />}/>
         </Routes>
+        <ReportProblem tgUsername={user?.username} />
       </Router>
     </div>
   );

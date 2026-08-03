@@ -24,4 +24,4 @@ BOT_TOKEN = os.environ['BOT_TOKEN']
 
 SECRET_KEY = os.environ["SECRET_KEY"]
 
-ADMIN_TG_CHAT_ID = os.environ["ADMIN_TG_CHAT_ID"]
+ADMIN_TG_CHAT_ID = int(os.environ["ADMIN_TG_CHAT_ID"])

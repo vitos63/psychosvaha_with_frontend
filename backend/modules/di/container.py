@@ -20,7 +20,6 @@ from service.date_time import DateTimeService
 from service.admin import AdminService
 from service.problem_report import ProblemReportService
 from cron.queue.tasks.send_notification_to_admin.processor import SendNotificationTOAdminProcessor
-from service.admin import AdminService
 from service.file_service import FileService
 from config import BOT_TOKEN
 
@@ -104,9 +103,9 @@ class Container(containers.DeclarativeContainer):
     )
 
     problem_report_service = providers.Factory(
-            ProblemReportService,
-            bot=bot
-        )
+        ProblemReportService,
+        bot=bot
+    )
 
     client_request_service = providers.Factory(
         ClientRequestService,
