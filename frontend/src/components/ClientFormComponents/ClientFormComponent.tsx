@@ -1,4 +1,5 @@
-import Select from 'react-select';
+import AsyncSelect from "react-select/async";
+import cities from "../../data/cities.json";
 import { City } from 'country-state-city';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -28,10 +29,28 @@ function ClientFormComponent({ client_id }) {
         { code: 'eur', name: 'Евро', selected: false, amount: '' }
     ]);
 
-    const cities = City.getAllCities().map(city => ({
-        value: city.name,
-        label: `${city.name}, ${city.countryCode}`,
-        }));
+    type City = {
+            id: number;
+            name: string;
+            name_ru: string;
+        };
+
+    const loadCities = async (inputValue: string) => {
+        if (!inputValue) return [];
+
+        const query = inputValue.toLowerCase().trim();
+
+        return (cities as City[])
+            .filter(city =>
+                city.name.toLowerCase().includes(query) ||
+                city.name_ru.toLowerCase().includes(query)
+            )
+            .slice(0, 30)
+            .map(city => ({
+                value: city.id,
+                label: `${city.name_ru} (${city.name})`,
+            }));
+    };
 
     const [errors, setErrors] = useState<ClientFormErrors>({})
     
@@ -309,14 +328,15 @@ function ClientFormComponent({ client_id }) {
             </div>
 
             <div className="form-field">
-                <Select
-                options={cities}
-                placeholder="Введите ваш город"
-                value={cities.find(city => city.value === formData.city) ?? null}
+                <AsyncSelect
+                cacheOptions
+                defaultOptions={false}
+                loadOptions={loadCities}
+                placeholder="Выберите город"
                 onChange={(selected) =>
                     setFormData(prev => ({
                         ...prev,
-                        city: selected?.value || "",
+                        city: selected?.label ?? "",
                     }))
                 }
             />
