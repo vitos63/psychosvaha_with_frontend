@@ -6,6 +6,8 @@ from aiogram import Bot
 
 from cron.queue.tasks.add_tags_to_client_request.processor import AddTagsToRequestProcessor
 from cron.queue.tasks.add_therapists_to_client_request.processor import AddTherapistsToRequestProcessor
+from cron.queue.tasks.remove_frozen_requests.processor import RemoveFrozenRequestsProcessor
+
 from repo.client_requests import ClientRequestRepo
 from repo.client_requests_therapists import ClientRequestTherapistRepo
 from repo.client_requests_tags import ClientRequestTagRepo
@@ -135,7 +137,16 @@ class Container(containers.DeclarativeContainer):
         tag_repo=tag_repo,
         client_request_repo=client_request_repo,
         bot=bot,
-  )
+    )
+
+    remove_frozen_requests_processor = providers.Factory(
+            RemoveFrozenRequestsProcessor,
+            session=session,
+            client_request_repo=client_request_repo,
+            bot=bot,
+            queue_repo=queue_repo,
+            date_time_service=date_time_service
+      )
 
     send_notification_to_admin_processor = providers.Factory(
         SendNotificationTOAdminProcessor,
@@ -144,4 +155,3 @@ class Container(containers.DeclarativeContainer):
         admin_service=admin_service,
         bot=bot,
     )
-

@@ -8,11 +8,13 @@ from config import (
     CONSUMER_BATCH_SIZE,
     CONSUMER_SHUTDOWN_SECONDS,
     CONSUMER_SLEEP_SECONDS,
+    REGULAR_TASKS_SLEEP_TIME
 )
 from cron.queue.errors import UnknownProcessorError, UnknownTaskError
 from cron.queue.tasks.add_tags_to_client_request.task import AddTagsToRequestTask
 from cron.queue.tasks.add_therapists_to_client_request.task import AddTherapistsToRequestTask
 from cron.queue.tasks.send_notification_to_admin.task import SendNotificationTOAdminTask
+from cron.queue.tasks.remove_frozen_requests.task import RemoveFrozenRequestsTask
 from cron.queue.tasks.base_processor import BaseProcessor
 from cron.queue.tasks.base_task import BaseTask
 from dto.enums import QueueStatus
@@ -36,6 +38,7 @@ class QueueConsumer:
             AddTagsToRequestTask.get_type(): AddTagsToRequestTask,
             AddTherapistsToRequestTask.get_type(): AddTherapistsToRequestTask,
             SendNotificationTOAdminTask.get_type(): SendNotificationTOAdminTask,
+            RemoveFrozenRequestsTask.get_type(): RemoveFrozenRequestsTask
         }
         self._shutdown_seconds = shutdown_seconds
         self._is_running = True
@@ -89,7 +92,7 @@ class QueueConsumer:
 
         async with self._session_factory() as session:
             container = self._container_factory(session=session)
-            
+
             task_cls = self._type_to_task_cls.get(task_type)
             if not task_cls:
                 raise UnknownTaskError(f"Unknown task type: {task_type}")
@@ -103,3 +106,23 @@ class QueueConsumer:
             await processor().process_task(task_dto)
 
         logger.debug(f"Finished task: {task_id=} {task_type=}")
+
+
+class RegularTasks:
+    def __init__(self,
+                 session_factory: Callable[..., AsyncSession],
+                 container_factory: Callable[..., Container]
+                 ):
+
+        self._session_factory = session_factory
+        self._container_factory = container_factory
+
+    async def run(self):
+        logger.info("Regular tasks started")
+        async with self._session_factory() as session:
+            container = self._container_factory(session=session)
+            task_dto = RemoveFrozenRequestsTask(**RemoveFrozenRequestsTask.to_dict())
+            processor: type[BaseProcessor] = getattr(container, RemoveFrozenRequestsTask.get_processor_name(), None)
+            while True:
+                await processor().process_task(task_dto)
+                await asyncio.sleep(REGULAR_TASKS_SLEEP_TIME)

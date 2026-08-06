@@ -1,5 +1,6 @@
-from sqlalchemy import literal_column, select, func, update
+from sqlalchemy import literal_column, select, func, update, and_
 from sqlalchemy.ext.asyncio import AsyncSession
+from datetime import datetime, timedelta
 
 from database.models import ClientRequest, ClientRequestTag, Tag, Therapist
 from database.models.client_requests_therapists import ClientRequestTherapist
@@ -124,3 +125,13 @@ class ClientRequestRepo:
         )
         await self._session.execute(stmt)
         await self._session.flush()
+
+    async def get_frozen_requests(self) -> list[ClientRequest]:
+        stmt = (
+            select(ClientRequest)
+            .where(and_(ClientRequest.created_at < datetime.now() - timedelta(days=1),
+                        ClientRequest.client_id))
+        )
+
+        result = await self._session.scalars(stmt)
+        return list(result.all())
