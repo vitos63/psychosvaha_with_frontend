@@ -9,7 +9,6 @@ import {
 import { AdminMainInfoResponse } from '../../interfaces/AdminMainInfoInterface';
 import '../Form.css';
 import './AdminDashboardPage.css';
-import { useFormState } from 'react-dom';
 
 type AdminDashboardPageProps = {
   tgId: number | undefined;
@@ -406,7 +405,7 @@ function AdminDashboardPage({ tgId }: AdminDashboardPageProps) {
                 </button>
                 <button
                   type="button"
-                  className="admin-dashboard__action admin-dashboard__action--secondary"
+                  className="admin-dashboard__action admin-dashboard__action--danger"
                   onClick={() => setShowConfirm(true)}
                 >
                   Отклонить

@@ -1,6 +1,5 @@
 import AsyncSelect from "react-select/async";
 import cities from "../../data/cities.json";
-import { City } from 'country-state-city';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../Form.css'
