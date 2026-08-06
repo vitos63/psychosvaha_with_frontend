@@ -10,6 +10,12 @@ admin_keyboard = InlineKeyboardMarkup(
                 text="Посмотреть",
                 web_app=WebAppInfo(url=f"{BASE_URL}/admin")
             )
+        ],
+        [
+            InlineKeyboardButton(
+                text="Продолжить",
+                callback_data="start_bot"
+            )
         ]
     ]
 )
