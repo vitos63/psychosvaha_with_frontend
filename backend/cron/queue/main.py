@@ -17,8 +17,7 @@ async def main():
             session_factory=AsyncSessionFactory,
             container_factory=Container,
         )
-    await consumer.run()
-    await regular_tasks.run()
+    await asyncio.gather(consumer.run(), regular_tasks.run())
 
 
 if __name__ == "__main__":

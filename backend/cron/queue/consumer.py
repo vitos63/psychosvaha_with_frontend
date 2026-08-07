@@ -121,7 +121,7 @@ class RegularTasks:
         logger.info("Regular tasks started")
         async with self._session_factory() as session:
             container = self._container_factory(session=session)
-            task_dto = RemoveFrozenRequestsTask(**RemoveFrozenRequestsTask.to_dict())
+            task_dto = RemoveFrozenRequestsTask()
             processor: type[BaseProcessor] = getattr(container, RemoveFrozenRequestsTask.get_processor_name(), None)
             while True:
                 await processor().process_task(task_dto)

@@ -47,5 +47,5 @@ class RemoveFrozenRequestsProcessor(BaseProcessor):
                 await self._bot.send_message(chat_id=ADMIN_TG_CHAT_ID, text=f"Была удалена зависшая заявка {request.id}")
 
             except Exception:
+                await self._session.rollback()
                 await self._bot.send_message(chat_id=ADMIN_TG_CHAT_ID, text=f"Ошибка во время удаления зависшей заявки {request.id}")
-
