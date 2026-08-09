@@ -1,11 +1,11 @@
 import AsyncSelect from "react-select/async";
-import cities from "../../data/cities.json";
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../Form.css'
 import { createClientRequest } from '../../api/clientRequestApi';
 import { ClientFormErrors } from 'interfaces/Errors';
 import { notifyTelegramWebAppFormSubmitted } from '../../utils/telegramWebApp';
+import { loadCityOptions } from '../../utils/cities';
 
 const MAX_AMOUNT_LENGTH = 7;
 
@@ -27,29 +27,6 @@ function ClientFormComponent({ client_id }) {
         { code: 'usd', name: 'Доллары', selected: false, amount: '' },
         { code: 'eur', name: 'Евро', selected: false, amount: '' }
     ]);
-
-    type City = {
-            id: number;
-            name: string;
-            name_ru: string;
-        };
-
-    const loadCities = async (inputValue: string) => {
-        if (!inputValue) return [];
-
-        const query = inputValue.toLowerCase().trim();
-
-        return (cities as City[])
-            .filter(city =>
-                city.name.toLowerCase().includes(query) ||
-                city.name_ru.toLowerCase().includes(query)
-            )
-            .slice(0, 30)
-            .map(city => ({
-                value: city.id,
-                label: `${city.name_ru} (${city.name})`,
-            }));
-    };
 
     const [errors, setErrors] = useState<ClientFormErrors>({})
     
@@ -330,7 +307,7 @@ function ClientFormComponent({ client_id }) {
                 <AsyncSelect
                 cacheOptions
                 defaultOptions={false}
-                loadOptions={loadCities}
+                loadOptions={loadCityOptions}
                 placeholder="Выберите город"
                 onChange={(selected) =>
                     setFormData(prev => ({

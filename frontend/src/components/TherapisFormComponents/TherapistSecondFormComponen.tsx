@@ -1,5 +1,4 @@
-import Select from 'react-select';
-import { City } from 'country-state-city';
+import AsyncSelect from 'react-select/async';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PhoneInput } from 'react-international-phone';
@@ -11,6 +10,7 @@ import { avatarPathToMediaUrl } from '../../api/api';
 import { TAG_CATEGORIES, TAG_CATEGORY_LABELS, type TagCategoryKey } from '../../constants/tags';
 import { TherapistByTgIdResponse } from '../../interfaces/TherapistInterface';
 import { notifyTelegramWebAppFormSubmitted } from '../../utils/telegramWebApp';
+import { loadCityOptions } from '../../utils/cities';
 
 const MAX_AMOUNT_LENGTH = 7;
 
@@ -53,11 +53,6 @@ function TherapistSecondFormComponent({
         { code: 'usd', name: 'Доллары', selected: false, amount: '' },
         { code: 'eur', name: 'Евро', selected: false, amount: '' }
     ]);
-
-    const cities = City.getAllCities().map(city => ({
-        value: city.name,
-        label: `${city.name}, ${city.countryCode}`,
-        }));
 
     type FormElement = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     const [selectedTags, setSelectedTags] = useState<number[]>([]);
@@ -505,10 +500,12 @@ return (
         </div>
 
         <div className="form-field">
-            <Select
-                options={cities}
+            <AsyncSelect
+                cacheOptions
+                defaultOptions={false}
+                loadOptions={loadCityOptions}
                 placeholder="Введите ваш город (не обязательно)"
-                value={cities.find(city => city.value === formData.city) ?? null}
+                value={formData.city ? { value: formData.city, label: formData.city } : null}
                 onChange={(selected) =>
                     setFormData(prev => ({
                         ...prev,

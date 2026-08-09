@@ -19,13 +19,13 @@ class RemoveFrozenRequestsProcessor(BaseProcessor):
             bot: Bot,
             session: AsyncSession,
             queue_repo: QueueRepo,
-            datetime_service: DateTimeService,
+            date_time_service: DateTimeService,
             client_request_repo: ClientRequestRepo,
     ):
         self._bot = bot
         self._session = session
         self._queue_repo = queue_repo
-        self._datetime_service = datetime_service
+        self._date_time_service = date_time_service
         self._client_request_repo = client_request_repo
 
     async def process_task(self, task: RemoveFrozenRequestsTask):
@@ -41,7 +41,7 @@ class RemoveFrozenRequestsProcessor(BaseProcessor):
                 )
                 await self._queue_repo.create_task(
                     task=task,
-                    start_at=self._datetime_service.get_current_time(),
+                    start_at=self._date_time_service.get_current_time(),
                 )
                 await self._session.commit()
                 await self._bot.send_message(chat_id=ADMIN_TG_CHAT_ID, text=f"Была удалена зависшая заявка {request.id}")
